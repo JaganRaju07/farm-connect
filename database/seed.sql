@@ -183,7 +183,11 @@ UNION ALL
 SELECT 'consumers', COUNT(*) FROM consumers
 UNION ALL
 SELECT 'products',  COUNT(*) FROM products
+<<<<<<< HEAD
 UNION ALLm
+=======
+UNION ALL
+>>>>>>> 9caa35a (Completed Week 1: 20 API endpoints and project structure)
 SELECT 'admins',    COUNT(*) FROM admins;
 
 -- 2. Distance sanity check  (should return ≈ 24.78 km)
@@ -205,4 +209,8 @@ WHERE
     p.is_active = TRUE
     AND f.is_verified = TRUE
     AND calculate_distance_km(12.9716, 77.5946, f.latitude, f.longitude) <= 30
+<<<<<<< HEAD
 ORDER BY distance_km ASC;
+=======
+ORDER BY distance_km ASC;
+>>>>>>> 9caa35a (Completed Week 1: 20 API endpoints and project structure)

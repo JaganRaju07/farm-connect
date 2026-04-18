@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9caa35a (Completed Week 1: 20 API endpoints and project structure)
 -- FARM CONNECT - WEEK 2 DATABASE SCHEMA
 -- Team P116 | Jagan Raju B (Database + Full Stack Developer)
 -- Updated: Week 2 (Mentor feedback integration)
@@ -339,5 +342,9 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- END OF SCHEMA
+<<<<<<< HEAD
 -- Next step: Run seed.sql to populate sample data
 
+=======
+-- Next step: Run seed.sql to populate sample data
+>>>>>>> 9caa35a (Completed Week 1: 20 API endpoints and project structure)

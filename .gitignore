@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dependencies
 node_modules/
 .pnp
@@ -51,3 +52,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 *.pem
+=======
+node_modules/
+.env
+>>>>>>> 9caa35a (Completed Week 1: 20 API endpoints and project structure)
