@@ -1,4 +1,6 @@
--- seed.sql
+-- FARM CONNECT - SEED DATA
+-- PostgreSQL 15+
+
 INSERT INTO admins (name, email, phone, password_hash, role, permissions) VALUES
 ('Manas Choksi', 'manas@farmconnect.in', '9000000001', '$2b$12$KIX8HRhiERANBbFP1MrLq.dkQk9.EHNiX5vSbmS0RKHbCGwZ7RkSa', 'super_admin', '{"verify_farmers": true, "manage_orders": true, "manage_admins": true, "view_reports": true}'),
 ('Preethi Admin', 'preethi@farmconnect.in', '9000000002', '$2b$12$KIX8HRhiERANBbFP1MrLq.dkQk9.EHNiX5vSbmS0RKHbCGwZ7RkSa', 'moderator', '{"verify_farmers": true, "manage_orders": true, "manage_admins": false, "view_reports": true}'),
@@ -29,7 +31,7 @@ INSERT INTO products (farmer_id, name, category, description, price, unit, stock
 (6, 'Coconuts', 'fruits', 'Large, water-filled tender coconuts from coastal farm', 30.00, 'piece', 150, 2, 20, TRUE, '2026-04-08', TRUE);
 
 INSERT INTO orders (order_number, consumer_id, farmer_id, items, subtotal, delivery_fee, total_amount, delivery_address, delivery_city, delivery_pincode, order_status, payment_status, payment_method, confirmed_at, delivered_at) VALUES
-('ORD-20260401-001', 1, 1, '[{"productId": 1, "name": "Organic Tomatoes", "quantity": 3, "price": 40.00, "unit": "kg"}, {"productId": 2, "name": "Fresh Spinach", "quantity": 2, "price": 25.00, "unit": "bunch"}]'::jsonb, 170.00, 30.00, 200.00, '123, Jayanagar 4th Block, Bengaluru', 'bengaluru', '560041', 'delivered', 'paid', 'cod', '2026-04-01 11:00:00', '2026-04-02 14:30:00');
+('ORD-20260401-001', 1, 1, '[{"productId": 1, "name": "Organic Tomatoes", "quantity": 3, "price": 40.00, "unit": "kg"}]'::jsonb, 170.00, 30.00, 200.00, '123, Jayanagar 4th Block, Bengaluru', 'bengaluru', '560041', 'delivered', 'paid', 'cod', '2026-04-01 11:00:00', '2026-04-02 14:30:00');
 
 INSERT INTO payments (order_id, amount, payment_method, payment_status, transaction_id, completed_at) VALUES
 (1, 200.00, 'cod', 'success', NULL, '2026-04-02 14:30:00');
