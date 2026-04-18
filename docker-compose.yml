@@ -1,19 +1,45 @@
 version: '3.8'
 
 services:
+  # ── PRIMARY DATABASE ──────────────────────────────────────────
   postgres:
     image: postgres:15-alpine
     container_name: farmconnect-db
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: farmconnect
-      POSTGRES_USER: farmconnect_user
+      POSTGRES_DB:       farmconnect
+      POSTGRES_USER:     farmconnect_user
       POSTGRES_PASSWORD: farmconnect_pass
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql
-      - ./database/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql:ro
+      - ./database/seed.sql:/docker-entrypoint-initdb.d/2-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U farmconnect_user -d farmconnect"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── PGADMIN (Visual DB Inspection) ──────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: farmconnect-pgadmin
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy     # pgAdmin waits for the DB to be healthy
+    environment:
+      PGADMIN_DEFAULT_EMAIL:    admin@farmconnect.dev
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
 
 volumes:
   postgres_data:
+    name: farmconnect_postgres_data
+  pgadmin_data:
+    name: farmconnect_pgadmin_data
