@@ -172,7 +172,6 @@ VALUES (
     'super_admin'
 );
 
-
 -- ============================================================
 -- QUICK VERIFICATION QUERIES
 -- ============================================================
@@ -184,7 +183,7 @@ UNION ALL
 SELECT 'consumers', COUNT(*) FROM consumers
 UNION ALL
 SELECT 'products',  COUNT(*) FROM products
-UNION ALL
+UNION ALLm
 SELECT 'admins',    COUNT(*) FROM admins;
 
 -- 2. Distance sanity check  (should return ≈ 24.78 km)

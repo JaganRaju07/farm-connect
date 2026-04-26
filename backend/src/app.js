@@ -5,7 +5,7 @@ const { testConnection } = require('./config/database');
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // This is the magic line that reads Postman JSON
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Farm Connect API running' });
@@ -20,8 +20,13 @@ const startServer = async () => {
   });
 };
 
+// --- ROUTES ---
 const productsRouter = require('./routes/products');
 app.use('/api/products', productsRouter);
+
+const ordersRouter = require('./routes/orders');
+app.use('/api/orders', ordersRouter);
+// --------------
 
 startServer();
 module.exports = app;
