@@ -48,6 +48,7 @@
 
 const db = require('../config/database');
 const { calculateDistance } = require('./location.service');
+const { createNotification, notifyOrderStatusChange } = require('./notification.service');
 
 // ============================================================
 // VALID STATUS TRANSITIONS
@@ -245,6 +246,13 @@ async function placeOrder(orderData) {
       ]
     );
 
+    await createNotification(
+      farmerId, 'farmer',
+      'New Order Received',
+      `New order #${orderNumber} placed by a customer. Please confirm.`,
+      'order_placed', orderResult.rows[0].id, 'order'
+    );
+
     // COMMIT happens automatically when executeTransaction resolves successfully.
     return orderResult.rows[0];
   });
@@ -350,6 +358,8 @@ async function updateOrderStatus(orderId, farmerId, newStatus, farmerNotes = nul
   if (result.rows.length === 0) {
     throw new Error('Order update failed. Order may have been modified concurrently.');
   }
+
+  await notifyOrderStatusChange(result.rows[0], newStatus);
 
   return result.rows[0];
 }
