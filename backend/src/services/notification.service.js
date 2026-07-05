@@ -1,5 +1,3 @@
-// backend/src/services/notification.service.js
-
 const db = require('../config/database');
 
 /**

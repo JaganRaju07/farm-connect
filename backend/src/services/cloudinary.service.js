@@ -1,5 +1,3 @@
-// backend/src/services/cloudinary.service.js
-
 const cloudinary = require('cloudinary').v2;
 const { Readable } = require('stream');
 

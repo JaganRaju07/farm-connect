@@ -1,5 +1,3 @@
-// backend/src/services/admin.service.js
-
 const db = require('../config/database');
 
 /**

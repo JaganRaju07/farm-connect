@@ -1,5 +1,3 @@
-// backend/src/middleware/upload.js
-
 const multer = require('multer');
 
 /**
