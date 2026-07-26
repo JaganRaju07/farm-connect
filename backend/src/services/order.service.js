@@ -539,6 +539,81 @@ async function getOrdersForConsumer(consumerId, limit = 20, offset = 0) {
 }
 
 // ============================================================
+// FUNCTION: CANCEL ORDER
+// ============================================================
+/**
+* Cancel an order and restore stock
+*
+* STUDY NOTE — Why Restore Stock in Service, Not Controller:
+* Stock restoration is business logic (how our app handles cancellations).
+* HTTP handling (who can cancel, format response) is controller logic.
+* Keeping this in the service means if you add an admin cancel endpoint later,
+* the same restoration logic runs without duplicating code.
+*/
+async function cancelOrder(orderId, cancelledBy, reason) {
+ return await db.executeTransaction(async (client) => {
+ // Lock order row to prevent concurrent modifications
+ const orderResult = await client.query(
+ `SELECT * FROM orders WHERE id = $1 FOR UPDATE`,
+ [orderId]
+ );
+
+ if (orderResult.rows.length === 0) {
+ throw Object.assign(new Error('Order not found'), { statusCode: 404 });
+ }
+
+ const order = orderResult.rows[0];
+
+ if (!['pending', 'confirmed'].includes(order.order_status)) {
+ throw Object.assign(
+ new Error(`Cannot cancel order with status: ${order.order_status}`),
+ { statusCode: 400, code: 'INVALID_STATUS' }
+ );
+ }
+
+ // Restore stock for every item in the order
+ const items = Array.isArray(order.items) ? order.items : JSON.parse(order.items);
+ for (const item of items) {
+ await client.query(
+ `UPDATE products
+ SET stock_available = stock_available + $1,
+ updated_at = CURRENT_TIMESTAMP
+ WHERE id = $2`,
+ [item.quantity, item.productId]
+ );
+ }
+
+ // Update order record
+ const updatedOrder = await client.query(
+ `UPDATE orders
+ SET order_status = 'cancelled',
+ cancellation_reason = $1,
+ cancelled_by = $2,
+ cancelled_at = CURRENT_TIMESTAMP,
+ updated_at = CURRENT_TIMESTAMP
+ WHERE id = $3
+ RETURNING *`,
+ [reason, cancelledBy, orderId]
+ );
+
+ // Notify the OTHER party
+ const notifyUserId = cancelledBy === 'consumer' ? order.farmer_id : order.consumer_id;
+ const notifyUserType = cancelledBy === 'consumer' ? 'farmer' : 'consumer';
+ const notifyTitle = 'Order Cancelled';
+ const notifyMessage = `Order ${order.order_number} was cancelled. ${reason ? 'Reason: ' + reason : ''}`;
+
+ await client.query(
+ `INSERT INTO notifications
+ (user_id, user_type, title, message, notification_type, related_id, related_type, action_url)
+ VALUES ($1, $2, $3, $4, 'order_cancelled', $5, 'order', $6)`,
+ [notifyUserId, notifyUserType, notifyTitle, notifyMessage, orderId, `/orders/${orderId}`]
+ );
+
+ return updatedOrder.rows[0];
+ });
+}
+
+// ============================================================
 // EXPORTS
 // ============================================================
 module.exports = {
@@ -548,6 +623,7 @@ module.exports = {
   getOrderById,             // Any party views a single order detail
   getOrdersForFarmer,       // Farmer views their incoming orders list
   getOrdersForConsumer,     // Consumer views their order history
+  cancelOrder,              // Cancel an order
 };
 
 // ============================================================

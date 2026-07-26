@@ -16,7 +16,7 @@ const db = require('../config/database');
 async function createNotification(userId, userType, title, message, type, referenceId = null, referenceType = null) {
   try {
     await db.query(
-      `INSERT INTO notifications (user_id, user_type, title, message, type, reference_id, reference_type)
+      `INSERT INTO notifications (user_id, user_type, title, message, notification_type, related_id, related_type)
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [userId, userType, title, message, type, referenceId, referenceType]
     );

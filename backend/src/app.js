@@ -7,6 +7,16 @@ const app = express();
 app.use(cors());
 app.use(express.json()); // This is the magic line that reads Postman JSON
 
+const healthController = require('./controllers/health.controller');
+// Health check — no auth, no rate limiting (Railway must reach this)
+app.get('/health', healthController.healthCheck);
+app.get('/', (req, res) => res.json({
+ name: 'Farm Connect API',
+ version: '1.0.0',
+ status: 'running',
+ docs: '/health'
+}));
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Farm Connect API running' });
 });

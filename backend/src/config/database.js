@@ -34,7 +34,7 @@ const pool = new Pool({
     ? { rejectUnauthorized: false }
     : false,
 
-  max: 20,                        // max simultaneous connections
+  max: process.env.NODE_ENV === 'production' ? 10 : 5, // Max simultaneous connections
   idleTimeoutMillis: 30000,       // release idle connections after 30s
   connectionTimeoutMillis: 2000,  // fail fast if DB is unreachable
 });
