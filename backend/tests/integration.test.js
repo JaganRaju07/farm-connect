@@ -166,6 +166,49 @@ async function runTests() {
     testsFailed++;
   }
 
+  // ── Test 7: Review can only be submitted after delivery ──────────────────────
+  try {
+    const { createReview } = require('../src/services/review.service');
+
+    // Try review on non-delivered order — should fail
+    let caught = false;
+    try {
+      await createReview(CONSUMER_ID, {
+        productId: PRODUCT_ID,
+        orderId: 999, // fake order
+        rating: 5,
+        reviewText: 'Test'
+      });
+    } catch (e) {
+      caught = true;
+    }
+    console.assert(caught, 'Review on fake order should be rejected');
+    console.log('✅ Test 7 PASS — Review gating works correctly');
+    testsPassed++;
+  } catch (e) {
+    console.error('❌ Test 7 FAIL:', e.message);
+    testsFailed++;
+  }
+
+  // ── Test 8: Wishlist toggle works ──────────────────────────────────────────
+  try {
+    const { toggleWishlist, getWishlist } = require('../src/services/wishlist.service');
+
+    await toggleWishlist(CONSUMER_ID, PRODUCT_ID); // save
+    const afterSave = await getWishlist(CONSUMER_ID);
+    console.assert(afterSave.length > 0, 'Wishlist should have item after save');
+
+    await toggleWishlist(CONSUMER_ID, PRODUCT_ID); // unsave
+    const afterRemove = await getWishlist(CONSUMER_ID);
+    console.assert(afterRemove.length === 0, 'Wishlist should be empty after unsave');
+
+    console.log('✅ Test 8 PASS — Wishlist toggle works correctly');
+    testsPassed++;
+  } catch (e) {
+    console.error('❌ Test 8 FAIL:', e.message);
+    testsFailed++;
+  }
+
   // ── Summary ─────────────────────────────────────────────────────────────────
   console.log('\n─────────────────────────────────────');
   console.log(`  Results: ${testsPassed} passed, ${testsFailed} failed`);

@@ -38,5 +38,17 @@ const ordersRouter = require('./routes/orders');
 app.use('/api/orders', ordersRouter);
 // --------------
 
+// New Routes
+const reviewRoutes = require('./routes/review.routes');
+app.use('/api/v1/reviews', reviewRoutes);
+
+const wishlistRoutes = require('./routes/wishlist.routes');
+app.use('/api/v1/wishlist', wishlistRoutes);
+
+const farmerRoutes = require('./routes/farmer.routes');
+app.use('/api/v1/farmers', farmerRoutes);
+
+const adminRoutes = require('./routes/admin.routes');
+app.use('/api/v1/admin', adminRoutes);
 startServer();
 module.exports = app;
