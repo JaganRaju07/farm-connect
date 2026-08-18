@@ -1,119 +1,73 @@
-// src/components/layout/Header.tsx
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import { ShoppingCart, User, Menu, X, Leaf } from 'lucide-react';
-
-interface NavLink {
-  href: string;
-  label: string;
-}
-
-const navLinks: NavLink[] = [
-  { href: '/marketplace', label: 'Marketplace' },
-  { href: '/farmer/dashboard', label: 'For Farmers' },
-  { href: '/about', label: 'About' },
-];
+import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartContext';
+import { Sprout, ShoppingCart, LogOut, User, Tractor } from 'lucide-react';
 
 export default function Header() {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const cartItemCount = 3; // TODO: Get from CartContext
-
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  const { isAuthenticated, user, role, logout } = useAuth();
+  const { getTotalItems } = useCart();
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
-      <nav className="container-app">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link 
-            href="/" 
-            className="flex items-center space-x-2 text-primary-600 hover:text-primary-700 transition-colors"
-          >
-            <Leaf className="h-8 w-8" aria-hidden="true" />
-            <span className="text-xl font-bold">Farm Connect</span>
-          </Link>
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        {/* Logo */}
+        <Link href={isAuthenticated ? (role === 'farmer' ? '/farmer/dashboard' : '/marketplace') : '/'}
+className="flex items-center gap-2">
+          <Sprout className="w-7 h-7 text-primary-600" />
+          <span className="font-bold text-lg text-gray-900">Farm Connect</span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-earth-600 hover:text-primary-600 font-medium transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Right side actions */}
-          <div className="flex items-center space-x-4">
-            {/* Cart button */}
-            <Link
-              href="/cart"
-              className="relative p-2 text-earth-600 hover:text-primary-600 transition-colors"
-              aria-label={`Shopping cart with ${cartItemCount} items`}
-            >
-              <ShoppingCart className="h-6 w-6" />
-              {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-secondary-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                  {cartItemCount > 9 ? '9+' : cartItemCount}
-                </span>
-              )}
-            </Link>
-
-            {/* User menu */}
-            <Link
-              href="/profile"
-              className="p-2 text-earth-600 hover:text-primary-600 transition-colors"
-              aria-label="User profile"
-            >
-              <User className="h-6 w-6" />
-            </Link>
-
-            {/* Mobile menu button */}
-            <button
-              type="button"
-              className="md:hidden p-2 text-earth-600 hover:text-primary-600 transition-colors"
-              onClick={toggleMobileMenu}
-              aria-expanded={isMobileMenuOpen}
-              aria-controls="mobile-menu"
-              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-            >
-              {isMobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Navigation Menu */}
-        {isMobileMenuOpen && (
-          <div 
-            id="mobile-menu"
-            className="md:hidden py-4 border-t border-earth-200 animate-fade-in"
-          >
-            <div className="flex flex-col space-y-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-earth-600 hover:text-primary-600 font-medium py-2 transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.label}
+        {/* Right side */}
+        <div className="flex items-center gap-3">
+          {isAuthenticated ? (
+            <>
+              {/* Cart (consumers only) */}
+              {role === 'consumer' && (
+                <Link href="/cart" className="relative p-2 hover:bg-gray-100 rounded-lg">
+                  <ShoppingCart className="w-6 h-6 text-gray-700" />
+                  {getTotalItems() > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-primary-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-semibold">
+                      {getTotalItems()}
+                    </span>
+                  )}
                 </Link>
-              ))}
-            </div>
-          </div>
-        )}
-      </nav>
+              )}
+
+              {/* User info */}
+              <div className="flex items-center gap-2 text-sm">
+                {role === 'farmer'
+                  ? <Tractor className="w-5 h-5 text-green-700" />
+                  : <User className="w-5 h-5 text-primary-600" />
+                }
+                <span className="hidden md:block font-medium text-gray-700">
+                  {user?.name?.split(' ')[0] || 'User'}
+                </span>
+              </div>
+
+              {/* Profile Link */}
+              <Link href="/profile" className="text-sm text-gray-600 hover:text-gray-900 hidden md:block">
+                Profile
+              </Link>
+
+              {/* Logout */}
+              <button onClick={logout}
+                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-red-600 transition-colors">
+                <LogOut className="w-4 h-4" />
+                <span className="hidden md:block">Logout</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900 font-medium">Sign In</Link>
+              <Link href="/register" className="bg-primary-600 text-white text-sm px-4 py-2 rounded-lg font-semibold hover:bg-primary-700">
+                Get Started
+              </Link>
+            </>
+          )}
+        </div>
+      </div>
     </header>
   );
 }
