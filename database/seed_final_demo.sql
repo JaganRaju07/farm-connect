@@ -1,21 +1,10 @@
--- Add this at the TOP of seed_final_demo.sql before the DO blocks
--- to verify prerequisite data exists before inserting
-DO $$
-BEGIN
- IF NOT EXISTS (SELECT 1 FROM farmers WHERE phone = '9845000001') THEN
- RAISE EXCEPTION 'Farmer 9845000001 not found. Run seed.sql first.';
- END IF;
- IF NOT EXISTS (SELECT 1 FROM consumers WHERE phone = '9900000001') THEN
- RAISE EXCEPTION 'Consumer 9900000001 not found. Run seed.sql first.';
- END IF;
- RAISE NOTICE 'Prerequisites verified. Proceeding with demo seed.';
-END $$;
+
 
 -- ─── Clean slate for demo (local only, NEVER on production) ──────────────────
--- Uncomment these only when preparing a clean demo environment:
--- TRUNCATE product_reviews, consumer_wishlist, notifications,
--- orders, products, consumers, farmers RESTART IDENTITY CASCADE;
--- DELETE FROM otp_store;
+-- Since we are setting up a demo environment, we clear existing data first:
+TRUNCATE product_reviews, consumer_wishlist, notifications,
+orders, products, consumers, farmers RESTART IDENTITY CASCADE;
+DELETE FROM otp_store;
 
 -- ─── Demo Farmers ─────────────────────────────────────────────────────────────
 INSERT INTO farmers (name, phone, latitude, longitude, address, city, pincode,
@@ -75,8 +64,7 @@ BEGIN
  (f1, 'Fresh Spinach', 'vegetables',
  'Tender baby spinach leaves, rich in iron. Harvested twice weekly.', 30, 'bunch', 40, TRUE, TRUE, 8, 4.2, 8, 
 22, 89)
- ON CONFLICT DO NOTHING
- RETURNING id INTO p1;
+ ON CONFLICT DO NOTHING;
 
  SELECT id INTO p1 FROM products WHERE farmer_id = f1 AND name = 'Organic Tomatoes';
  SELECT id INTO p2 FROM products WHERE farmer_id = f1 AND name = 'Fresh Spinach';
