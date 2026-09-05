@@ -84,5 +84,5 @@ npm run dev
 | Jagan Raju B | Team Lead + Database + Full Stack |
 | Deekshitha P | Backend Developer |
 | Ishani Srinivas | Frontend Developer |
-**Mentor:** Dr. Narender M.
+**Mentor:** Dr. Narender M, Manas Ajaykumar Choksi(Project Mentor)
 **Institute:** The National Institute of Engineering, Mysuru (VTU Belagavi)
