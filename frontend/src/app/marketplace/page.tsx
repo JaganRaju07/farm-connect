@@ -189,9 +189,5 @@ function MarketplaceContent() {
 }
 
 export default function MarketplacePage() {
-  return (
-    <ProtectedRoute allowedRoles={['consumer']} redirectTo="/login">
-      <MarketplaceContent />
-    </ProtectedRoute>
-  );
+  return <MarketplaceContent />;
 }

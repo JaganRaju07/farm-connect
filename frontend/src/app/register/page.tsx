@@ -48,7 +48,7 @@ export default function ConsumerRegisterPage() {
       });
       setStep('otp');
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Failed to send OTP. Try again.');
+      setError(err.response?.data?.error?.message || err.response?.data?.message || 'Failed to send OTP. Try again.');
     } finally {
       setLoading(false);
     }
@@ -70,7 +70,7 @@ export default function ConsumerRegisterPage() {
       login(token, user, 'consumer');
       router.push('/complete-profile');
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Invalid OTP. Try again.');
+      setError(err.response?.data?.error?.message || err.response?.data?.message || 'Invalid OTP. Try again.');
       setOtp(['', '', '', '', '', '']);
       otpRefs.current[0]?.focus();
     } finally {

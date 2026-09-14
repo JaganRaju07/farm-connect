@@ -7,6 +7,7 @@ import axios from 'axios';
 import { Shield, Users, ShoppingCart, Tag, IndianRupee, LogOut, CheckCircle, Clock } from 'lucide-react';
 import Link from 'next/link';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
+import { useAuth } from '@/context/AuthContext';
 
 function AdminDashboardContent() {
   const router = useRouter();
@@ -14,24 +15,18 @@ function AdminDashboardContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : '';
+
+  const { logout } = useAuth();
 
   useEffect(() => {
-    if (!token) {
-      router.push('/admin/login');
-      return;
-    }
-
     const fetchAnalytics = async () => {
       try {
-        const res = await axios.get('/api/v1/admin/analytics', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+        const res = await axios.get(`${API}/admin/analytics`);
         setAnalytics(res.data.data);
       } catch (err: any) {
         if (err.response?.status === 401 || err.response?.status === 403) {
-          localStorage.removeItem('admin_token');
-          router.push('/admin/login');
+          logout();
         } else {
           setError('Failed to load platform analytics.');
         }

@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Leaf } from "lucide-react";
 import Link from "next/link";
+import Button from "@/components/common/button";
 
 interface EmptyStateProps {
   icon?: ReactNode;
@@ -39,15 +40,17 @@ export function EmptyState({
       </p>
       
       {(actionText && actionHref) && (
-        <Link href={actionHref} className="btn-primary px-8 h-12 text-base font-semibold">
-          {actionText}
+        <Link href={actionHref}>
+          <Button variant="primary" className="px-8 h-12 text-base">
+            {actionText}
+          </Button>
         </Link>
       )}
       
       {(actionText && onAction && !actionHref) && (
-        <button onClick={onAction} className="btn-primary px-8 h-12 text-base font-semibold">
+        <Button onClick={onAction} variant="primary" className="px-8 h-12 text-base">
           {actionText}
-        </button>
+        </Button>
       )}
     </div>
   );

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Shield, CheckCircle, XCircle, LogOut, ArrowLeft, User, Phone, MapPin, Award, BookOpen } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/context/AuthContext';
 
 export default function AdminFarmerVerificationPage() {
   const router = useRouter();
@@ -18,11 +19,12 @@ export default function AdminFarmerVerificationPage() {
   const [rejectionNotes, setRejectionNotes] = useState<Record<number, string>>({});
   const [activeRejectionId, setActiveRejectionId] = useState<number | null>(null);
 
-  const token = typeof window !== 'undefined' ? localStorage.getItem('admin_token') : '';
+  const { logout, token } = useAuth();
 
   const fetchPendingFarmers = async () => {
     try {
-      const res = await axios.get('/api/v1/admin/farmers?status=pending', {
+      const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+      const res = await axios.get(`${API}/admin/farmers?status=pending`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       // The backend returns { farmers: [...], total, page, limit }
@@ -51,7 +53,8 @@ export default function AdminFarmerVerificationPage() {
 
     setActionLoadingId(farmerId);
     try {
-      await axios.patch(`/api/v1/admin/farmers/${farmerId}/verify`, 
+      const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+      await axios.patch(`${API}/admin/farmers/${farmerId}/verify`, 
         { decision, adminNote: note || null },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -67,8 +70,7 @@ export default function AdminFarmerVerificationPage() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('admin_token');
-    router.push('/admin/login');
+    logout();
   };
 
   if (loading) {

@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Sprout, ArrowRight, Loader2, Leaf, ShieldCheck, MapPin, Tractor } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuroraBackground } from '@/components/reactbits/AuroraBackground';
+import Button from '@/components/common/button';
 
 type Step = 'phone' | 'otp';
 
@@ -261,10 +262,17 @@ export default function ConsumerLoginPage() {
                   </motion.div>
                 )}
 
-                <button type="submit" disabled={phone.length !== 10 || loading} className="btn-primary w-full h-12 mt-4 text-base shadow-md">
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-                  {loading ? 'Sending code...' : 'Continue'}
-                </button>
+                <Button 
+                  type="submit" 
+                  disabled={phone.length !== 10 || loading} 
+                  isLoading={loading}
+                  loadingText="Sending code..."
+                  fullWidth 
+                  size="lg"
+                  className="mt-4"
+                >
+                  Continue
+                </Button>
               </motion.form>
             )}
 

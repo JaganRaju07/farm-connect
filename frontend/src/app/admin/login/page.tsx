@@ -5,9 +5,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Shield } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,10 +21,20 @@ export default function AdminLoginPage() {
     setError('');
 
     try {
-      const res = await axios.post('/api/v1/admin/login', { email, password });
+      const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+      const res = await axios.post(`${API}/admin/login`, { email, password });
       
-      // Save admin token separately from farmer/consumer token
-      localStorage.setItem('admin_token', res.data.data.token);
+      const token = res.data.data.token;
+      
+      // Mock user for admin
+      const mockAdminUser = {
+        id: 999,
+        name: 'Super Admin',
+        phone: 'N/A',
+        is_profile_complete: true
+      };
+
+      login(token, mockAdminUser, 'admin');
       
       router.push('/admin/dashboard');
     } catch (err: any) {
