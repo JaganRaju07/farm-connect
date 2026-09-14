@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { AnimatedBeam } from '@/components/magicui/AnimatedBeam';
+import ReviewForm from '@/components/reviews/ReviewForm';
 
 export default function OrderTrackingPage() {
   const params = useParams();
@@ -20,6 +21,7 @@ export default function OrderTrackingPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [apiError, setApiError] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const farmRef = useRef<HTMLDivElement>(null);
@@ -31,8 +33,13 @@ export default function OrderTrackingPage() {
     try {
       const data = await getOrderById(orderId);
       setOrder(data);
-    } catch {
-      setError('Failed to load order details.');
+      setApiError(false);
+    } catch (e: any) {
+      if (e.response?.status === 404) {
+        setApiError(true);
+      } else {
+        setError('Failed to load order details.');
+      }
     } finally {
       setLoading(false);
     }
@@ -50,6 +57,19 @@ export default function OrderTrackingPage() {
     );
   }
 
+  if (apiError) {
+    return (
+      <div className="min-h-screen bg-earth-50 flex items-center justify-center p-4">
+        <div className="bg-white p-12 rounded-3xl shadow-sm border border-earth-200 text-center max-w-md w-full">
+          <Package className="w-16 h-16 text-blue-500 mx-auto mb-4" />
+          <p className="text-xl font-bold text-earth-900 mb-2">Backend Integration Pending</p>
+          <p className="text-earth-500 mb-8">The single order tracking endpoint is not yet available on the backend server.</p>
+          <Link href="/consumer/orders" className="btn-secondary w-full justify-center">Back to Orders</Link>
+        </div>
+      </div>
+    );
+  }
+
   if (error || !order) {
     return (
       <div className="min-h-screen bg-earth-50 flex items-center justify-center p-4">
@@ -58,8 +78,8 @@ export default function OrderTrackingPage() {
           <p className="text-xl font-bold text-earth-900 mb-2">{error || 'Order not found'}</p>
           <p className="text-earth-500 mb-8">We couldn't locate this order in our system.</p>
           <div className="flex flex-col gap-3">
-            <button onClick={fetchOrder} className="btn-primary w-full">Retry</button>
-            <Link href="/consumer/orders" className="btn-secondary w-full">Back to Orders</Link>
+            <button onClick={fetchOrder} className="btn-primary w-full justify-center">Retry</button>
+            <Link href="/consumer/orders" className="btn-secondary w-full justify-center">Back to Orders</Link>
           </div>
         </div>
       </div>
@@ -67,6 +87,7 @@ export default function OrderTrackingPage() {
   }
 
   const items = JSON.parse(order.items) as Array<{
+    productId: number;
     name: string;
     quantity: number;
     unit: string;
@@ -254,6 +275,22 @@ export default function OrderTrackingPage() {
                 </div>
               </div>
             </div>
+            
+            {/* Review Prompt for Completed Orders */}
+            {['delivered', 'completed'].includes(order.order_status) && (
+              <div className="card p-6 mt-8">
+                <h2 className="text-lg font-bold text-earth-900 mb-2 tracking-tight">Review Your Order</h2>
+                <p className="text-sm text-earth-500 mb-4">How was your experience with these items?</p>
+                {/* For simplicity, we'll allow reviewing the first item in the order */}
+                {items.length > 0 && (
+                  <ReviewForm 
+                    productId={items[0].productId} 
+                    orderId={order.id} 
+                    onSubmitted={() => fetchOrder()} 
+                  />
+                )}
+              </div>
+            )}
             
           </div>
         </div>

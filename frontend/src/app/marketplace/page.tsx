@@ -5,7 +5,9 @@ import axios from 'axios';
 import { useLocation } from '@/context/LocationContext';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
 import ProductCard from '@/components/product/productcard';
-import { MapPin, Search, Loader2, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import ProductSkeleton from '@/components/product/ProductSkeleton';
+import { ProductFilter, FilterState } from '@/components/product/productfilter';
+import { MapPin, Search, Loader2, SlidersHorizontal, ChevronDown, X } from 'lucide-react';
 import { Product } from '@/types';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
@@ -15,31 +17,47 @@ function MarketplaceContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [radius, setRadius] = useState(25); // Default 25km radius
+  
+  const initialFilters: FilterState = {
+    category: '',
+    minPrice: '',
+    maxPrice: '',
+    isOrganic: false,
+    radius: 25,
+  };
+  
+  const [filters, setFilters] = useState<FilterState>(initialFilters);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState<FilterState>(initialFilters);
 
-  useEffect(() => {
+  const fetchProducts = async () => {
     // Only fetch if we have location, or if location failed (we can fetch without it, just no distance sorting)
     if (locLoading) return;
-
-    const fetchProducts = async () => {
-      setLoading(true);
-      try {
-        let url = `${API}/products?`;
-        if (latitude && longitude) {
-          url += `lat=${latitude}&lon=${longitude}&radius=${radius}`;
-        }
-        
-        const res = await axios.get(url);
-        setProducts(res.data.data || []);
-      } catch (error) {
-        console.error('Failed to fetch marketplace products:', error);
-      } finally {
-        setLoading(false);
+    
+    setLoading(true);
+    try {
+      let url = `${API}/products?`;
+      if (latitude && longitude) {
+        url += `lat=${latitude}&lon=${longitude}&radius=${appliedFilters.radius}`;
       }
-    };
+      
+      if (appliedFilters.category) url += `&category=${appliedFilters.category}`;
+      if (appliedFilters.minPrice) url += `&minPrice=${appliedFilters.minPrice}`;
+      if (appliedFilters.maxPrice) url += `&maxPrice=${appliedFilters.maxPrice}`;
+      if (appliedFilters.isOrganic) url += `&isOrganic=true`;
+      
+      const res = await axios.get(url);
+      setProducts(res.data.data || []);
+    } catch (error) {
+      console.error('Failed to fetch marketplace products:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchProducts();
-  }, [latitude, longitude, locLoading, radius]);
+  }, [latitude, longitude, locLoading, appliedFilters]);
 
   const filteredProducts = products.filter(p => 
     p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -57,7 +75,7 @@ function MarketplaceContent() {
             <div className="flex items-center gap-2 mt-2">
               <MapPin className="w-4 h-4 text-primary-600" />
               <span className="text-sm font-medium text-earth-600">
-                {locLoading ? 'Locating you...' : locError ? 'Location unavailable' : `Showing farms within ${radius}km`}
+                {locLoading ? 'Locating you...' : locError ? 'Location unavailable' : `Showing farms within ${appliedFilters.radius}km`}
               </span>
               {!locLoading && (
                 <button onClick={refreshLocation} className="text-xs text-primary-600 hover:underline ml-2 font-medium">
@@ -78,25 +96,54 @@ function MarketplaceContent() {
                 className="input-field pl-10"
               />
             </div>
-            <button className="btn-secondary px-4 py-2.5 shrink-0">
+            <button 
+              onClick={() => setIsFilterOpen(true)}
+              className="btn-secondary px-4 py-2.5 shrink-0 relative"
+            >
               <SlidersHorizontal className="w-4 h-4" />
               <span className="hidden sm:inline">Filters</span>
+              {(appliedFilters.category || appliedFilters.isOrganic || appliedFilters.minPrice || appliedFilters.maxPrice) && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-600 rounded-full border-2 border-white" />
+              )}
             </button>
           </div>
         </div>
+
+        {/* ── Active Filters Display ── */}
+        {(appliedFilters.category || appliedFilters.isOrganic || appliedFilters.minPrice || appliedFilters.maxPrice) && (
+          <div className="flex flex-wrap gap-2 mb-6 animate-fade-in">
+            {appliedFilters.category && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-50 text-primary-700 text-sm font-medium rounded-lg border border-primary-100">
+                {appliedFilters.category}
+                <button onClick={() => { setFilters(prev => ({ ...prev, category: '' })); setAppliedFilters(prev => ({ ...prev, category: '' })); }} className="hover:text-primary-900"><X className="w-3.5 h-3.5" /></button>
+              </span>
+            )}
+            {appliedFilters.isOrganic && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-success-50 text-success-700 text-sm font-medium rounded-lg border border-success-100">
+                Organic Only
+                <button onClick={() => { setFilters(prev => ({ ...prev, isOrganic: false })); setAppliedFilters(prev => ({ ...prev, isOrganic: false })); }} className="hover:text-success-900"><X className="w-3.5 h-3.5" /></button>
+              </span>
+            )}
+            {(appliedFilters.minPrice || appliedFilters.maxPrice) && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent-50 text-accent-700 text-sm font-medium rounded-lg border border-accent-100">
+                ₹{appliedFilters.minPrice || '0'} - ₹{appliedFilters.maxPrice || 'Any'}
+                <button onClick={() => { setFilters(prev => ({ ...prev, minPrice: '', maxPrice: '' })); setAppliedFilters(prev => ({ ...prev, minPrice: '', maxPrice: '' })); }} className="hover:text-accent-900"><X className="w-3.5 h-3.5" /></button>
+              </span>
+            )}
+            <button 
+              onClick={() => { setFilters(initialFilters); setAppliedFilters(initialFilters); }}
+              className="text-sm font-medium text-earth-500 hover:text-earth-900 hover:underline px-2"
+            >
+              Clear All
+            </button>
+          </div>
+        )}
 
         {/* ── Product Grid ── */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-              <div key={i} className="card h-[400px] animate-pulse flex flex-col overflow-hidden">
-                <div className="h-48 bg-earth-200" />
-                <div className="p-5 flex-1 flex flex-col gap-4">
-                  <div className="h-6 w-3/4 bg-earth-200 rounded" />
-                  <div className="h-8 w-1/2 bg-earth-200 rounded" />
-                  <div className="mt-auto h-16 bg-earth-100 rounded" />
-                </div>
-              </div>
+              <ProductSkeleton key={i} />
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
@@ -106,10 +153,14 @@ function MarketplaceContent() {
             <p className="text-earth-500">Try expanding your search radius or modifying your filters.</p>
             <div className="mt-6">
               <button 
-                onClick={() => setRadius(radius === 25 ? 50 : 100)}
+                onClick={() => {
+                  const newRadius = appliedFilters.radius === 25 ? 50 : 100;
+                  setFilters(prev => ({ ...prev, radius: newRadius }));
+                  setAppliedFilters(prev => ({ ...prev, radius: newRadius }));
+                }}
                 className="btn-secondary"
               >
-                Expand Search Radius to {radius === 25 ? '50km' : '100km'}
+                Expand Search Radius to {appliedFilters.radius === 25 ? '50km' : '100km'}
               </button>
             </div>
           </div>
@@ -121,6 +172,18 @@ function MarketplaceContent() {
           </div>
         )}
       </div>
+
+      <ProductFilter 
+        isOpen={isFilterOpen}
+        onClose={() => setIsFilterOpen(false)}
+        filters={filters}
+        setFilters={setFilters}
+        onApply={() => setAppliedFilters(filters)}
+        onReset={() => {
+          setFilters(initialFilters);
+          setAppliedFilters(initialFilters);
+        }}
+      />
     </div>
   );
 }

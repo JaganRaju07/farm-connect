@@ -27,6 +27,7 @@ export interface Order {
   id: number;
   order_number: string;
   consumer_id: number;
+  consumer_name?: string;
   farmer_id: number;
   farmer_name: string;
   farmer_phone: string;

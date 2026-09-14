@@ -8,6 +8,8 @@ import ProtectedRoute from '@/components/common/ProtectedRoute';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { AnimatedBeam } from '@/components/magicui/AnimatedBeam';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+
 interface DashboardStats {
   activeProducts: number;
   pendingOrders: number;
@@ -28,28 +30,32 @@ function FarmerDashboardContent() {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const [productsRes, ordersRes, profileRes] = await Promise.all([
-          axios.get('/api/v1/farmer/products?status=active', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get('/api/v1/farmer/orders?status=pending', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get('/api/v1/farmer/profile', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+        // Fallback-friendly fetch for routes that might not exist yet
+        const fetchSafe = async (url: string) => {
+          try {
+            const res = await axios.get(url, { headers: { Authorization: `Bearer ${token}` } });
+            return res.data?.data;
+          } catch (e: any) {
+            console.warn(`Safe fetch failed for ${url}:`, e.message);
+            return null;
+          }
+        };
+
+        const [productsData, ordersData, profileData, allOrdersData] = await Promise.all([
+          fetchSafe(`${API_BASE}/farmers/products?status=active`),
+          fetchSafe(`${API_BASE}/farmers/orders?status=pending`),
+          fetchSafe(`${API_BASE}/farmers/profile`),
+          fetchSafe(`${API_BASE}/farmers/orders`)
         ]);
 
-        const allOrdersRes = await axios.get('/api/v1/farmer/orders', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const productsList = productsRes.data?.data?.products ?? [];
-        const activeCount = productsRes.data?.data?.count ?? productsList.length ?? 0;
+        const productsList = productsData?.products ?? [];
+        const activeCount = productsData?.count ?? productsList.length ?? 0;
         const lowStockCount = productsList.filter((p: any) => p.stock_available < 10).length;
-        const pendingCount = ordersRes.data?.data?.count ?? ordersRes.data?.data?.orders?.length ?? 0;
-        const earnings = profileRes.data?.data?.farmer?.total_earnings ?? 0;
-        const ordersList = allOrdersRes.data?.data?.orders ?? [];
+        
+        const pendingCount = ordersData?.count ?? ordersData?.orders?.length ?? 0;
+        const earnings = profileData?.farmer?.total_earnings ?? 0;
+        
+        const ordersList = allOrdersData?.orders ?? [];
 
         setStats({
           activeProducts: activeCount,
@@ -144,6 +150,12 @@ function FarmerDashboardContent() {
       <div>
         <h1 className="text-2xl font-bold font-display text-earth-900 tracking-tight">Overview</h1>
         <p className="text-earth-500 text-sm mt-1">Here's what's happening with your farm today.</p>
+        {(!stats?.activeProducts && !stats?.pendingOrders && !stats?.totalEarnings) && (
+          <div className="mt-4 inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg text-sm border border-blue-100 font-medium">
+            <AlertCircle className="w-4 h-4" />
+            Backend integration pending: Connect the farmer endpoints to see real metrics here.
+          </div>
+        )}
       </div>
       
       {/* Low Stock Warning */}

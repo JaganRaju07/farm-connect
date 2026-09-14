@@ -7,6 +7,8 @@ import { ShoppingBag, MapPin, Calendar, CheckCircle, Package, Truck, Award, XCir
 import { motion, AnimatePresence } from 'framer-motion';
 import { EmptyState } from '@/components/common/EmptyState';
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+
 const STATUS_TRANSITION_LABELS: Record<string, string> = {
   pending: 'Accept Order',
   confirmed: 'Mark as Packed',
@@ -42,17 +44,22 @@ export default function FarmerOrdersPage() {
   const [filter, setFilter] = useState<string>('all');
   const [expandedOrderId, setExpandedOrderId] = useState<number | null>(null);
   const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
+  const [apiError, setApiError] = useState(false);
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : '';
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get('/api/v1/farmer/orders', {
+      const res = await axios.get(`${API_BASE}/farmers/orders`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setOrders(res.data.data.orders || []);
-    } catch (error) {
-      console.error('Failed to fetch orders:', error);
+      setOrders(res.data.data?.orders || []);
+      setApiError(false);
+    } catch (error: any) {
+      console.error('Failed to fetch orders:', error.message);
+      if (error.response?.status === 404) {
+        setApiError(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -69,7 +76,7 @@ export default function FarmerOrdersPage() {
   const handleUpdateStatus = async (orderId: number, currentStatus: string, nextStatus: string) => {
     setActionLoadingId(orderId);
     try {
-      await axios.patch(`/api/v1/farmer/orders/${orderId}/status`, 
+      await axios.patch(`${API_BASE}/farmers/orders/${orderId}/status`, 
         { status: nextStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -94,7 +101,7 @@ export default function FarmerOrdersPage() {
     if (!confirm('Are you sure you want to cancel this order?')) return;
     setActionLoadingId(orderId);
     try {
-      await axios.patch(`/api/v1/farmer/orders/${orderId}/status`, 
+      await axios.patch(`${API_BASE}/farmers/orders/${orderId}/status`, 
         { status: 'cancelled' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -159,6 +166,14 @@ export default function FarmerOrdersPage() {
           {[1, 2, 3].map(i => (
             <div key={i} className="h-32 bg-earth-200 rounded-2xl animate-pulse" />
           ))}
+        </div>
+      ) : apiError ? (
+        <div className="card text-center p-16 border-blue-100 bg-blue-50/50">
+          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-200">
+            <ShoppingBag className="w-10 h-10 text-blue-500" />
+          </div>
+          <p className="text-earth-900 font-bold font-display text-lg mb-1">Backend Integration Pending</p>
+          <p className="text-earth-500 mb-6 max-w-md mx-auto">The orders endpoint is not yet available on the backend server. Your customer orders will appear here once connected.</p>
         </div>
       ) : filteredOrders.length === 0 ? (
         <EmptyState

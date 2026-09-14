@@ -5,24 +5,32 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Package } from 'lucide-react';
 import ProductFormModal from '@/components/farmer/ProductFormModal';
+import { EmptyState } from '@/components/common/EmptyState';
 import { motion } from 'framer-motion';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 export default function FarmerProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editProduct, setEditProduct] = useState<any>(null);
+  const [apiError, setApiError] = useState(false);
   
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : '';
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('/api/v1/farmer/products', {
+      const res = await axios.get(`${API_BASE}/farmers/products`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setProducts(res.data.data.products || []);
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
+      setProducts(res.data.data?.products || []);
+      setApiError(false);
+    } catch (error: any) {
+      console.error('Failed to fetch products:', error.message);
+      if (error.response?.status === 404) {
+        setApiError(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -38,7 +46,7 @@ export default function FarmerProductsPage() {
 
   const handleToggleActive = async (productId: number, currentStatus: boolean) => {
     try {
-      await axios.put(`/api/v1/farmer/products/${productId}`,
+      await axios.put(`${API_BASE}/farmers/products/${productId}`,
         { is_active: !currentStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -54,7 +62,7 @@ export default function FarmerProductsPage() {
   const handleDelete = async (productId: number, name: string) => {
     if (!confirm(`Remove "${name}" from your listing?`)) return;
     try {
-      await axios.delete(`/api/v1/farmer/products/${productId}`, {
+      await axios.delete(`${API_BASE}/farmers/products/${productId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setProducts(prev => prev.filter(p => p.id !== productId));
@@ -87,17 +95,25 @@ export default function FarmerProductsPage() {
             <div key={i} className="h-20 bg-earth-200 rounded-xl animate-pulse" />
           ))}
         </div>
-      ) : products.length === 0 ? (
-        <div className="card text-center p-16">
-          <div className="w-20 h-20 bg-earth-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-earth-100">
-            <Package className="w-10 h-10 text-earth-300" />
+      ) : apiError ? (
+        <div className="card text-center p-16 border-blue-100 bg-blue-50/50">
+          <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-200">
+            <Package className="w-10 h-10 text-blue-500" />
           </div>
-          <p className="text-earth-900 font-bold font-display text-lg mb-1">No products yet</p>
-          <p className="text-earth-500 mb-6">Start by adding your first harvest to the marketplace.</p>
+          <p className="text-earth-900 font-bold font-display text-lg mb-1">Backend Integration Pending</p>
+          <p className="text-earth-500 mb-6 max-w-md mx-auto">The products endpoint is not yet available on the backend server. The UI is ready once the integration is complete.</p>
           <button onClick={() => { setEditProduct(null); setShowModal(true); }} className="btn-secondary mx-auto">
-            Add your first product
+            Test Form Validation
           </button>
         </div>
+      ) : products.length === 0 ? (
+        <EmptyState
+          icon={<Package className="w-10 h-10 text-earth-400" />}
+          title="No products yet"
+          description="Start by adding your first harvest to the marketplace."
+          actionText="Add your first product"
+          onAction={() => { setEditProduct(null); setShowModal(true); }}
+        />
       ) : (
         <div className="card overflow-hidden">
           <div className="overflow-x-auto">

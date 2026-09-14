@@ -23,6 +23,7 @@ function ConsumerOrdersContent() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState<number | null>(null);
+  const [apiError, setApiError] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -32,10 +33,17 @@ function ConsumerOrdersContent() {
     setLoading(true);
     try {
       const params = activeTab !== 'all' ? `?status=${activeTab}` : '';
-      const res = await axios.get(`${API}/consumer/orders${params}`);
-      setOrders(res.data.data.orders);
-    } catch {
-      showError('Failed to load orders');
+      const res = await axios.get(`${API}/consumer/orders${params}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('auth_token')}` }
+      });
+      setOrders(res.data.data?.orders || []);
+      setApiError(false);
+    } catch (error: any) {
+      if (error.response?.status === 404) {
+        setApiError(true);
+      } else {
+        showError('Failed to load orders');
+      }
     } finally {
       setLoading(false);
     }
@@ -109,6 +117,14 @@ function ConsumerOrdersContent() {
               <div key={i} className="card h-32 animate-pulse bg-white border border-earth-200" />
             ))}
           </div>
+        ) : apiError ? (
+          <EmptyState
+            icon={<Package className="w-10 h-10 text-blue-500" />}
+            title="Backend Integration Pending"
+            description="The orders API endpoint is not yet available. Your order history will appear here once connected."
+            actionText="Browse Marketplace"
+            actionHref="/marketplace"
+          />
         ) : orders.length === 0 ? (
           <EmptyState
             icon={<Package className="w-10 h-10 text-earth-400" />}

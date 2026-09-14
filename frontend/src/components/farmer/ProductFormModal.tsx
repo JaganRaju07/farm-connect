@@ -44,7 +44,27 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+    if (!form.name.trim()) errors.name = 'Product name is required';
+    if (form.name.length > 50) errors.name = 'Name must be less than 50 characters';
+    
+    const priceNum = parseFloat(form.price as string);
+    if (!form.price || isNaN(priceNum)) errors.price = 'Valid price is required';
+    else if (priceNum <= 0) errors.price = 'Price must be greater than 0';
+    else if (priceNum > 50000) errors.price = 'Price cannot exceed ₹50,000';
+    
+    const stockNum = parseInt(form.stock_available as string);
+    if (form.stock_available === '' || isNaN(stockNum)) errors.stock_available = 'Valid stock amount is required';
+    else if (stockNum < 0) errors.stock_available = 'Stock cannot be negative';
+    else if (stockNum > 10000) errors.stock_available = 'Stock cannot exceed 10,000';
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleImageSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -85,6 +105,8 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    
     setSaving(true);
     setError('');
 
@@ -111,7 +133,11 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
       }
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Failed to save product');
+      if (err.response?.status === 404) {
+        setError('Backend integration pending: Feature not available yet in the API.');
+      } else {
+        setError(err.response?.data?.error?.message || 'Failed to save product');
+      }
     } finally {
       setSaving(false);
     }
@@ -166,10 +192,14 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
               type="text" 
               required 
               value={form.name} 
-              onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all" 
+              onChange={e => {
+                setForm(p => ({ ...p, name: e.target.value }));
+                if (validationErrors.name) setValidationErrors(p => ({ ...p, name: '' }));
+              }}
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none transition-all ${validationErrors.name ? 'border-red-300 bg-red-50' : 'border-gray-300'}`} 
               placeholder="Fresh Tomatoes" 
             />
+            {validationErrors.name && <p className="text-red-500 text-xs mt-1">{validationErrors.name}</p>}
           </div>
 
           {/* Category */}
@@ -195,10 +225,14 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
                 required 
                 min="1" 
                 value={form.price} 
-                onChange={e => setForm(p => ({ ...p, price: e.target.value }))}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all" 
+                onChange={e => {
+                  setForm(p => ({ ...p, price: e.target.value }));
+                  if (validationErrors.price) setValidationErrors(p => ({ ...p, price: '' }));
+                }}
+                className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none transition-all ${validationErrors.price ? 'border-red-300 bg-red-50' : 'border-gray-300'}`} 
                 placeholder="40" 
               />
+              {validationErrors.price && <p className="text-red-500 text-xs mt-1">{validationErrors.price}</p>}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Unit *</label>
@@ -222,10 +256,14 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
               required 
               min="0" 
               value={form.stock_available}
-              onChange={e => setForm(p => ({ ...p, stock_available: e.target.value }))}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all" 
+              onChange={e => {
+                setForm(p => ({ ...p, stock_available: e.target.value }));
+                if (validationErrors.stock_available) setValidationErrors(p => ({ ...p, stock_available: '' }));
+              }}
+              className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none transition-all ${validationErrors.stock_available ? 'border-red-300 bg-red-50' : 'border-gray-300'}`} 
               placeholder="50" 
             />
+            {validationErrors.stock_available && <p className="text-red-500 text-xs mt-1">{validationErrors.stock_available}</p>}
           </div>
 
           {/* Organic toggle */}

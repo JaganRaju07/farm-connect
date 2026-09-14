@@ -10,6 +10,7 @@ import { useAuth } from '@/context/AuthContext';
 import { MapPin, Star, Leaf, Package, Minus, Plus, ShoppingCart, ArrowLeft, ShieldCheck } from 'lucide-react';
 import ReviewForm from '@/components/reviews/ReviewForm';
 import Link from 'next/link';
+import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -39,11 +40,7 @@ export default function ProductDetailPage() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  if (loading) return (
-    <div className="min-h-screen bg-earth-50 pt-24 pb-12 font-sans flex justify-center">
-      <div className="animate-spin w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full" />
-    </div>
-  );
+  if (loading) return <ProductDetailSkeleton />;
 
   if (!product) return (
     <div className="min-h-screen flex items-center justify-center bg-earth-50 font-sans">
@@ -189,8 +186,8 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* Action Area */}
-            <div className="mt-auto card p-6">
+            {/* Availability */}
+            <div className="mt-auto pt-6">
               <div className="flex items-center justify-between mb-4">
                 <span className="font-semibold text-earth-900">Availability</span>
                 {product.stock_available > 0 ? (
@@ -204,28 +201,32 @@ export default function ProductDetailPage() {
                   </span>
                 )}
               </div>
+            </div>
 
-              {product.stock_available > 0 && (
-                <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-earth-100">
+            {/* Sticky Mobile / Inline Desktop Purchase Action */}
+            {product.stock_available > 0 && (
+              <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-earth-200 p-4 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)] lg:static lg:bg-transparent lg:border-0 lg:p-0 lg:shadow-none lg:mt-2">
+                <div className="max-w-6xl mx-auto flex items-center gap-3 sm:gap-4">
                   {/* Qty Selector */}
-                  <div className="flex items-center justify-between w-full sm:w-auto bg-earth-50 border border-earth-200 rounded-xl p-1 h-12 shrink-0">
-                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-10 h-10 flex items-center justify-center text-earth-600 hover:text-earth-900 hover:bg-white rounded-lg transition-colors">
+                  <div className="flex items-center justify-between bg-earth-50 border border-earth-200 rounded-xl p-1 h-14 shrink-0 w-28 sm:w-32">
+                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 sm:w-10 h-full flex items-center justify-center text-earth-600 hover:text-earth-900 hover:bg-white rounded-lg transition-colors">
                       <Minus className="w-4 h-4" />
                     </button>
-                    <span className="w-12 text-center font-bold text-lg text-earth-900">{qty}</span>
-                    <button onClick={() => setQty(q => Math.min(product.stock_available, q + 1))} className="w-10 h-10 flex items-center justify-center text-earth-600 hover:text-earth-900 hover:bg-white rounded-lg transition-colors">
+                    <span className="text-center font-bold text-lg text-earth-900 flex-1">{qty}</span>
+                    <button onClick={() => setQty(q => Math.min(product.stock_available, q + 1))} className="w-8 sm:w-10 h-full flex items-center justify-center text-earth-600 hover:text-earth-900 hover:bg-white rounded-lg transition-colors">
                       <Plus className="w-4 h-4" />
                     </button>
                   </div>
                   
                   {/* CTA */}
-                  <button onClick={handleAddToCart} className="btn-primary w-full h-12 text-base">
-                    <ShoppingCart className="w-5 h-5" />
-                    Add to Cart — {totalPrice}
+                  <button onClick={handleAddToCart} className="btn-primary flex-1 h-14 text-base shadow-[0_4px_20px_rgba(21,128,61,0.2)]">
+                    <ShoppingCart className="w-5 h-5 hidden sm:block" />
+                    <span className="hidden sm:inline">Add to Cart — {totalPrice}</span>
+                    <span className="sm:hidden">Add — {totalPrice}</span>
                   </button>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
             
           </div>
         </div>
