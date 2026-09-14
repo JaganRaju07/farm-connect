@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Package, ShoppingBag, TrendingUp, AlertCircle, ArrowRight, Clock, CheckCircle, PackageCheck } from 'lucide-react';
+import { Package, ShoppingBag, TrendingUp, AlertCircle, ArrowRight, Clock, CheckCircle, PackageCheck, Plus, ListOrdered } from 'lucide-react';
 import axios from 'axios';
 import Link from 'next/link';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
@@ -215,6 +215,29 @@ function FarmerDashboardContent() {
             <p className="text-sm font-medium text-earth-500 mb-1">Total Earnings</p>
             <p className="text-3xl font-bold text-primary-700 tracking-tight">{formatCurrency(stats?.totalEarnings || 0)}</p>
           </div>
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div>
+        <h2 className="text-xl font-bold font-display text-earth-900 tracking-tight mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <Link href="/farmer/products/new" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-earth-200 hover:border-primary-300 hover:shadow-sm transition-all group">
+            <div className="p-2.5 bg-primary-50 rounded-lg text-primary-600 group-hover:scale-110 transition-transform"><Plus className="w-5 h-5" /></div>
+            <span className="font-semibold text-earth-900">Add Product</span>
+          </Link>
+          <Link href="/farmer/products" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-earth-200 hover:border-primary-300 hover:shadow-sm transition-all group">
+            <div className="p-2.5 bg-earth-100 rounded-lg text-earth-600 group-hover:scale-110 transition-transform"><Package className="w-5 h-5" /></div>
+            <span className="font-semibold text-earth-900">Inventory</span>
+          </Link>
+          <Link href="/farmer/orders" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-earth-200 hover:border-primary-300 hover:shadow-sm transition-all group">
+            <div className="p-2.5 bg-earth-100 rounded-lg text-earth-600 group-hover:scale-110 transition-transform"><ListOrdered className="w-5 h-5" /></div>
+            <span className="font-semibold text-earth-900">Manage Orders</span>
+          </Link>
+          <Link href="/farmer/earnings" className="flex items-center gap-3 p-4 bg-white rounded-xl border border-earth-200 hover:border-primary-300 hover:shadow-sm transition-all group">
+            <div className="p-2.5 bg-earth-100 rounded-lg text-earth-600 group-hover:scale-110 transition-transform"><TrendingUp className="w-5 h-5" /></div>
+            <span className="font-semibold text-earth-900">Analytics</span>
+          </Link>
         </div>
       </div>
 

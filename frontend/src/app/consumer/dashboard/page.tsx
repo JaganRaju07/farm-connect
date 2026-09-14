@@ -5,7 +5,7 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
-import { ShoppingBag, Clock, CheckCircle, MapPin, Package, ArrowRight, Store, Star } from 'lucide-react';
+import { ShoppingBag, Clock, CheckCircle, MapPin, Package, ArrowRight, Store, Star, User } from 'lucide-react';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -195,7 +195,7 @@ function ConsumerDashboardContent() {
 
           {/* Favourite Farmers */}
           <div className="lg:col-span-1">
-            <div className="card h-full flex flex-col">
+            <div className="card h-full flex flex-col mb-8">
               <div className="p-6 border-b border-earth-100 bg-white">
                 <h2 className="text-lg font-bold text-earth-900 tracking-tight">Favourite Farmers</h2>
                 <p className="text-sm text-earth-500 mt-1">Farms you frequently buy from</p>
@@ -230,6 +230,27 @@ function ConsumerDashboardContent() {
                     ))}
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="card flex flex-col">
+              <div className="p-6 border-b border-earth-100 bg-white">
+                <h2 className="text-lg font-bold text-earth-900 tracking-tight">Quick Actions</h2>
+              </div>
+              <div className="p-4 flex-1 bg-earth-50/30 space-y-2">
+                <Link href="/marketplace" className="flex items-center gap-3 p-3 bg-white rounded-lg border border-earth-200 hover:border-primary-300 hover:text-primary-700 transition-colors">
+                  <div className="p-2 bg-primary-50 rounded-md text-primary-600"><ShoppingBag className="w-5 h-5" /></div>
+                  <span className="font-semibold text-earth-800">Browse Marketplace</span>
+                </Link>
+                <Link href="/consumer/orders" className="flex items-center gap-3 p-3 bg-white rounded-lg border border-earth-200 hover:border-primary-300 hover:text-primary-700 transition-colors">
+                  <div className="p-2 bg-earth-100 rounded-md text-earth-600"><Package className="w-5 h-5" /></div>
+                  <span className="font-semibold text-earth-800">View All Orders</span>
+                </Link>
+                <Link href="/profile" className="flex items-center gap-3 p-3 bg-white rounded-lg border border-earth-200 hover:border-primary-300 hover:text-primary-700 transition-colors">
+                  <div className="p-2 bg-earth-100 rounded-md text-earth-600"><User className="w-5 h-5" /></div>
+                  <span className="font-semibold text-earth-800">Manage Profile</span>
+                </Link>
               </div>
             </div>
           </div>

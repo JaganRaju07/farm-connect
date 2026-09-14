@@ -6,8 +6,9 @@ import { useCart } from '@/context/cartcontext';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useRouter } from 'next/navigation';
 import { placeOrder } from '@/lib/api/orders';
-import { MapPin, AlertCircle, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { MapPin, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import Button from '@/components/common/button';
 
 const DELIVERY_FEE = 30;
 
@@ -189,23 +190,19 @@ export default function CheckoutPage() {
                 </div>
               )}
 
-              <button
+              <Button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full h-14 text-lg"
+                isLoading={loading}
+                loadingText="Placing Order..."
+                variant="primary"
+                fullWidth
+                size="lg"
+                className="h-14 text-lg"
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    Placing Order...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle2 className="w-5 h-5" />
-                    Place Order (Cash on Delivery)
-                  </>
-                )}
-              </button>
+                <CheckCircle2 className="w-5 h-5" />
+                Place Order (Cash on Delivery)
+              </Button>
             </form>
           </div>
 

@@ -8,6 +8,7 @@ import { Shield, Users, ShoppingCart, Tag, IndianRupee, LogOut, CheckCircle, Clo
 import Link from 'next/link';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
 import { useAuth } from '@/context/AuthContext';
+import Button from '@/components/common/button';
 
 function AdminDashboardContent() {
   const router = useRouter();
@@ -17,6 +18,7 @@ function AdminDashboardContent() {
 
 
   const { logout } = useAuth();
+  const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : '';
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -36,7 +38,7 @@ function AdminDashboardContent() {
     };
 
     fetchAnalytics();
-  }, [token, router]);
+  }, [router, logout, token]);
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
@@ -95,12 +97,11 @@ function AdminDashboardContent() {
               <h1 className="text-3xl font-extrabold font-display text-earth-900">Platform Analytics</h1>
               <p className="text-earth-500 text-sm mt-1">Real-time statistics across the Farm Connect network</p>
             </div>
-            <Link
-              href="/admin/farmers"
-              className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm shadow-xs"
-            >
-              <CheckCircle className="w-4 h-4" />
-              Verify Pending Farmers
+            <Link href="/admin/farmers">
+              <Button variant="primary" size="sm" className="shadow-xs">
+                <CheckCircle className="w-4 h-4" />
+                Verify Pending Farmers
+              </Button>
             </Link>
           </div>
 

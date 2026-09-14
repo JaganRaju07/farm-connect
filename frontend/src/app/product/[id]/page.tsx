@@ -11,6 +11,7 @@ import { MapPin, Star, Leaf, Package, Minus, Plus, ShoppingCart, ArrowLeft, Shie
 import ReviewForm from '@/components/reviews/ReviewForm';
 import Link from 'next/link';
 import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton';
+import Button from '@/components/common/button';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -47,9 +48,9 @@ export default function ProductDetailPage() {
       <div className="card text-center p-12">
         <Package className="w-12 h-12 text-earth-300 mx-auto mb-4" />
         <p className="text-lg text-earth-900 font-bold font-display mb-4">Product not found</p>
-        <button onClick={() => router.push('/marketplace')} className="btn-secondary">
+        <Button onClick={() => router.push('/marketplace')} variant="secondary">
           Return to Marketplace
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -219,11 +220,11 @@ export default function ProductDetailPage() {
                   </div>
                   
                   {/* CTA */}
-                  <button onClick={handleAddToCart} className="btn-primary flex-1 h-14 text-base shadow-[0_4px_20px_rgba(21,128,61,0.2)]">
+                  <Button onClick={handleAddToCart} variant="primary" className="flex-1 h-14 text-base shadow-[0_4px_20px_rgba(21,128,61,0.2)]">
                     <ShoppingCart className="w-5 h-5 hidden sm:block" />
                     <span className="hidden sm:inline">Add to Cart — {totalPrice}</span>
                     <span className="sm:hidden">Add — {totalPrice}</span>
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}

@@ -7,6 +7,7 @@ import axios from 'axios';
 import { Shield, CheckCircle, XCircle, LogOut, ArrowLeft, User, Phone, MapPin, Award, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import Button from '@/components/common/button';
 
 export default function AdminFarmerVerificationPage() {
   const router = useRouter();
@@ -206,22 +207,25 @@ export default function AdminFarmerVerificationPage() {
                     <div className="flex flex-col gap-4 border-t border-gray-100 pt-5">
                       {!isRejectionActive ? (
                         <div className="flex gap-3 justify-end">
-                          <button
+                          <Button
                             onClick={() => setActiveRejectionId(farmer.id)}
                             disabled={isActionLoading}
-                            className="flex items-center gap-1.5 px-4 py-2 border border-red-200 text-red-600 hover:bg-red-50 rounded-lg text-sm font-semibold transition-colors cursor-pointer disabled:opacity-50"
+                            variant="danger"
+                            className="bg-transparent border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300"
                           >
                             <XCircle className="w-4.5 h-4.5" />
                             Reject Profile
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => handleVerify(farmer.id, 'approved')}
                             disabled={isActionLoading}
-                            className="flex items-center gap-1.5 px-5 py-2 bg-primary-600 text-white hover:bg-primary-700 rounded-lg text-sm font-semibold transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                            isLoading={isActionLoading}
+                            variant="primary"
+                            className="shadow-xs"
                           >
-                            <CheckCircle className="w-4.5 h-4.5" />
+                            {!isActionLoading && <CheckCircle className="w-4.5 h-4.5" />}
                             Approve Profile
-                          </button>
+                          </Button>
                         </div>
                       ) : (
                         <div className="space-y-3">
@@ -234,23 +238,27 @@ export default function AdminFarmerVerificationPage() {
                             placeholder="State clearly why this profile is rejected (e.g. invalid photo, address unclear)..."
                           />
                           <div className="flex gap-2 justify-end">
-                            <button
+                            <Button
                               onClick={() => {
                                 setActiveRejectionId(null);
                                 setRejectionNotes(p => ({ ...p, [farmer.id]: '' }));
                               }}
                               disabled={isActionLoading}
-                              className="px-3.5 py-1.5 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-xs font-semibold cursor-pointer transition-colors"
+                              variant="secondary"
+                              size="sm"
                             >
                               Cancel
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => handleVerify(farmer.id, 'rejected')}
                               disabled={isActionLoading}
-                              className="px-4 py-1.5 bg-red-600 text-white hover:bg-red-700 rounded-lg text-xs font-semibold cursor-pointer transition-colors shadow-xs"
+                              isLoading={isActionLoading}
+                              variant="danger"
+                              size="sm"
+                              className="shadow-xs"
                             >
                               Confirm Rejection
-                            </button>
+                            </Button>
                           </div>
                         </div>
                       )}

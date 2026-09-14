@@ -5,7 +5,8 @@ import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
-import { Camera, Loader2, Tractor, Check, X, ShieldCheck } from 'lucide-react';
+import { Camera, Tractor, Check, ShieldCheck } from 'lucide-react';
+import Button from '@/components/common/button';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -99,18 +100,18 @@ function FarmerProfileContent() {
           <p className="text-earth-500 text-sm mt-1">Manage your farm's public profile and contact details.</p>
         </div>
         {!editing ? (
-          <button onClick={() => setEditing(true)} className="btn-secondary self-start md:self-auto">
+          <Button onClick={() => setEditing(true)} variant="secondary" className="self-start md:self-auto">
             Edit Profile
-          </button>
+          </Button>
         ) : (
           <div className="flex gap-2 self-start md:self-auto">
-            <button onClick={handleCancel} disabled={loading} className="btn-secondary">
+            <Button onClick={handleCancel} disabled={loading} variant="secondary">
               Cancel
-            </button>
-            <button onClick={handleSave} disabled={loading} className="btn-primary">
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-              {loading ? 'Saving...' : 'Save Changes'}
-            </button>
+            </Button>
+            <Button onClick={handleSave} disabled={loading} isLoading={loading} variant="primary">
+              {!loading && <Check className="w-4 h-4" />}
+              Save Changes
+            </Button>
           </div>
         )}
       </div>

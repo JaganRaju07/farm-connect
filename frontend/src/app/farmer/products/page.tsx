@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Edit2, Trash2, Eye, EyeOff, Package } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Package, AlertCircle } from 'lucide-react';
 import ProductFormModal from '@/components/farmer/ProductFormModal';
 import { EmptyState } from '@/components/common/EmptyState';
 import { motion } from 'framer-motion';
@@ -154,10 +154,25 @@ export default function FarmerProductsPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-earth-900 font-bold">
                       {formatPrice(product.price)} <span className="text-earth-500 text-xs font-medium">/ {product.unit}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-earth-700 font-medium">
-                      <span className={product.stock_available === 0 ? 'text-red-600 font-bold bg-red-50 px-2 py-1 rounded-md' : ''}>
-                        {product.stock_available} {product.unit}
-                      </span>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex flex-col gap-1">
+                        <span className="font-bold text-earth-900">
+                          {product.stock_available} {product.unit}
+                        </span>
+                        {product.stock_available === 0 ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-red-600">
+                            <span className="w-2 h-2 rounded-full border-2 border-red-600 shrink-0"></span> Out of Stock
+                          </span>
+                        ) : product.stock_available <= 10 ? (
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-amber-600">
+                            <AlertCircle className="w-3 h-3" /> Low Stock
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-xs font-bold text-primary-600">
+                            <span className="w-2 h-2 rounded-full bg-primary-600 shrink-0"></span> In Stock
+                          </span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center text-xs px-2.5 py-1 rounded-md font-bold border ${
