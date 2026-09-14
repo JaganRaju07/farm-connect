@@ -27,7 +27,7 @@ export default function CompleteProfilePage() {
   const { latitude, longitude } = useGeolocation();
   
   const userRole = typeof window !== 'undefined'
-    ? localStorage.getItem('user_role') // 'farmer' or 'consumer'
+    ? localStorage.getItem('auth_role') // 'farmer' or 'consumer'
     : null;
 
   const [formData, setFormData] = useState({

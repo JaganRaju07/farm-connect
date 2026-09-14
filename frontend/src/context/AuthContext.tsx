@@ -36,9 +36,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const storedToken = localStorage.getItem('fc_token');
-      const storedUser = localStorage.getItem('fc_user');
-      const storedRole = localStorage.getItem('fc_role');
+      const storedToken = localStorage.getItem('auth_token');
+      const storedUser = localStorage.getItem('auth_user');
+      const storedRole = localStorage.getItem('auth_role');
 
       if (storedToken && storedUser && storedRole) {
         const parsedUser = JSON.parse(storedUser);
@@ -51,9 +51,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch {
       // Corrupted localStorage — clear everything
-      localStorage.removeItem('fc_token');
-      localStorage.removeItem('fc_user');
-      localStorage.removeItem('fc_role');
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      localStorage.removeItem('auth_role');
     } finally {
       setIsLoading(false);
     }
@@ -64,9 +64,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(newUser);
     setRole(newRole as 'farmer' | 'consumer' | 'admin');
 
-    localStorage.setItem('fc_token', newToken);
-    localStorage.setItem('fc_user', JSON.stringify(newUser));
-    localStorage.setItem('fc_role', newRole);
+    localStorage.setItem('auth_token', newToken);
+    localStorage.setItem('auth_user', JSON.stringify(newUser));
+    localStorage.setItem('auth_role', newRole);
 
     axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
   };
@@ -76,9 +76,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     setRole(null);
 
-    localStorage.removeItem('fc_token');
-    localStorage.removeItem('fc_user');
-    localStorage.removeItem('fc_role');
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    localStorage.removeItem('auth_role');
 
     delete axios.defaults.headers.common['Authorization'];
     router.push('/');
@@ -88,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(prev => {
       if (!prev) return prev;
       const updated = { ...prev, ...updates };
-      localStorage.setItem('fc_user', JSON.stringify(updated));
+      localStorage.setItem('auth_user', JSON.stringify(updated));
       return updated;
     });
   };

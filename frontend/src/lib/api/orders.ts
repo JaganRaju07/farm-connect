@@ -55,7 +55,7 @@ export interface Order {
 export async function placeOrder(data: PlaceOrderData): Promise<Order> {
   const response = await axios.post(`${API_BASE}/orders`, data, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('farmconnect_token')}`,
+      Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
     },
   });
   return response.data.data.order;
@@ -64,7 +64,7 @@ export async function placeOrder(data: PlaceOrderData): Promise<Order> {
 export async function getOrderById(id: string): Promise<Order> {
   const response = await axios.get(`${API_BASE}/orders/${id}`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('farmconnect_token')}`,
+      Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
     },
   });
   return response.data.data.order;
@@ -73,7 +73,7 @@ export async function getOrderById(id: string): Promise<Order> {
 export async function getMyOrders(): Promise<Order[]> {
   const response = await axios.get(`${API_BASE}/orders/my`, {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem('farmconnect_token')}`,
+      Authorization: `Bearer ${localStorage.getItem('auth_token')}`,
     },
   });
   return response.data.data.orders;

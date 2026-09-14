@@ -41,7 +41,9 @@ function AdminDashboardContent() {
   }, [router, logout, token]);
 
   const handleLogout = () => {
-    localStorage.removeItem('admin_token');
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('auth_user');
+    localStorage.removeItem('auth_role');
     router.push('/admin/login');
   };
 

@@ -29,10 +29,25 @@ exports.sendOTP = async (req, res, next) => {
       });
     }
 
-    const otp = generateOTP();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+    const existingOtp = await pool.query(
+      `SELECT otp_code, expires_at FROM otp_store WHERE phone=$1 AND user_type=$2`, 
+      [phone, userType]
+    );
 
-    // Upsert the OTP (Updates if phone already exists in store)
+    let otp, expiresAt;
+    
+    // Check if there is an active OTP generated less than 60 seconds ago (expires in > 4 mins)
+    if (existingOtp.rows.length > 0 && new Date(existingOtp.rows[0].expires_at).getTime() > Date.now() + 4 * 60 * 1000) {
+      // Reuse the existing OTP to prevent overwriting during rapid double-clicks
+      otp = existingOtp.rows[0].otp_code;
+      expiresAt = existingOtp.rows[0].expires_at;
+    } else {
+      // Generate a new one
+      otp = generateOTP();
+      expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+    }
+
+    // Upsert the OTP
     await pool.query(
       `INSERT INTO otp_store (phone, otp_code, expires_at, user_type, action)
        VALUES ($1,$2,$3,$4,$5)
@@ -76,7 +91,13 @@ exports.verifyOTP = async (req, res, next) => {
 
     const storedOTP = result.rows[0];
 
-    if (storedOTP.otp_code !== String(otp)) { // Enforced string comparison just in case
+    console.log("=== OTP VERIFICATION DEBUG ===");
+    console.log("Provided OTP:", otp, typeof otp);
+    console.log("Stored OTP:", storedOTP.otp_code, typeof storedOTP.otp_code);
+    console.log("Match:", storedOTP.otp_code === String(otp));
+    console.log("Trim Match:", storedOTP.otp_code.trim() === String(otp).trim());
+
+    if (storedOTP.otp_code.trim() !== String(otp).trim()) { // Added trim to be safe
       return res.status(400).json({ success: false, message: "Invalid OTP" });
     }
 
@@ -89,13 +110,13 @@ exports.verifyOTP = async (req, res, next) => {
 
     // --- CRITICAL FIX HERE ---
     if (storedOTP.action === "register") {
-      // Ensure required fields are provided
-      if (!name || !latitude || !longitude || !address || !city) {
-         return res.status(400).json({ 
-            success: false, 
-            message: "Missing required profile fields for registration (name, latitude, longitude, address, city)" 
-         });
-      }
+      // For progressive onboarding, we don't require latitude, longitude, address, city upfront.
+      // The frontend will send them later via /complete-registration.
+      // However, the database schema has NOT NULL constraints, so we insert temporary defaults.
+      const insertLat = latitude || 0;
+      const insertLon = longitude || 0;
+      const insertAddr = address || 'Pending Profile Completion';
+      const insertCity = city || 'Pending';
 
       let query;
       if (userType === "farmer") {
@@ -107,7 +128,7 @@ exports.verifyOTP = async (req, res, next) => {
                  VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING id, phone, name`;
       }
 
-      const newUser = await pool.query(query, [name, phone, latitude, longitude, address, city]);
+      const newUser = await pool.query(query, [name, phone, insertLat, insertLon, insertAddr, insertCity]);
       user = newUser.rows[0];
     } else {
       // Login Flow
@@ -137,8 +158,11 @@ exports.verifyOTP = async (req, res, next) => {
     res.json({
       success: true,
       message: "OTP verified successfully",
-      token,
-      user,
+      data: {
+        token,
+        user,
+        requiresProfileCompletion: storedOTP.action === "register"
+      }
     });
   } catch (error) {
     next(error);
