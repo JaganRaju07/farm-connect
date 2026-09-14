@@ -5,9 +5,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getOrderById, Order } from '@/lib/api/orders';
 import OrderTimeline from '@/components/order/OrderTimeline';
-import { CheckCircle, Loader2, Phone, RefreshCw, Package, MapPin, Store, ArrowLeft } from 'lucide-react';
+import { CheckCircle, Loader2, Phone, RefreshCw, Package, MapPin, Store, ArrowLeft, Home, Truck } from 'lucide-react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { AnimatedBeam } from '@/components/magicui/AnimatedBeam';
 
 export default function OrderTrackingPage() {
   const params = useParams();
@@ -18,6 +20,10 @@ export default function OrderTrackingPage() {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const farmRef = useRef<HTMLDivElement>(null);
+  const homeRef = useRef<HTMLDivElement>(null);
 
   const fetchOrder = async () => {
     setLoading(true);
@@ -105,6 +111,37 @@ export default function OrderTrackingPage() {
             </div>
           </motion.div>
         )}
+
+        {/* ── Animated Tracking Visual ── */}
+        <div ref={containerRef} className="relative w-full h-32 lg:h-40 bg-earth-900 rounded-[2rem] p-6 lg:px-12 flex justify-between items-center overflow-hidden shadow-xl border border-earth-800 mb-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary-900/40 via-earth-900 to-earth-900" />
+          
+          <div ref={farmRef} className="relative z-10 w-16 h-16 lg:w-20 lg:h-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl flex items-center justify-center shadow-lg">
+            <Store className="w-8 h-8 lg:w-10 lg:h-10 text-primary-400" />
+          </div>
+          
+          <div className="relative z-10 text-center px-4 bg-earth-900/50 backdrop-blur-sm rounded-full py-2 px-6 border border-white/5">
+            <h3 className="text-white font-bold text-sm tracking-widest uppercase flex items-center gap-2">
+              <Truck className="w-4 h-4 text-primary-400" /> 
+              {order.order_status.replace('_', ' ')}
+            </h3>
+          </div>
+          
+          <div ref={homeRef} className="relative z-10 w-16 h-16 lg:w-20 lg:h-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl flex items-center justify-center shadow-lg">
+            <Home className="w-8 h-8 lg:w-10 lg:h-10 text-accent-400" />
+          </div>
+
+          <AnimatedBeam 
+            containerRef={containerRef}
+            fromRef={farmRef}
+            toRef={homeRef}
+            curvature={20}
+            pathColor="rgba(255,255,255,0.05)"
+            gradientStartColor="#60b682"
+            gradientStopColor="#e76f51"
+            pathWidth={3}
+          />
+        </div>
 
         {/* Header */}
         <div className="card p-6 md:p-8 mb-8">

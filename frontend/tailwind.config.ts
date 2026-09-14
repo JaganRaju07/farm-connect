@@ -79,6 +79,8 @@ const config: Config = {
         'slide-up': 'slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
         'enter': 'enter 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
         blob: "blob 7s infinite",
+        shimmer: "shimmer 8s infinite linear",
+        shine: "shine var(--duration) infinite linear",
       },
       keyframes: {
         fadeIn: {
@@ -98,7 +100,26 @@ const config: Config = {
           "33%": { transform: "translate(30px, -50px) scale(1.1)" },
           "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
           "100%": { transform: "translate(0px, 0px) scale(1)" }
-        }
+        },
+        shimmer: {
+          "0%, 90%, 100%": {
+            "background-position": "calc(-100% - var(--shimmer-width)) 0",
+          },
+          "30%, 60%": {
+            "background-position": "calc(100% + var(--shimmer-width)) 0",
+          },
+        },
+        shine: {
+          "0%": {
+            "background-position": "0% 0%",
+          },
+          "50%": {
+            "background-position": "100% 100%",
+          },
+          to: {
+            "background-position": "0% 0%",
+          },
+        },
       },
       borderRadius: {
         'xl': '0.75rem',  

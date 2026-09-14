@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Package, ShoppingBag, TrendingUp, AlertCircle, ArrowRight, Clock, CheckCircle, PackageCheck } from 'lucide-react';
 import axios from 'axios';
 import Link from 'next/link';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
+import { AnimatedBeam } from '@/components/magicui/AnimatedBeam';
 
 interface DashboardStats {
   activeProducts: number;
@@ -19,6 +20,10 @@ function FarmerDashboardContent() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : '';
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const farmRef = useRef<HTMLDivElement>(null);
+  const consumerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -107,6 +112,34 @@ function FarmerDashboardContent() {
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       
+      {/* ── Animated Connection Visual ── */}
+      <div ref={containerRef} className="relative w-full h-32 lg:h-40 bg-earth-900 rounded-[2rem] p-6 lg:px-12 flex justify-between items-center overflow-hidden shadow-xl border border-earth-800">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary-900/40 via-earth-900 to-earth-900" />
+        
+        <div ref={farmRef} className="relative z-10 w-16 h-16 lg:w-20 lg:h-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl flex items-center justify-center shadow-lg">
+          <Package className="w-8 h-8 lg:w-10 lg:h-10 text-primary-400" />
+        </div>
+        
+        <div className="relative z-10 text-center px-4">
+          <h3 className="text-white font-display font-bold text-xl lg:text-2xl tracking-tight">Farm to Table</h3>
+          <p className="text-earth-400 text-sm mt-1">Direct connection active</p>
+        </div>
+        
+        <div ref={consumerRef} className="relative z-10 w-16 h-16 lg:w-20 lg:h-20 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl flex items-center justify-center shadow-lg">
+          <ShoppingBag className="w-8 h-8 lg:w-10 lg:h-10 text-accent-400" />
+        </div>
+
+        <AnimatedBeam 
+          containerRef={containerRef}
+          fromRef={farmRef}
+          toRef={consumerRef}
+          curvature={-30}
+          pathColor="rgba(255,255,255,0.05)"
+          gradientStartColor="#60b682"
+          gradientStopColor="#e76f51"
+        />
+      </div>
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold font-display text-earth-900 tracking-tight">Overview</h1>

@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { AuroraBackground } from '@/components/reactbits/AuroraBackground';
 import { BlobCursor } from '@/components/reactbits/BlobCursor';
+import { ShinyText } from '@/components/magicui/ShinyText';
 
 export default function HomePage() {
   const { isAuthenticated, role, isLoading } = useAuth();
@@ -70,7 +71,7 @@ export default function HomePage() {
               
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-earth-900 mb-6 tracking-tight font-display leading-[1.1]">
                 Fresh produce. <br />
-                <span className="text-primary-700">Zero middlemen.</span>
+                <ShinyText text="Zero middlemen." className="text-primary-700 dark:text-primary-500" />
               </h1>
               
               <p className="text-lg md:text-xl text-earth-600 mb-8 leading-relaxed max-w-lg">
@@ -142,42 +143,73 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── How It Works (Shadcn Timeline Style) ── */}
-      <section className="bg-earth-50 py-24 lg:py-32">
-        <div className="max-w-4xl mx-auto px-4 lg:px-8">
+      {/* ── How It Works (Bento Grid) ── */}
+      <section className="bg-earth-50 py-24 lg:py-32 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-extrabold text-earth-900 mb-4 font-display tracking-tight">How Farm Connect Works</h2>
             <p className="text-earth-600 text-lg">Three simple steps to a better food system.</p>
           </div>
           
-          <div className="space-y-4">
-            {[
-              { 
-                icon: MapPin, 
-                title: 'Discover Nearby Farms', 
-                desc: 'We use location data to show you the closest farms, minimizing transport time and carbon footprint.'
-              },
-              { 
-                icon: ShoppingCart, 
-                title: 'Order Directly', 
-                desc: 'Browse live inventory and place orders. No payment gateways required—pay the farmer on delivery with cash or UPI.'
-              },
-              { 
-                icon: Truck, 
-                title: 'Track & Receive', 
-                desc: 'Follow your order from packed to delivered. Enjoy 100% transparent, untampered fresh produce.'
-              }
-            ].map((item, i) => (
-              <div key={i} className="flex gap-6 bg-white p-6 md:p-8 rounded-2xl border border-earth-200 shadow-sm transition-all hover:shadow-md">
-                <div className="flex-shrink-0 w-12 h-12 bg-primary-50 text-primary-700 rounded-xl flex items-center justify-center border border-primary-100">
-                  <item.icon className="w-6 h-6" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[auto] md:auto-rows-[280px]">
+            {/* Bento Box 1: Large/Wide */}
+            <div className="md:col-span-2 row-span-1 bg-white rounded-3xl p-8 md:p-10 border border-earth-200 shadow-[0_8px_30px_rgba(0,0,0,0.04)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+              <div className="absolute top-0 right-0 -mr-10 -mt-10 w-64 h-64 bg-primary-100 rounded-full blur-3xl opacity-50 transition-transform group-hover:scale-125 duration-700" />
+              <div className="relative z-10 flex flex-col h-full justify-between">
+                <div className="w-14 h-14 bg-primary-50 text-primary-700 rounded-2xl flex items-center justify-center border border-primary-100 mb-6">
+                  <MapPin className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-earth-900 mb-2">{item.title}</h3>
-                  <p className="text-earth-600 leading-relaxed">{item.desc}</p>
+                  <h3 className="text-2xl font-bold text-earth-900 mb-3 font-display tracking-tight">Discover Nearby Farms</h3>
+                  <p className="text-earth-600 text-lg leading-relaxed max-w-md">We use location data to show you the closest farms, minimizing transport time and carbon footprint for ultra-fresh produce.</p>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Bento Box 2: Tall (Dark) */}
+            <div className="md:col-span-1 md:row-span-2 bg-primary-900 rounded-3xl p-8 md:p-10 border border-primary-800 shadow-[0_15px_40px_rgba(21,128,61,0.15)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary-600 via-primary-900 to-primary-900 opacity-60 transition-opacity group-hover:opacity-80 duration-500" />
+              <div className="relative z-10 flex flex-col h-full justify-between text-white">
+                <div className="w-14 h-14 bg-primary-800 text-primary-300 rounded-2xl flex items-center justify-center border border-primary-700 mb-6">
+                  <ShoppingCart className="w-7 h-7" />
+                </div>
+                <div className="mt-auto">
+                  <h3 className="text-2xl font-bold mb-4 font-display tracking-tight">Order Directly</h3>
+                  <p className="text-primary-100 leading-relaxed text-lg">Browse live inventory and place orders. No payment gateways required—pay the farmer directly on delivery with cash or UPI.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bento Box 3: Square */}
+            <div className="md:col-span-1 row-span-1 bg-white rounded-3xl p-8 border border-earth-200 shadow-[0_8px_30px_rgba(0,0,0,0.04)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+               <div className="absolute bottom-0 right-0 opacity-5 translate-x-4 translate-y-4 group-hover:scale-110 group-hover:opacity-10 transition-all duration-500 pointer-events-none">
+                  <Truck className="w-48 h-48" />
+               </div>
+              <div className="relative z-10 flex flex-col h-full justify-between">
+                <div className="w-12 h-12 bg-earth-100 text-earth-700 rounded-xl flex items-center justify-center mb-6">
+                  <Truck className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-earth-900 mb-2 font-display tracking-tight">Track & Receive</h3>
+                  <p className="text-earth-600 leading-relaxed">Follow your order from packed to delivered with real-time status updates.</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Bento Box 4: Square */}
+            <div className="md:col-span-1 row-span-1 bg-white rounded-3xl p-8 border border-earth-200 shadow-[0_8px_30px_rgba(0,0,0,0.04)] relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
+              <div className="absolute inset-0 bg-gradient-to-br from-transparent to-earth-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative z-10 flex flex-col h-full justify-between">
+                <div className="w-12 h-12 bg-accent-50 text-accent-600 rounded-xl flex items-center justify-center mb-6 border border-accent-100">
+                  <ShieldCheck className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-earth-900 mb-2 font-display tracking-tight">100% Transparent</h3>
+                  <p className="text-earth-600 leading-relaxed">Untampered fresh produce, directly from the source to your kitchen.</p>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { MapPin, User, Star, ShieldCheck, Clock } from 'lucide-react';
 import { Product } from '@/types';
 import WishlistButton from '@/components/product/WishlistButton';
+import { ShineBorder } from '@/components/magicui/ShineBorder';
 
 interface ProductCardProps {
   product: Product & {
@@ -41,7 +42,12 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <Link href={`/product/${id}`} className="block group h-full">
-      <article className="card h-full flex flex-col relative overflow-hidden bg-white">
+      <ShineBorder 
+        borderRadius={24} 
+        borderWidth={1.5} 
+        color={["#3a9a62", "#e76f51", "#3a9a62"]}
+        className="card h-full flex flex-col relative overflow-hidden bg-white w-full !min-w-0 !p-0"
+      >
         
         {/* ── Image Container ── */}
         <div className="relative h-56 w-full overflow-hidden bg-earth-100">
@@ -138,7 +144,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
 
         </div>
-      </article>
+      </ShineBorder>
     </Link>
   );
 }
