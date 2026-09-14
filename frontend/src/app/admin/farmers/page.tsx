@@ -74,17 +74,17 @@ export default function AdminFarmerVerificationPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-earth-50 flex">
       {/* Sidebar */}
       <aside className="w-64 bg-slate-900 text-white flex flex-col justify-between p-6">
         <div className="space-y-8">
-          <div className="flex items-center gap-3 font-bold text-lg text-emerald-400">
+          <div className="flex items-center gap-3 font-bold text-lg text-primary-400">
             <Shield className="w-6 h-6" />
             <span>FC Admin Console</span>
           </div>
@@ -127,8 +127,8 @@ export default function AdminFarmerVerificationPage() {
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Farmer Profiles Pending Verification</h1>
-              <p className="text-sm text-gray-500">Approve farmers to allow them to list products, or reject them with feedback</p>
+              <h1 className="text-2xl font-bold font-display text-earth-900">Farmer Profiles Pending Verification</h1>
+              <p className="text-sm text-earth-500">Approve farmers to allow them to list products, or reject them with feedback</p>
             </div>
           </div>
 
@@ -139,8 +139,8 @@ export default function AdminFarmerVerificationPage() {
           )}
 
           {farmers.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center shadow-xs">
-              <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
+            <div className="card text-center p-12">
+              <CheckCircle className="w-12 h-12 text-primary-500 mx-auto mb-3" />
               <p className="text-gray-600 font-semibold text-lg">All profiles verified!</p>
               <p className="text-gray-500 text-sm mt-1">There are no farmers currently waiting for verification.</p>
             </div>
@@ -151,7 +151,7 @@ export default function AdminFarmerVerificationPage() {
                 const isRejectionActive = activeRejectionId === farmer.id;
 
                 return (
-                  <div key={farmer.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden p-6 space-y-6 hover:border-gray-300 transition-all">
+                  <div key={farmer.id} className="card p-6 space-y-6 hover:border-earth-300 transition-all">
                     {/* Header: photo preview + name */}
                     <div className="flex flex-col sm:flex-row gap-5 items-start">
                       {farmer.profile_photo_url ? (
@@ -161,13 +161,13 @@ export default function AdminFarmerVerificationPage() {
                           className="w-20 h-20 rounded-full object-cover border border-gray-150 shadow-xs" 
                         />
                       ) : (
-                        <div className="w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100">
-                          <User className="w-10 h-10 text-emerald-400" />
+                        <div className="w-20 h-20 rounded-full bg-primary-50 flex items-center justify-center border border-primary-100">
+                          <User className="w-10 h-10 text-primary-400" />
                         </div>
                       )}
                       <div className="space-y-1.5 flex-1">
                         <h3 className="text-xl font-bold text-gray-900">{farmer.name}</h3>
-                        <p className="text-xs font-semibold uppercase tracking-wide text-emerald-600 flex items-center gap-1">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-primary-600 flex items-center gap-1">
                           🚜 {farmer.farming_type || 'Organic'} Farming
                         </p>
                         
@@ -215,7 +215,7 @@ export default function AdminFarmerVerificationPage() {
                           <button
                             onClick={() => handleVerify(farmer.id, 'approved')}
                             disabled={isActionLoading}
-                            className="flex items-center gap-1.5 px-5 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-lg text-sm font-semibold transition-all cursor-pointer shadow-xs disabled:opacity-50"
+                            className="flex items-center gap-1.5 px-5 py-2 bg-primary-600 text-white hover:bg-primary-700 rounded-lg text-sm font-semibold transition-all cursor-pointer shadow-xs disabled:opacity-50"
                           >
                             <CheckCircle className="w-4.5 h-4.5" />
                             Approve Profile

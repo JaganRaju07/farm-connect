@@ -1,213 +1,298 @@
-// frontend/src/app/product/[id]/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getProductById, Product } from '@/lib/api/products';
-import { useCart } from '@/context/CartContext';
-import { useLocation } from '@/context/LocationContext';
-import { MapPin, User, Navigation, ShoppingCart, Plus, Minus, ArrowLeft, Loader2, Award } from 'lucide-react';
+import axios from 'axios';
 import Image from 'next/image';
+import { useCart } from '@/context/cartcontext';
+import { useToast } from '@/context/ToastContext';
+import { useAuth } from '@/context/AuthContext';
+import { MapPin, Star, Leaf, Package, Minus, Plus, ShoppingCart, ArrowLeft, ShieldCheck } from 'lucide-react';
+import ReviewForm from '@/components/reviews/ReviewForm';
 import Link from 'next/link';
+
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 export default function ProductDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const productId = parseInt(params.id as string, 10);
-  
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [quantity, setQuantity] = useState(1);
+  const id = params.id as string;
 
+  const { isAuthenticated } = useAuth();
   const { addToCart } = useCart();
-  const { latitude, longitude } = useLocation();
+  const { success, error: showError } = useToast();
+  
+  const [product, setProduct] = useState<any>(null);
+  const [reviews, setReviews] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [qty, setQty] = useState(1);
+  const [activeImage, setActiveImage] = useState(0);
 
   useEffect(() => {
-    if (isNaN(productId)) {
-      setError('Invalid product ID');
-      setLoading(false);
-      return;
-    }
+    Promise.all([
+      axios.get(`${API}/products/${id}`),
+      axios.get(`${API}/reviews/product/${id}`)
+    ]).then(([pRes, rRes]) => {
+      setProduct(pRes.data.data.product);
+      setReviews(rRes.data.data);
+    }).catch(console.error)
+      .finally(() => setLoading(false));
+  }, [id]);
 
-    const fetchProduct = async () => {
-      try {
-        const data = await getProductById(productId);
-        setProduct(data);
-        if (data.minimum_order_quantity) {
-          setQuantity(data.minimum_order_quantity);
-        }
-      } catch (err) {
-        setError('Product not found or failed to load.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  if (loading) return (
+    <div className="min-h-screen bg-earth-50 pt-24 pb-12 font-sans flex justify-center">
+      <div className="animate-spin w-8 h-8 border-2 border-primary-600 border-t-transparent rounded-full" />
+    </div>
+  );
 
-    fetchProduct();
-  }, [productId]);
-
-  const handleQuantityChange = (val: number) => {
-    if (!product) return;
-    const min = product.minimum_order_quantity || 1;
-    const max = product.stock_available;
-    setQuantity(Math.max(min, Math.min(max, val)));
-  };
-
-  const handleAddToCart = () => {
-    if (!product) return;
-    addToCart(product, quantity);
-    router.push('/cart');
-  };
-
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <Loader2 className="w-10 h-10 animate-spin text-emerald-600 mx-auto" />
-      </div>
-    );
-  }
-
-  if (error || !product) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <p className="text-red-650 mb-4 font-semibold">{error || 'Product not found'}</p>
-        <button
-          onClick={() => router.push('/marketplace')}
-          className="bg-emerald-600 text-white px-6 py-2 rounded-lg"
-        >
-          Back to Marketplace
+  if (!product) return (
+    <div className="min-h-screen flex items-center justify-center bg-earth-50 font-sans">
+      <div className="card text-center p-12">
+        <Package className="w-12 h-12 text-earth-300 mx-auto mb-4" />
+        <p className="text-lg text-earth-900 font-bold font-display mb-4">Product not found</p>
+        <button onClick={() => router.push('/marketplace')} className="btn-secondary">
+          Return to Marketplace
         </button>
       </div>
-    );
-  }
+    </div>
+  );
 
-  const outOfStock = product.stock_available === 0;
+  const images = product.image_urls?.length > 0 
+    ? product.image_urls 
+    : ['/placeholder-product.jpg'];
+
+  const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      router.push('/login?redirect=' + window.location.pathname); 
+      return;
+    }
+    addToCart(product, qty);
+    success(`${product.name} added to cart!`);
+  };
+
+  const formattedPrice = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(product.price);
+
+  const totalPrice = new Intl.NumberFormat('en-IN', {
+    style: 'currency',
+    currency: 'INR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(product.price * qty);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-5xl animate-fade-in">
-      <Link 
-        href="/marketplace" 
-        className="flex items-center gap-2 text-sm text-gray-550 hover:text-emerald-600 transition-colors mb-6 font-semibold"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Back to Marketplace
-      </Link>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-6 rounded-2xl border border-gray-150 shadow-xs">
-        {/* Left: Image */}
-        <div className="relative h-96 rounded-xl overflow-hidden bg-gray-100 border border-gray-100">
-          <Image
-            src={product.image_url || '/placeholder-product.jpg'}
-            alt={product.name}
-            fill
-            className="object-cover"
-          />
-          {product.is_organic && (
-            <span className="absolute top-4 right-4 bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-sm">
-              🌿 Organic
-            </span>
-          )}
-          {outOfStock && (
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <span className="text-white font-black text-xl px-4 py-2 border-2 border-white rounded-md">Out of Stock</span>
-            </div>
-          )}
+    <div className="min-h-screen bg-earth-50 font-sans pb-24">
+      
+      {/* ── Top Nav Area ── */}
+      <div className="bg-white border-b border-earth-200 sticky top-0 z-40">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center">
+          <Link href="/marketplace" className="inline-flex items-center gap-2 text-earth-600 hover:text-earth-900 font-medium transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Marketplace
+          </Link>
         </div>
+      </div>
 
-        {/* Right: Details */}
-        <div className="flex flex-col justify-between">
+      <div className="max-w-6xl mx-auto px-4 py-8 md:py-12 animate-enter">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
+          
+          {/* ── Left: Image Gallery ── */}
           <div className="space-y-4">
-            <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">{product.category}</span>
-              <h1 className="text-3xl font-black text-gray-950 mt-2">{product.name}</h1>
+            <div className="relative aspect-square bg-earth-100 rounded-2xl overflow-hidden border border-earth-200 group shadow-sm">
+              <Image 
+                src={images[activeImage]} 
+                alt={product.name} 
+                fill 
+                className="object-cover transition-transform duration-500 group-hover:scale-105" 
+              />
+              {product.is_organic && (
+                <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-primary-700 text-sm px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm font-bold border border-primary-100">
+                  <ShieldCheck className="w-4 h-4" /> Organic Certified
+                </span>
+              )}
             </div>
-
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-emerald-600">₹{product.price}</span>
-              <span className="text-gray-500 text-sm">/ {product.unit}</span>
-            </div>
-
-            <p className="text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
-              {product.description || 'No description provided for this farm product.'}
-            </p>
-
-            {/* Logistics details */}
-            <div className="space-y-3 pt-4 border-t border-gray-100">
-              <div className="flex items-center gap-3 text-sm text-gray-700">
-                <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                  <User className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-gray-400 block text-xs">Farmer</span>
-                  <span className="font-semibold text-gray-900 flex items-center gap-1">
-                    {product.farmer_name}
-                    {product.farmer_verified && <Award className="w-4 h-4 text-emerald-600" />}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 text-sm text-gray-700">
-                <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                  <MapPin className="w-4 h-4" />
-                </div>
-                <div>
-                  <span className="text-gray-400 block text-xs">Origin</span>
-                  <span className="font-semibold text-gray-900">{product.farmer_city}</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 text-sm text-emerald-650 font-semibold">
-                <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
-                  <Navigation className="w-4 h-4" />
-                </div>
-                <span>{product.distance_km ? `${product.distance_km.toFixed(1)} km away` : 'Calculating distance...'}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Cart triggers */}
-          <div className="pt-6 border-t border-gray-100 mt-6 space-y-4">
-            {!outOfStock ? (
-              <>
-                <div className="flex items-center justify-between">
-                  <div className="text-sm">
-                    <span className="text-gray-500">Stock Available: </span>
-                    <span className="font-semibold text-emerald-700">{product.stock_available} {product.unit}</span>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => handleQuantityChange(quantity - 1)}
-                      className="p-1.5 border border-gray-300 rounded hover:bg-gray-105 transition-colors cursor-pointer"
-                    >
-                      <Minus size={16} />
-                    </button>
-                    <span className="w-10 text-center font-bold text-gray-900">{quantity}</span>
-                    <button
-                      onClick={() => handleQuantityChange(quantity + 1)}
-                      className="p-1.5 border border-gray-300 rounded hover:bg-gray-105 transition-colors cursor-pointer"
-                    >
-                      <Plus size={16} />
-                    </button>
-                    <span className="text-sm text-gray-500 font-medium">{product.unit}</span>
-                  </div>
-                </div>
-
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full bg-emerald-600 text-white hover:bg-emerald-700 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
-                >
-                  <ShoppingCart size={20} />
-                  Add to Cart • ₹{(product.price * quantity).toFixed(0)}
-                </button>
-              </>
-            ) : (
-              <div className="bg-red-50 text-red-650 text-center py-3 rounded-lg font-bold">
-                Out of Stock
+            
+            {images.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {images.map((img: string, i: number) => (
+                  <button key={i} onClick={() => setActiveImage(i)}
+                    className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all ${
+                      activeImage === i ? 'border-primary-600 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'
+                    }`}>
+                    <Image src={img} alt="" fill className="object-cover" />
+                  </button>
+                ))}
               </div>
             )}
           </div>
+
+          {/* ── Right: Product Info ── */}
+          <div className="flex flex-col">
+            <div className="mb-6 border-b border-earth-200 pb-6">
+              <p className="text-xs font-bold text-primary-600 uppercase tracking-widest mb-2">{product.category}</p>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-earth-900 mb-4 tracking-tight leading-tight font-display">{product.name}</h1>
+              
+              {/* Rating */}
+              {product.average_rating > 0 && (
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex gap-0.5">
+                    {[1,2,3,4,5].map(s => (
+                      <Star key={s} className={`w-4 h-4 ${s <= Math.round(product.average_rating) ? 'text-amber-400 fill-amber-400' : 'text-earth-200'}`} />
+                    ))}
+                  </div>
+                  <span className="text-sm font-bold text-earth-800">
+                    {parseFloat(product.average_rating).toFixed(1)}
+                  </span>
+                  <span className="text-sm text-earth-500">
+                    ({product.review_count} reviews)
+                  </span>
+                </div>
+              )}
+
+              {/* Price */}
+              <div className="flex items-baseline gap-2 mt-2">
+                <span className="text-4xl font-black text-primary-700 tracking-tight">{formattedPrice}</span>
+                <span className="text-lg text-earth-500 font-medium">/ {product.unit}</span>
+              </div>
+            </div>
+
+            {/* Description */}
+            {product.description && (
+              <div className="mb-8">
+                <h3 className="text-sm font-bold text-earth-900 mb-2 uppercase tracking-wider">About this product</h3>
+                <p className="text-earth-600 leading-relaxed text-sm md:text-base">{product.description}</p>
+              </div>
+            )}
+
+            {/* Farmer Trust Card */}
+            <div className="card p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center font-bold text-primary-800 text-lg border border-primary-200 shrink-0">
+                  {product.farmer_name[0]}
+                </div>
+                <div>
+                  <p className="text-xs text-earth-500 font-medium mb-0.5">Grown by</p>
+                  <p className="font-bold text-earth-900 text-lg leading-tight">{product.farmer_name}</p>
+                </div>
+              </div>
+              <div className="bg-earth-100/50 px-3 py-2 rounded-lg text-right">
+                <div className="flex items-center gap-1.5 text-earth-700 font-medium text-sm">
+                  <MapPin className="w-4 h-4 text-earth-400" /> {product.farmer_city}
+                </div>
+                {product.distance_km && (
+                  <p className="text-xs font-semibold text-primary-700 mt-1">{product.distance_km.toFixed(1)} km away</p>
+                )}
+              </div>
+            </div>
+
+            {/* Action Area */}
+            <div className="mt-auto card p-6">
+              <div className="flex items-center justify-between mb-4">
+                <span className="font-semibold text-earth-900">Availability</span>
+                {product.stock_available > 0 ? (
+                  <span className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-md border border-primary-100">
+                    <Package className="w-4 h-4" />
+                    {product.stock_available} {product.unit} in stock
+                  </span>
+                ) : (
+                  <span className="text-sm font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-md border border-red-100">
+                    Out of stock
+                  </span>
+                )}
+              </div>
+
+              {product.stock_available > 0 && (
+                <div className="flex flex-col sm:flex-row items-center gap-4 pt-4 border-t border-earth-100">
+                  {/* Qty Selector */}
+                  <div className="flex items-center justify-between w-full sm:w-auto bg-earth-50 border border-earth-200 rounded-xl p-1 h-12 shrink-0">
+                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-10 h-10 flex items-center justify-center text-earth-600 hover:text-earth-900 hover:bg-white rounded-lg transition-colors">
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="w-12 text-center font-bold text-lg text-earth-900">{qty}</span>
+                    <button onClick={() => setQty(q => Math.min(product.stock_available, q + 1))} className="w-10 h-10 flex items-center justify-center text-earth-600 hover:text-earth-900 hover:bg-white rounded-lg transition-colors">
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+                  
+                  {/* CTA */}
+                  <button onClick={handleAddToCart} className="btn-primary w-full h-12 text-base">
+                    <ShoppingCart className="w-5 h-5" />
+                    Add to Cart — {totalPrice}
+                  </button>
+                </div>
+              )}
+            </div>
+            
+          </div>
+        </div>
+
+        {/* ── Reviews Section ── */}
+        <div className="card p-8 lg:p-12 mt-16">
+          <h2 className="text-2xl font-bold mb-8 text-earth-900 tracking-tight font-display">Customer Reviews</h2>
+          
+          {reviews?.summary && (
+            <div className="flex flex-col sm:flex-row items-center gap-8 mb-10 pb-10 border-b border-earth-100">
+              <div className="text-center sm:text-left flex flex-col items-center sm:items-start bg-earth-50 p-6 rounded-2xl border border-earth-200">
+                <p className="text-5xl font-black text-earth-900 tracking-tighter">
+                  {parseFloat(reviews.summary.average_rating || '0').toFixed(1)}
+                </p>
+                <div className="flex gap-1 mt-3 mb-2">
+                  {[1,2,3,4,5].map(s => (
+                    <Star key={s} className={`w-5 h-5 ${s <= Math.round(reviews.summary.average_rating) ? 'text-amber-400 fill-amber-400' : 'text-earth-200'}`} />
+                  ))}
+                </div>
+                <p className="text-sm font-semibold text-earth-500">Based on {reviews.summary.review_count} verified ratings</p>
+              </div>
+            </div>
+          )}
+
+          {reviews?.reviews?.length === 0 && (
+            <div className="text-center py-12">
+              <Star className="w-12 h-12 text-earth-200 mx-auto mb-3" />
+              <p className="text-earth-500 font-medium">No reviews yet. Be the first to review this product!</p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            {reviews?.reviews?.map((review: any) => (
+              <div key={review.id} className="bg-earth-50 p-6 rounded-2xl border border-earth-100">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-white border border-earth-200 flex items-center justify-center text-base font-bold text-earth-700 shrink-0">
+                    {review.consumer_name[0]}
+                  </div>
+                  <div>
+                    <p className="font-bold text-earth-900">{review.consumer_name}</p>
+                    <div className="flex gap-0.5 mt-0.5">
+                      {[1,2,3,4,5].map(s => (
+                        <Star key={s} className={`w-3.5 h-3.5 ${s <= review.rating ? 'text-amber-400 fill-amber-400' : 'text-earth-200'}`} />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {review.review_text && (
+                  <p className="text-earth-700 leading-relaxed text-sm">"{review.review_text}"</p>
+                )}
+              </div>
+            ))}
+          </div>
+          
+          {/* Review Form - Consumers can leave reviews */}
+          {isAuthenticated && (
+            <div className="pt-8 border-t border-earth-100">
+              <h3 className="text-lg font-bold text-earth-900 mb-4">Leave a Review</h3>
+              <ReviewForm 
+                productId={Number(id)} 
+                orderId={0} /* In a real app, you'd pass the actual orderId they purchased from */
+                onSubmitted={() => {
+                  axios.get(`${API}/reviews/product/${id}`).then(res => setReviews(res.data.data));
+                }} 
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

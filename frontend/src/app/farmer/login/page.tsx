@@ -1,16 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
-import { Tractor, Phone, ArrowRight, Loader2, Leaf } from 'lucide-react';
+import { Sprout, ArrowRight, Loader2, Tractor, TrendingUp, ShieldCheck } from 'lucide-react';
+import { AuroraBackground } from '@/components/reactbits/AuroraBackground';
 
 type Step = 'phone' | 'otp';
 
 export default function FarmerLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/farmer/dashboard';
   const { login } = useAuth();
 
   const [step, setStep] = useState<Step>('phone');
@@ -22,12 +25,13 @@ export default function FarmerLoginPage() {
 
   const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
+  // ─── Step 1: Send OTP ───────────────────────────────────────────────────────
   const handleSendOTP = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     if (!/^[6-9]\d{9}$/.test(phone)) {
-      setError('Enter a valid 10-digit mobile number');
+      setError('Enter a valid 10-digit Indian mobile number');
       return;
     }
 
@@ -44,15 +48,16 @@ export default function FarmerLoginPage() {
     } catch (err: any) {
       const msg = err.response?.data?.error?.message || '';
       if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('register')) {
-        setError('Phone not registered as farmer. Please register first.');
+        setError('Phone number not registered. Please create an account first.');
       } else {
-        setError(msg || 'Failed to send OTP');
+        setError(msg || 'Failed to send OTP. Try again.');
       }
     } finally {
       setLoading(false);
     }
   };
 
+  // ─── Step 2: Verify OTP ──────────────────────────────────────────────────────
   const handleVerifyOTP = async (otpString: string) => {
     setError('');
     setLoading(true);
@@ -64,16 +69,15 @@ export default function FarmerLoginPage() {
       });
 
       const { token, user, requiresProfileCompletion } = res.data.data;
-
       login(token, user, 'farmer');
 
       if (requiresProfileCompletion) {
-        router.push('/complete-profile');
+        router.push('/farmer/complete-profile');
       } else {
-        router.push('/farmer/dashboard');
+        router.push(redirectTo);
       }
     } catch (err: any) {
-      setError(err.response?.data?.error?.message || 'Invalid OTP');
+      setError(err.response?.data?.error?.message || 'Invalid OTP. Try again.');
       setOtp(['', '', '', '', '', '']);
     } finally {
       setLoading(false);
@@ -82,65 +86,139 @@ export default function FarmerLoginPage() {
 
   const handleOtpChange = (index: number, value: string) => {
     if (value && !/^\d$/.test(value)) return;
-
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
-
-    if (value && index < 5) document.getElementById(`fotp-${index + 1}`)?.focus();
+    if (value && index < 5) document.getElementById(`otp-${index + 1}`)?.focus();
     if (newOtp.every(d => d) && index === 5) handleVerifyOTP(newOtp.join(''));
   };
 
   const handleOtpKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      document.getElementById(`fotp-${index - 1}`)?.focus();
+      document.getElementById(`otp-${index - 1}`)?.focus();
     }
   };
 
-  const handlePaste = (e: React.ClipboardEvent) => {
+  const handleOtpPaste = (e: React.ClipboardEvent) => {
     e.preventDefault();
     const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-    if (pasted.length === 6) { setOtp(pasted.split('')); handleVerifyOTP(pasted); }
+    if (pasted.length === 6) {
+      setOtp(pasted.split(''));
+      handleVerifyOTP(pasted);
+    }
   };
 
   const startResendTimer = () => {
     setResendTimer(60);
     const interval = setInterval(() => {
-      setResendTimer(prev => { if (prev <= 1) { clearInterval(interval); return 0; } return prev - 1; });
+      setResendTimer(prev => {
+        if (prev <= 1) { clearInterval(interval); return 0; }
+        return prev - 1;
+      });
     }, 1000);
   };
 
+  const handleResend = async () => {
+    setError('');
+    try {
+      await axios.post(`${API}/auth/send-otp`, { phone, userType: 'farmer', action: 'login' });
+      startResendTimer();
+    } catch {
+      setError('Failed to resend OTP');
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-green-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-700 rounded-2xl mb-4">
-            <Tractor className="w-9 h-9 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold text-gray-900">Farmer Portal</h1>
-          <p className="text-gray-500 text-sm mt-1">
-            {step === 'phone'
-              ? 'Sign in to manage your products and orders'
-              : `OTP sent to ${phone}`}
-          </p>
+    <AuroraBackground className="w-full flex-row items-stretch bg-earth-50 p-0">
+      
+      {/* ── Left Side: Beautiful Visual ── */}
+      <div className="hidden lg:flex w-1/2 bg-earth-900 relative overflow-hidden flex-col justify-between p-12">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')] opacity-30 mix-blend-overlay object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-earth-900 via-transparent to-earth-900/50" />
+
+        <div className="relative z-10">
+          <Link href="/" className="inline-flex items-center gap-2 text-white">
+            <Sprout className="w-8 h-8" />
+            <span className="text-2xl font-bold tracking-tight">Farm Connect Portal</span>
+          </Link>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm p-8">
-          {step === 'phone' && (
-            <form onSubmit={handleSendOTP} className="space-y-5">
+        <div className="relative z-10 max-w-md">
+          <h1 className="text-4xl font-semibold text-white mb-6 leading-tight">
+            Grow your business, directly.
+          </h1>
+          
+          <div className="space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                <TrendingUp className="w-5 h-5 text-primary-400" />
+              </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Registered Mobile Number
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <h3 className="text-white font-medium">Keep 100% of the profits</h3>
+                <p className="text-earth-300 text-sm mt-1 leading-relaxed">No middlemen. You set your prices and sell directly to consumers.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4">
+              <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                <Tractor className="w-5 h-5 text-primary-400" />
+              </div>
+              <div>
+                <h3 className="text-white font-medium">Easy Inventory Management</h3>
+                <p className="text-earth-300 text-sm mt-1 leading-relaxed">Update your available stock from your phone, right from the field.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="p-2 bg-white/10 rounded-lg backdrop-blur-sm">
+                <ShieldCheck className="w-5 h-5 text-primary-400" />
+              </div>
+              <div>
+                <h3 className="text-white font-medium">Guaranteed Payments</h3>
+                <p className="text-earth-300 text-sm mt-1 leading-relaxed">Secure, fast payouts directly to your linked bank account.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Right Side: Auth Form ── */}
+      <div className="flex-1 flex flex-col relative bg-white/80 backdrop-blur-xl">
+        <div className="lg:hidden sticky top-0 z-50 w-full bg-white px-6 py-4 border-b border-earth-100 flex items-center">
+          <Link href="/" className="inline-flex items-center gap-2">
+            <Sprout className="w-6 h-6 text-primary-600" />
+            <span className="text-lg font-bold text-earth-900 font-display">Farm Connect</span>
+          </Link>
+        </div>
+        
+        <div className="flex-1 flex flex-col justify-center px-4 sm:px-12 lg:px-24 xl:px-32 py-8 lg:py-0">
+          <div className="w-full max-w-sm mx-auto">
+          <div className="mb-8">
+            <h2 className="text-2xl font-bold text-earth-900 mb-2">
+              {step === 'phone' ? 'Farmer Login' : 'Check your phone'}
+            </h2>
+            <p className="text-earth-500 text-sm">
+              {step === 'phone'
+                ? 'Enter your phone number to access your portal.'
+                : `We sent a 6-digit verification code to ${phone}.`}
+            </p>
+          </div>
+
+          {/* ── Phone Step ── */}
+          {step === 'phone' && (
+            <form onSubmit={handleSendOTP} className="space-y-5 animate-enter">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-earth-800">Mobile Number</label>
+                <div className="relative flex flex-row items-center bg-white border border-earth-300 rounded-xl overflow-hidden focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-600/20 transition-all shadow-sm">
+                  <div className="flex shrink-0 items-center justify-center bg-earth-50 px-4 py-3 border-r border-earth-200">
+                    <span className="text-earth-600 font-semibold">+91</span>
+                  </div>
                   <input
                     type="tel"
                     value={phone}
                     onChange={e => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                     placeholder="9876543210"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-600 text-lg tracking-widest"
+                    className="w-full bg-transparent px-4 py-3 outline-none text-earth-900 font-medium tracking-wide"
                     disabled={loading}
                     autoFocus
                   />
@@ -148,43 +226,33 @@ export default function FarmerLoginPage() {
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-sm p-3 rounded-lg">
+                <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-600 animate-enter">
                   {error}
-                  {error.includes('register') && (
-                    <Link href="/farmer/register" className="block mt-1 font-medium underline">
-                      Register as farmer →
+                  {error.includes('account') && (
+                    <Link href="/farmer/register" className="block mt-1 font-semibold underline underline-offset-2 hover:text-red-700 transition-colors">
+                      Register as a farmer
                     </Link>
                   )}
                 </div>
               )}
 
-              <button
-                type="submit"
-                disabled={phone.length !== 10 || loading}
-                className="w-full flex items-center justify-center gap-2 bg-green-700 text-white py-3 rounded-xl font-semibold hover:bg-green-800 disabled:opacity-50 transition-colors"
-              >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-                {loading ? 'Sending OTP...' : 'Get OTP'}
-                {!loading && <ArrowRight className="w-5 h-5" />}
+              <button type="submit" disabled={phone.length !== 10 || loading} className="btn-primary w-full h-11">
+                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                {loading ? 'Sending code...' : 'Continue'}
               </button>
-
-              {/* Farm Visual Badge */}
-              <div className="flex items-center gap-2 justify-center text-xs text-gray-500 mt-2">
-                <Leaf className="w-4 h-4 text-green-600" />
-                Secure farmer portal — OTP login only
-              </div>
             </form>
           )}
 
+          {/* ── OTP Step ── */}
           {step === 'otp' && (
-            <div className="space-y-6">
-              <div>
-                <p className="text-sm text-center text-gray-600 mb-3">Enter the 6-digit code</p>
-                <div className="flex gap-2 justify-center" onPaste={handlePaste}>
+            <div className="space-y-6 animate-enter">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-earth-800">Verification Code</label>
+                <div className="flex gap-2 justify-between" onPaste={handleOtpPaste}>
                   {otp.map((digit, i) => (
                     <input
                       key={i}
-                      id={`fotp-${i}`}
+                      id={`otp-${i}`}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}
@@ -192,48 +260,56 @@ export default function FarmerLoginPage() {
                       onChange={e => handleOtpChange(i, e.target.value)}
                       onKeyDown={e => handleOtpKeyDown(i, e)}
                       disabled={loading}
-                      className="w-12 h-14 text-center text-xl font-bold border-2 border-gray-300 rounded-xl focus:border-green-600 focus:ring-2 focus:ring-green-200"
+                      className="w-12 h-14 text-center text-xl font-semibold border border-earth-300 rounded-lg focus:border-primary-600 focus:ring-1 focus:ring-primary-600 outline-none transition-all disabled:bg-earth-50"
                       autoFocus={i === 0}
                     />
                   ))}
                 </div>
               </div>
 
-              {loading && (
-                <div className="flex items-center justify-center gap-2 text-green-700">
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span className="text-sm">Verifying...</span>
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-600 text-center animate-enter">
+                  {error}
                 </div>
               )}
 
-              {error && (
-                <p className="text-red-600 text-sm text-center bg-red-50 p-3 rounded-lg">{error}</p>
-              )}
+              <div className="flex items-center justify-between mt-6">
+                <button
+                  onClick={() => { setStep('phone'); setOtp(['', '', '', '', '', '']); setError(''); }}
+                  className="text-sm text-earth-500 hover:text-earth-800 font-medium transition-colors"
+                >
+                  ← Edit number
+                </button>
 
-              <div className="text-center">
                 {resendTimer > 0 ? (
-                  <p className="text-sm text-gray-500">Resend in <span className="font-semibold text-green-700">{resendTimer}s</span></p>
+                  <span className="text-sm text-earth-400">
+                    Resend in {resendTimer}s
+                  </span>
                 ) : (
-                  <button onClick={async () => { await axios.post(`${API}/auth/send-otp`, { phone, userType: 'farmer', action: 'login' }); startResendTimer(); }}
-                    className="text-sm text-green-700 font-medium hover:underline">Resend OTP</button>
+                  <button onClick={handleResend} className="text-sm text-primary-700 hover:text-primary-900 font-medium transition-colors">
+                    Resend code
+                  </button>
                 )}
               </div>
-
-              <button onClick={() => { setStep('phone'); setOtp(['','','','','','']); setError(''); }}
-                className="w-full text-sm text-gray-500 hover:text-gray-700">← Change phone number</button>
             </div>
           )}
-        </div>
 
-        <p className="text-center text-sm text-gray-600 mt-6">
-          New farmer?{' '}
-          <Link href="/farmer/register" className="text-green-700 font-semibold hover:underline">Register your farm</Link>
-        </p>
-        <p className="text-center text-sm text-gray-500 mt-2">
-          Consumer?{' '}
-          <Link href="/login" className="text-primary-600 hover:underline">Consumer login →</Link>
-        </p>
+          <div className="mt-8 pt-8 border-t border-earth-100">
+            <p className="text-sm text-earth-500 text-center">
+              Want to sell your produce?{' '}
+              <Link href="/farmer/register" className="text-earth-900 font-semibold hover:underline">
+                Register here
+              </Link>
+            </p>
+            <p className="text-sm text-earth-500 text-center mt-4">
+              <Link href="/login" className="text-primary-700 font-semibold hover:underline flex items-center justify-center gap-1">
+                Go to Consumer Login <ArrowRight className="w-3 h-3" />
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
-    </div>
+      </div>
+    </AuroraBackground>
   );
 }

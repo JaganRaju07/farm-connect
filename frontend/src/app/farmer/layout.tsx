@@ -1,104 +1,131 @@
-// frontend/src/app/farmer/layout.tsx
 'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import {
-  LayoutDashboard, Package, ShoppingBag, User, Menu, X
+  LayoutDashboard, Package, ShoppingBag, User, Menu, X, Sprout, LogOut, ChartNoAxesCombined
 } from 'lucide-react';
-import NotificationBell from '@/components/common/NotificationBell';
 
 const navItems = [
   { href: '/farmer/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/farmer/products', label: 'My Products', icon: Package },
+  { href: '/farmer/products', label: 'Inventory', icon: Package },
   { href: '/farmer/orders', label: 'Orders', icon: ShoppingBag },
-  { href: '/farmer/profile', label: 'Profile', icon: User },
+  { href: '/farmer/earnings', label: 'Earnings', icon: ChartNoAxesCombined },
+  { href: '/farmer/profile', label: 'Settings', icon: User },
 ];
 
-/**
- * Farmer Dashboard Layout
- * 
- * WHY IN A LAYOUT?
- * In Next.js, layout.tsx files act as wrapper shells around the page routes in their folders.
- * By defining the Sidebar and Top Navigation bar here, we avoid recreating or re-rendering them
- * on every page change. The state is maintained, navigation is smooth, and only the `{children}`
- * portion of the page refreshes.
- */
 export default function FarmerLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const handleLogout = () => {
+    logout();
+    router.push('/farmer/login');
+  };
+
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar */}
+    <div className="flex h-screen bg-earth-50 overflow-hidden font-sans">
+      
+      {/* ── Mobile Sidebar Overlay ── */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-earth-900/50 backdrop-blur-sm z-40 md:hidden animate-fade-in"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* ── Sidebar ── */}
       <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200
-        transform transition-transform duration-200 ease-in-out
+        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-earth-200 shadow-sm
+        transform transition-transform duration-300 ease-in-out flex flex-col
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         md:relative md:translate-x-0
       `}>
-        {/* Logo */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 bg-white">
-          <span className="text-xl font-bold text-emerald-700 flex items-center gap-2">
-            🌱 Farm Connect
-          </span>
+        {/* Brand */}
+        <div className="flex items-center justify-between h-16 px-6 border-b border-earth-100 flex-shrink-0">
+          <Link href="/farmer/dashboard" className="flex items-center gap-2">
+            <Sprout className="w-6 h-6 text-primary-600" />
+            <span className="text-lg font-bold text-earth-900 tracking-tight">Farm Connect</span>
+          </Link>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="md:hidden p-1.5 rounded-lg text-gray-500 hover:bg-gray-100"
-            aria-label="Close menu"
+            className="md:hidden p-1 rounded-lg text-earth-400 hover:text-earth-600 hover:bg-earth-50 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Nav items */}
-        <nav className="p-4 space-y-1 overflow-y-auto h-[calc(100vh-4rem)]">
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {navItems.map(item => {
             const Icon = item.icon;
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? 'bg-emerald-50 text-emerald-700 shadow-sm'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'bg-primary-50 text-primary-900'
+                    : 'text-earth-600 hover:bg-earth-100 hover:text-earth-900'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-emerald-700' : 'text-gray-400'}`} />
+                <Icon className={`w-4 h-4 ${isActive ? 'text-primary-600' : 'text-earth-400'}`} />
                 {item.label}
               </Link>
             );
           })}
         </nav>
+
+        {/* User Profile / Logout */}
+        <div className="p-4 border-t border-earth-100 flex-shrink-0">
+          <div className="flex items-center gap-3 px-3 py-2 mb-2">
+            <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center border border-primary-200">
+              <span className="text-sm font-bold text-primary-700">
+                {user?.name?.charAt(0)?.toUpperCase() || 'F'}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-earth-900 truncate">{user?.name || 'Farmer'}</p>
+              <p className="text-xs text-earth-500 truncate">Dashboard</p>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-earth-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+          >
+            <LogOut className="w-4 h-4 text-earth-400 group-hover:text-red-500" />
+            Sign out
+          </button>
+        </div>
       </aside>
 
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top bar */}
-        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 flex-shrink-0">
+      {/* ── Main Content Area ── */}
+      <div className="flex-1 flex flex-col overflow-hidden relative">
+        {/* Mobile Topbar */}
+        <header className="md:hidden h-16 bg-white border-b border-earth-200 flex items-center justify-between px-4 flex-shrink-0 shadow-sm z-10">
+          <div className="flex items-center gap-2">
+            <Sprout className="w-6 h-6 text-primary-600" />
+            <span className="font-bold text-earth-900 tracking-tight">Portal</span>
+          </div>
           <button
             onClick={() => setSidebarOpen(true)}
-            className="md:hidden text-gray-600 p-1.5 rounded-lg hover:bg-gray-100"
-            aria-label="Open menu"
+            className="text-earth-600 p-2 rounded-lg hover:bg-earth-100 transition-colors"
           >
             <Menu className="w-6 h-6" />
           </button>
-          
-          <div className="flex items-center gap-4 ml-auto">
-            <NotificationBell />
-            <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center border border-emerald-200">
-              <User className="w-4 h-4 text-emerald-700" />
-            </div>
-          </div>
         </header>
 
-        {/* Page content */}
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto bg-earth-50">
+          <div className="container-app py-8 animate-enter">
+            {children}
+          </div>
         </main>
       </div>
     </div>

@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Package } from 'lucide-react';
 import ProductFormModal from '@/components/farmer/ProductFormModal';
+import { motion } from 'framer-motion';
 
 export default function FarmerProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -62,13 +63,18 @@ export default function FarmerProductsPage() {
     }
   };
 
+  const formatPrice = (price: number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(price);
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">My Products</h1>
+    <div className="space-y-8 pb-12 animate-enter">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold font-display text-earth-900 tracking-tight">Inventory</h1>
+          <p className="text-sm text-earth-500 mt-1">Manage your farm's products and stock levels.</p>
+        </div>
         <button
           onClick={() => { setEditProduct(null); setShowModal(true); }}
-          className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 font-medium transition-colors cursor-pointer"
+          className="btn-primary shrink-0"
         >
           <Plus className="w-5 h-5" />
           Add Product
@@ -78,88 +84,100 @@ export default function FarmerProductsPage() {
       {loading ? (
         <div className="space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="h-20 bg-gray-200 rounded-xl animate-pulse" />
+            <div key={i} className="h-20 bg-earth-200 rounded-xl animate-pulse" />
           ))}
         </div>
       ) : products.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center shadow-sm">
-          <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-600 font-medium">No products yet. Add your first listing!</p>
+        <div className="card text-center p-16">
+          <div className="w-20 h-20 bg-earth-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-earth-100">
+            <Package className="w-10 h-10 text-earth-300" />
+          </div>
+          <p className="text-earth-900 font-bold font-display text-lg mb-1">No products yet</p>
+          <p className="text-earth-500 mb-6">Start by adding your first harvest to the marketplace.</p>
+          <button onClick={() => { setEditProduct(null); setShowModal(true); }} className="btn-secondary mx-auto">
+            Add your first product
+          </button>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <div className="card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="bg-earth-50/50 border-b border-earth-200">
                 <tr>
-                  <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Product</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Stock</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+                  <th className="px-6 py-4 text-xs font-bold text-earth-600 uppercase tracking-wider">Product</th>
+                  <th className="px-6 py-4 text-xs font-bold text-earth-600 uppercase tracking-wider">Price</th>
+                  <th className="px-6 py-4 text-xs font-bold text-earth-600 uppercase tracking-wider">Stock</th>
+                  <th className="px-6 py-4 text-xs font-bold text-earth-600 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-4 text-xs font-bold text-earth-600 uppercase tracking-wider text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
-                {products.map(product => (
-                  <tr key={product.id} className="hover:bg-gray-50 transition-colors">
+              <tbody className="divide-y divide-earth-100 bg-white">
+                {products.map((product, i) => (
+                  <motion.tr 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    key={product.id} 
+                    className="hover:bg-earth-50/50 transition-colors group"
+                  >
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-4">
                         {product.image_url ? (
-                          <img src={product.image_url} alt="" className="w-10 h-10 rounded-lg object-cover border border-gray-100" />
+                          <img src={product.image_url} alt="" className="w-12 h-12 rounded-xl object-cover border border-earth-200 shadow-sm group-hover:scale-105 transition-transform" />
                         ) : (
-                          <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center border border-gray-200">
-                            <Package className="w-5 h-5 text-gray-400" />
+                          <div className="w-12 h-12 bg-earth-50 rounded-xl flex items-center justify-center border border-earth-200">
+                            <Package className="w-5 h-5 text-earth-400" />
                           </div>
                         )}
                         <div>
-                          <p className="font-semibold text-sm text-gray-900">{product.name}</p>
-                          <p className="text-xs text-gray-500 capitalize">{product.category}</p>
+                          <p className="font-bold text-sm text-earth-900 group-hover:text-primary-700 transition-colors">{product.name}</p>
+                          <p className="text-xs font-medium text-earth-500 capitalize">{product.category}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                      ₹{product.price} / {product.unit}
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-earth-900 font-bold">
+                      {formatPrice(product.price)} <span className="text-earth-500 text-xs font-medium">/ {product.unit}</span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
-                      <span className={product.stock_available === 0 ? 'text-red-600 font-semibold' : ''}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-earth-700 font-medium">
+                      <span className={product.stock_available === 0 ? 'text-red-600 font-bold bg-red-50 px-2 py-1 rounded-md' : ''}>
                         {product.stock_available} {product.unit}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex text-xs px-2.5 py-1 rounded-full font-medium ${
+                      <span className={`inline-flex items-center text-xs px-2.5 py-1 rounded-md font-bold border ${
                         product.is_active 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-gray-100 text-gray-600'
+                          ? 'bg-primary-50 text-primary-700 border-primary-100' 
+                          : 'bg-earth-100 text-earth-600 border-earth-200'
                       }`}>
                         {product.is_active ? 'Active' : 'Hidden'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => handleToggleActive(product.id, product.is_active)}
-                          className="p-1.5 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors cursor-pointer"
+                          className="p-2 text-earth-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer"
                           title={product.is_active ? 'Hide Product' : 'Show Product'}
                         >
-                          {product.is_active ? <Eye className="w-4.5 h-4.5" /> : <EyeOff className="w-4.5 h-4.5" />}
+                          {product.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                         </button>
                         <button
                           onClick={() => { setEditProduct(product); setShowModal(true); }}
-                          className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                          className="p-2 text-earth-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer"
                           title="Edit"
                         >
-                          <Edit2 className="w-4.5 h-4.5" />
+                          <Edit2 className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(product.id, product.name)}
-                          className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                          className="p-2 text-earth-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                           title="Delete"
                         >
-                          <Trash2 className="w-4.5 h-4.5" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))}
               </tbody>
             </table>

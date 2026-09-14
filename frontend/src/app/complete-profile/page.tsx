@@ -147,16 +147,16 @@ export default function CompleteProfilePage() {
                 <img
                   src={photoPreview}
                   alt="Profile preview"
-                  className="w-24 h-24 rounded-full object-cover border-4 border-emerald-100"
+                  className="w-24 h-24 rounded-full object-cover border-4 border-primary-100"
                 />
               ) : (
-                <div className="w-24 h-24 rounded-full bg-emerald-50 border-4 border-emerald-100 flex items-center justify-center">
-                  <User className="w-10 h-10 text-emerald-400" />
+                <div className="w-24 h-24 rounded-full bg-primary-50 border-4 border-primary-100 flex items-center justify-center">
+                  <User className="w-10 h-10 text-primary-400" />
                 </div>
               )}
               <label
                 htmlFor="photo"
-                className="absolute bottom-0 right-0 bg-emerald-600 text-white p-1.5 rounded-full cursor-pointer hover:bg-emerald-700 transition-colors"
+                className="absolute bottom-0 right-0 bg-primary-600 text-white p-1.5 rounded-full cursor-pointer hover:bg-primary-700 transition-colors"
               >
                 <Camera className="w-4 h-4" />
               </label>
@@ -181,7 +181,7 @@ export default function CompleteProfilePage() {
               required
               value={formData.name}
               onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
               placeholder={userRole === 'farmer' ? 'Ravi Kumar' : 'Arjun Mehta'}
             />
           </div>
@@ -195,7 +195,7 @@ export default function CompleteProfilePage() {
               type="email"
               value={formData.email}
               onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
               placeholder="yourname@email.com"
             />
           </div>
@@ -210,7 +210,7 @@ export default function CompleteProfilePage() {
               rows={2}
               value={formData.address}
               onChange={e => setFormData(prev => ({ ...prev, address: e.target.value }))}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
               placeholder="House/Farm number, Street, Landmark..."
             />
           </div>
@@ -224,7 +224,7 @@ export default function CompleteProfilePage() {
                 required
                 value={formData.city}
                 onChange={e => setFormData(prev => ({ ...prev, city: e.target.value }))}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                 placeholder="Bengaluru"
               />
             </div>
@@ -235,7 +235,7 @@ export default function CompleteProfilePage() {
                 required
                 value={formData.pincode}
                 onChange={e => setFormData(prev => ({ ...prev, pincode: e.target.value }))}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                 placeholder="560001"
               />
             </div>
@@ -256,8 +256,8 @@ export default function CompleteProfilePage() {
                       onClick={() => setFormData(prev => ({ ...prev, farming_type: type }))}
                       className={`py-2 px-4 rounded-lg border text-sm font-medium capitalize flex items-center justify-center gap-1.5 transition-all ${
                         formData.farming_type === type
-                          ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-emerald-400'
+                          ? 'bg-primary-600 text-white border-primary-600 shadow-sm'
+                          : 'bg-white text-gray-700 border-gray-300 hover:border-primary-400'
                       }`}
                     >
                       {type === 'organic' && '🌿'}
@@ -276,7 +276,7 @@ export default function CompleteProfilePage() {
                   rows={3}
                   value={formData.bio}
                   onChange={e => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                   placeholder="Tell consumers about your farm, your practices..."
                 />
               </div>
@@ -290,7 +290,7 @@ export default function CompleteProfilePage() {
                   max="70"
                   value={formData.years_of_farming}
                   onChange={e => setFormData(prev => ({ ...prev, years_of_farming: e.target.value }))}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                   placeholder="10"
                 />
               </div>
@@ -298,9 +298,9 @@ export default function CompleteProfilePage() {
           )}
 
           {/* GPS Location indicator */}
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-3">
-            <MapPin className="w-5 h-5 text-emerald-600 flex-shrink-0" />
-            <p className="text-sm text-emerald-800">
+          <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 flex items-center gap-3">
+            <MapPin className="w-5 h-5 text-primary-600 flex-shrink-0" />
+            <p className="text-sm text-primary-800">
               {latitude && longitude
                 ? `Location detected: ${latitude.toFixed(5)}°N, ${longitude.toFixed(5)}°E`
                 : 'Detecting your location...'}
@@ -318,7 +318,7 @@ export default function CompleteProfilePage() {
           <button
             type="submit"
             disabled={loading || !latitude}
-            className="w-full bg-emerald-600 text-white py-3 rounded-xl font-semibold hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="w-full bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {loading ? 'Saving...' : 'Complete Profile'}
           </button>

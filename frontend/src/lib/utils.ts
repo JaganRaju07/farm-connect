@@ -101,7 +101,7 @@ export function getOrderStatusInfo(status: string): {
     processing: { label: 'Processing', color: 'text-purple-700', bgColor: 'bg-purple-100' },
     shipped: { label: 'Shipped', color: 'text-indigo-700', bgColor: 'bg-indigo-100' },
     out_for_delivery: { label: 'Out for Delivery', color: 'text-cyan-700', bgColor: 'bg-cyan-100' },
-    delivered: { label: 'Delivered', color: 'text-green-700', bgColor: 'bg-green-100' },
+    delivered: { label: 'Delivered', color: 'text-success-700', bgColor: 'bg-success-100' },
     cancelled: { label: 'Cancelled', color: 'text-red-700', bgColor: 'bg-red-100' },
     refunded: { label: 'Refunded', color: 'text-gray-700', bgColor: 'bg-gray-100' },
   };

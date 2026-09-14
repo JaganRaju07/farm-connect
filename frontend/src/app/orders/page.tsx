@@ -38,7 +38,7 @@ export default function ConsumerOrdersPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
-        <Loader2 className="w-10 h-10 animate-spin text-emerald-600 mx-auto" />
+        <Loader2 className="w-10 h-10 animate-spin text-primary-600 mx-auto" />
       </div>
     );
   }
@@ -49,7 +49,7 @@ export default function ConsumerOrdersPage() {
         <h1 className="text-3xl font-bold text-gray-900">My Orders</h1>
         <Link 
           href="/marketplace" 
-          className="text-sm font-semibold text-emerald-650 hover:text-emerald-700 flex items-center gap-1 transition-colors"
+          className="text-sm font-semibold text-primary-650 hover:text-primary-700 flex items-center gap-1 transition-colors"
         >
           Back to Marketplace <ArrowRight className="w-4 h-4" />
         </Link>
@@ -68,7 +68,7 @@ export default function ConsumerOrdersPage() {
           <p className="text-gray-500 text-sm mt-1 mb-6">Explore our fresh products from local farmers.</p>
           <Link
             href="/marketplace"
-            className="inline-block bg-emerald-600 text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-emerald-700 transition-colors"
+            className="inline-block bg-primary-600 text-white font-semibold px-6 py-2.5 rounded-lg hover:bg-primary-700 transition-colors"
           >
             Start Shopping
           </Link>
@@ -89,7 +89,7 @@ export default function ConsumerOrdersPage() {
                       : order.order_status === 'confirmed'
                       ? 'bg-blue-100 text-blue-700'
                       : order.order_status === 'delivered' || order.order_status === 'completed'
-                      ? 'bg-green-100 text-green-700'
+                      ? 'bg-primary-100 text-primary-700'
                       : 'bg-gray-100 text-gray-700'
                   }`}>
                     {order.order_status}
@@ -107,7 +107,7 @@ export default function ConsumerOrdersPage() {
               <div className="flex items-center justify-between md:justify-end gap-6 border-t md:border-t-0 pt-3 md:pt-0">
                 <div className="text-left md:text-right">
                   <p className="text-xs text-gray-500">Total Amount</p>
-                  <p className="text-base font-bold text-emerald-600">₹{order.total_amount.toFixed(2)}</p>
+                  <p className="text-base font-bold text-primary-600">₹{order.total_amount.toFixed(2)}</p>
                 </div>
                 <Link
                   href={`/orders/${order.id}`}

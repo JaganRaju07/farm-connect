@@ -7,20 +7,39 @@
 /* ---------------- BASE ---------------- */
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 20 14.3% 4.1%;
+    --background: #faf9f7; /* earth-50 */
+    --foreground: #1c1917; /* earth-900 */
   }
 
   * {
-    border-color: #e7e5e4;
+    border-color: #e7e3dc; /* earth-200 */
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    border: none !important;
+    outline: none !important;
   }
 
   body {
-    background-color: #fafaf9;
-    color: #1c1917;
+    background-color: var(--background);
+    color: var(--foreground);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-outfit), 'Outfit', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  h1, .h1 { font-size: 3rem; line-height: 1; font-weight: 800; letter-spacing: -0.025em; }
+  h2, .h2 { font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; letter-spacing: -0.025em; }
+  h3, .h3 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; letter-spacing: -0.025em; }
+  h4, .h4 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; letter-spacing: -0.025em; }
+  .display { font-size: 4.5rem; line-height: 1.05; font-weight: 800; letter-spacing: -0.05em; }
+  .caption { font-size: 0.875rem; line-height: 1.25rem; color: #9b9182; font-weight: 500; }
 }
 
 /* ------------- COMPONENTS ------------- */
@@ -28,117 +47,133 @@
   .container-app {
     max-width: 1280px;
     margin: 0 auto;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .container-app {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 
   @media (min-width: 1024px) {
     .container-app {
-      padding-left: 2rem;
-      padding-right: 2rem;
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
     }
   }
 
+  /* Polished Card */
   .card {
-    background: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: 0.2s;
+    background: #ffffff;
+    border-radius: 1.5rem; /* 3xl */
+    border: 1px solid #e7e3dc; /* earth-200 */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05); /* stronger shadow for elevation */
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .card:hover {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06); /* shadow-hover */
+    transform: translateY(-2px);
   }
 
+  /* Polished Buttons */
   .btn-primary {
-    background: #16a34a;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #15803d; /* primary-700 (Dark forest green) */
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem; /* xl */
+    font-weight: 600;
+    font-size: 0.9375rem; /* 15px */
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px 0 rgba(21, 128, 61, 0.39);
   }
 
   .btn-primary:hover {
-    background: #15803d;
+    background: #166534; /* primary-800 */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.23);
+  }
+  
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 10px rgba(43, 122, 75, 0.3);
+  }
+  
+  .btn-primary:disabled {
+    opacity: 0.6;
+    pointer-events: none;
+    box-shadow: none;
   }
 
   .btn-secondary {
-    background: #f59e0b;
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    border: none;
-    cursor: pointer;
-    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #ffffff;
+    color: #1c1917; /* earth-900 */
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    border: 1px solid #d5cec4; /* earth-300 */
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   }
 
   .btn-secondary:hover {
-    background: #d97706;
+    background: #f4f2ee; /* earth-100 */
+    border-color: #b8afa1; /* earth-400 */
   }
 
-  .btn-outline {
-    background: transparent;
-    color: #16a34a;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    border: 2px solid #16a34a;
-    cursor: pointer;
-    font-weight: 500;
+  .btn-accent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #e76f51; /* accent-400 */
+    color: #ffffff;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 14px 0 rgba(231, 111, 81, 0.39);
   }
 
-  .btn-outline:hover {
-    background: #f0fdf4;
+  .btn-accent:hover {
+    background: #e05837; /* accent-500 */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(231, 111, 81, 0.23);
   }
 
+  /* Polished Inputs */
   .input-field {
     width: 100%;
-    padding: 0.5rem 1rem;
-    border: 1px solid #d6d3d1;
-    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    background: #ffffff;
+    border: 1px solid #d5cec4; /* earth-300 */
+    border-radius: 0.75rem;
+    color: #1c1917;
+    font-size: 0.9375rem;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     outline: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  }
+
+  .input-field::placeholder {
+    color: #b8afa1; /* earth-400 */
   }
 
   .input-field:focus {
-    border-color: #16a34a;
-    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+    border-color: #2b7a4b; /* primary-600 */
+    box-shadow: 0 0 0 2px rgba(43, 122, 75, 0.2);
   }
-
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.2rem 0.6rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 500;
-  }
-
-  .badge-success {
-    background: #dcfce7;
-    color: #166534;
-  }
-
-  .badge-warning {
-    background: #fef3c7;
-    color: #92400e;
-  }
-
-  .badge-error {
-    background: #fee2e2;
-    color: #991b1b;
-  }
-
-  .badge-info {
-    background: #dbeafe;
-    color: #1e40af;
+  
+  .input-field:disabled {
+    background: #f4f2ee;
+    color: #9b9182;
+    cursor: not-allowed;
   }
 }
 

@@ -137,7 +137,7 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
             <label className="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:border-emerald-500 hover:bg-emerald-50/10 transition-all"
+              className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center cursor-pointer hover:border-primary-500 hover:bg-primary-50/10 transition-all"
             >
               {imagePreview ? (
                 <img src={imagePreview} alt="Preview" className="w-full h-40 object-contain rounded-lg" />
@@ -148,7 +148,7 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
                   <p className="text-xs text-gray-400 mt-1">Supports JPEG, PNG, or WebP</p>
                 </div>
               )}
-              {uploading && <p className="text-sm text-emerald-600 mt-2 font-medium">Uploading to cloud...</p>}
+              {uploading && <p className="text-sm text-primary-600 mt-2 font-medium">Uploading to cloud...</p>}
             </div>
             <input 
               ref={fileInputRef} 
@@ -167,7 +167,7 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
               required 
               value={form.name} 
               onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all" 
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all" 
               placeholder="Fresh Tomatoes" 
             />
           </div>
@@ -178,7 +178,7 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
             <select 
               value={form.category} 
               onChange={e => setForm(p => ({ ...p, category: e.target.value }))}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
             >
               {['vegetables', 'fruits', 'grains', 'dairy', 'herbs', 'other'].map(c => (
                 <option key={c} value={c} className="capitalize">{c}</option>
@@ -196,7 +196,7 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
                 min="1" 
                 value={form.price} 
                 onChange={e => setForm(p => ({ ...p, price: e.target.value }))}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all" 
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all" 
                 placeholder="40" 
               />
             </div>
@@ -205,7 +205,7 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
               <select 
                 value={form.unit} 
                 onChange={e => setForm(p => ({ ...p, unit: e.target.value }))}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
+                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
               >
                 {['kg', 'g', 'litre', 'ml', 'dozen', 'bunch', 'piece'].map(u => (
                   <option key={u} value={u}>{u}</option>
@@ -223,7 +223,7 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
               min="0" 
               value={form.stock_available}
               onChange={e => setForm(p => ({ ...p, stock_available: e.target.value }))}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all" 
+              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all" 
               placeholder="50" 
             />
           </div>
@@ -235,7 +235,7 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
               id="organic" 
               checked={form.is_organic}
               onChange={e => setForm(p => ({ ...p, is_organic: e.target.checked }))}
-              className="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 border-gray-300 cursor-pointer" 
+              className="w-5 h-5 text-primary-600 rounded focus:ring-primary-500 border-gray-300 cursor-pointer" 
             />
             <label htmlFor="organic" className="text-sm font-medium text-gray-700 cursor-pointer flex items-center gap-1.5">
               🌿 Organic product
@@ -257,7 +257,7 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
             <button 
               type="submit" 
               disabled={saving || uploading}
-              className="flex-1 bg-emerald-600 text-white py-2.5 rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+              className="flex-1 bg-primary-600 text-white py-2.5 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
             >
               {saving ? 'Saving...' : isEdit ? 'Save Changes' : 'Add Product'}
             </button>

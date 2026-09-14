@@ -35,7 +35,7 @@ export default function NotificationBell() {
       {/* Bell button */}
       <button
         onClick={openAndMarkRead}
-        className="relative p-2 text-gray-600 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors focus:outline-none"
+        className="relative p-2 text-gray-600 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors focus:outline-none"
         aria-label={`Notifications, ${unreadCount} unread`}
       >
         <Bell className="w-6 h-6" />
@@ -76,12 +76,12 @@ export default function NotificationBell() {
                     <div
                       key={notif.id}
                       className={`px-4 py-3 border-b border-gray-100 last:border-0 transition-colors ${
-                        !notif.is_read ? 'bg-emerald-50/50' : 'hover:bg-gray-50'
+                        !notif.is_read ? 'bg-primary-50/50' : 'hover:bg-gray-50'
                       }`}
                     >
                       <div className="flex items-start gap-3">
                         <div className={`p-1.5 rounded-full flex-shrink-0 ${
-                          !notif.is_read ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
+                          !notif.is_read ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-500'
                         }`}>
                           <Icon className="w-4 h-4" />
                         </div>

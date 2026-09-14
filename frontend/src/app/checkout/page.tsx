@@ -1,13 +1,13 @@
 // frontend/src/app/checkout/page.tsx
-
 'use client';
 
 import { useState, FormEvent } from 'react';
-import { useCart } from '@/context/CartContext';
+import { useCart } from '@/context/cartcontext';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useRouter } from 'next/navigation';
 import { placeOrder } from '@/lib/api/orders';
-import { MapPin, AlertCircle, Loader2 } from 'lucide-react';
+import { MapPin, AlertCircle, Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
 
 const DELIVERY_FEE = 30;
 
@@ -24,6 +24,15 @@ export default function CheckoutPage() {
   const [error, setError] = useState('');
 
   const subtotal = getSubtotal();
+
+  const formatPrice = (amount: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -76,140 +85,182 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-8">Checkout</h1>
+    <div className="min-h-screen bg-earth-50 font-sans pb-24">
+      
+      {/* ── Top Nav ── */}
+      <div className="bg-white border-b border-earth-200 sticky top-0 z-40">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center">
+          <Link href="/cart" className="inline-flex items-center gap-2 text-earth-600 hover:text-earth-900 font-medium transition-colors">
+            <ArrowLeft className="w-4 h-4" />
+            Back to Cart
+          </Link>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-        {/* Form */}
-        <div className="lg:col-span-3">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Location indicator */}
-            <div className="bg-primary-50 border border-primary-200 rounded-lg p-4 flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-primary-600 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-primary-800">Delivery Location</p>
-                <p className="text-xs text-primary-600">
-                  {latitude?.toFixed(6)}°N, {longitude?.toFixed(6)}°E
-                </p>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Delivery Address *</label>
-              <textarea
-                required
-                value={address}
-                onChange={e => setAddress(e.target.value)}
-                rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                placeholder="House/Flat, Street, Landmark..."
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">City *</label>
-                <input
-                  type="text"
-                  required
-                  value={city}
-                  onChange={e => setCity(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  placeholder="Bengaluru"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Pincode</label>
-                <input
-                  type="text"
-                  value={pincode}
-                  onChange={e => setPincode(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                  placeholder="560001"
-                  maxLength={6}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Special Instructions (Optional)
-              </label>
-              <textarea
-                value={notes}
-                onChange={e => setNotes(e.target.value)}
-                rows={2}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                placeholder="Any requests for the farmer..."
-              />
-            </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
-                <p className="text-red-800">{error}</p>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-primary-600 text-white py-3 rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Placing Order...
-                </>
-              ) : (
-                'Place Order (Cash on Delivery)'
-              )}
-            </button>
-          </form>
+      <div className="max-w-6xl mx-auto px-4 py-8 md:py-12 animate-enter">
+        <div className="mb-10">
+          <h1 className="text-3xl font-extrabold font-display text-earth-900 tracking-tight">Checkout</h1>
+          <p className="text-earth-500 mt-2">Complete your order with farm-fresh products.</p>
         </div>
 
-        {/* Summary */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow p-6 sticky top-4">
-            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
-
-            <div className="space-y-2 mb-4 max-h-48 overflow-y-auto">
-              {items.map(({ product, quantity }) => (
-                <div key={product.id} className="flex justify-between text-sm">
-                  <span className="text-gray-600 truncate pr-2">
-                    {product.name} × {quantity}
-                  </span>
-                  <span className="font-medium flex-shrink-0">
-                    ₹{(product.price * quantity).toFixed(2)}
-                  </span>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          
+          {/* ── Form Section ── */}
+          <div className="lg:col-span-2">
+            <form onSubmit={handleSubmit} className="card space-y-8 p-6 md:p-8">
+              
+              <div className="border-b border-earth-100 pb-6">
+                <h2 className="text-lg font-bold font-display text-earth-900 mb-6 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-sm">1</span>
+                  Delivery Details
+                </h2>
+                
+                {/* Location indicator */}
+                <div className="bg-primary-50/50 border border-primary-100 rounded-xl p-4 flex items-start gap-4 mb-6">
+                  <div className="bg-white p-2 rounded-lg shadow-sm border border-primary-100">
+                    <MapPin className="w-5 h-5 text-primary-600" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-primary-900">GPS Location Active</p>
+                    <p className="text-sm text-primary-700 mt-0.5">
+                      {latitude?.toFixed(4)}°N, {longitude?.toFixed(4)}°E
+                    </p>
+                  </div>
                 </div>
-              ))}
-            </div>
 
-            <div className="border-t pt-3 space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium">₹{subtotal.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Delivery</span>
-                <span className="font-medium">₹{DELIVERY_FEE}</span>
-              </div>
-              <div className="flex justify-between text-lg font-bold pt-2 border-t">
-                <span>Total</span>
-                <span>₹{(subtotal + DELIVERY_FEE).toFixed(2)}</span>
-              </div>
-            </div>
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-semibold text-earth-700 mb-1.5">Delivery Address *</label>
+                    <textarea
+                      required
+                      value={address}
+                      onChange={e => setAddress(e.target.value)}
+                      rows={2}
+                      className="input-field resize-none"
+                      placeholder="House/Flat, Street, Landmark..."
+                    />
+                  </div>
 
-            <div className="mt-4 bg-amber-50 border border-amber-200 rounded p-3">
-              <p className="text-sm text-amber-800">
-                💰 Cash on Delivery — Pay when your order arrives
-              </p>
+                  <div className="grid grid-cols-2 gap-5">
+                    <div>
+                      <label className="block text-sm font-semibold text-earth-700 mb-1.5">City *</label>
+                      <input
+                        type="text"
+                        required
+                        value={city}
+                        onChange={e => setCity(e.target.value)}
+                        className="input-field"
+                        placeholder="Bengaluru"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-earth-700 mb-1.5">Pincode *</label>
+                      <input
+                        type="text"
+                        required
+                        value={pincode}
+                        onChange={e => setPincode(e.target.value)}
+                        className="input-field"
+                        placeholder="560001"
+                        maxLength={6}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-earth-700 mb-1.5">
+                      Special Instructions (Optional)
+                    </label>
+                    <textarea
+                      value={notes}
+                      onChange={e => setNotes(e.target.value)}
+                      rows={2}
+                      className="input-field resize-none"
+                      placeholder="Any requests for the farmer (e.g. ring bell upon arrival)..."
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                  <p className="text-sm text-red-800 font-medium">{error}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full h-14 text-lg"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Placing Order...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-5 h-5" />
+                    Place Order (Cash on Delivery)
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* ── Order Summary Section ── */}
+          <div className="lg:col-span-1">
+            <div className="card p-6 sticky top-24">
+              <h2 className="text-lg font-bold font-display text-earth-900 mb-6 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-earth-100 text-earth-700 flex items-center justify-center text-sm">2</span>
+                Order Summary
+              </h2>
+
+              <div className="space-y-4 mb-6 max-h-64 overflow-y-auto pr-2 scrollbar-hide">
+                {items.map(({ product, quantity }) => (
+                  <div key={product.id} className="flex justify-between items-start text-sm group">
+                    <div className="pr-4">
+                      <p className="font-semibold text-earth-900">{product.name}</p>
+                      <p className="text-earth-500 text-xs mt-0.5">Qty: {quantity}</p>
+                    </div>
+                    <span className="font-bold text-earth-900">
+                      {formatPrice(product.price * quantity)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="border-t border-earth-100 pt-6 space-y-4">
+                <div className="flex justify-between text-sm text-earth-600 font-medium">
+                  <span>Subtotal</span>
+                  <span className="text-earth-900 font-semibold">{formatPrice(subtotal)}</span>
+                </div>
+                <div className="flex justify-between text-sm text-earth-600 font-medium">
+                  <span>Platform & Delivery</span>
+                  <span className="text-earth-900 font-semibold">{formatPrice(DELIVERY_FEE)}</span>
+                </div>
+                
+                <div className="flex justify-between items-center pt-4 border-t border-earth-100">
+                  <span className="text-base font-bold text-earth-900">Total to pay</span>
+                  <span className="text-2xl font-black text-primary-700">{formatPrice(subtotal + DELIVERY_FEE)}</span>
+                </div>
+              </div>
+
+              <div className="mt-8 bg-amber-50 border border-amber-200/50 rounded-xl p-4 flex items-start gap-3">
+                <div className="text-lg">💰</div>
+                <div>
+                  <p className="text-sm font-bold text-amber-900">Cash on Delivery</p>
+                  <p className="text-xs text-amber-700 mt-0.5 leading-relaxed">
+                    You only pay when your order arrives. No online payment required today.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
   );
 }
-
