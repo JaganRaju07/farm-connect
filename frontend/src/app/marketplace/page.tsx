@@ -113,21 +113,21 @@ function MarketplaceContent() {
         {(appliedFilters.category || appliedFilters.isOrganic || appliedFilters.minPrice || appliedFilters.maxPrice) && (
           <div className="flex flex-wrap gap-2 mb-6 animate-fade-in">
             {appliedFilters.category && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary-50 text-primary-700 text-sm font-medium rounded-lg border border-primary-100">
+              <span className="inline-flex items-center gap-1.5 pl-3 pr-1 py-1 bg-primary-50 text-primary-700 text-sm font-medium rounded-lg border border-primary-100">
                 {appliedFilters.category}
-                <button onClick={() => { setFilters(prev => ({ ...prev, category: '' })); setAppliedFilters(prev => ({ ...prev, category: '' })); }} className="hover:text-primary-900"><X className="w-3.5 h-3.5" /></button>
+                <button onClick={() => { setFilters(prev => ({ ...prev, category: '' })); setAppliedFilters(prev => ({ ...prev, category: '' })); }} className="p-1 hover:text-primary-900 rounded-md hover:bg-primary-100 transition-colors"><X className="w-3.5 h-3.5" /></button>
               </span>
             )}
             {appliedFilters.isOrganic && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-success-50 text-success-700 text-sm font-medium rounded-lg border border-success-100">
+              <span className="inline-flex items-center gap-1.5 pl-3 pr-1 py-1 bg-success-50 text-success-700 text-sm font-medium rounded-lg border border-success-100">
                 Organic Only
-                <button onClick={() => { setFilters(prev => ({ ...prev, isOrganic: false })); setAppliedFilters(prev => ({ ...prev, isOrganic: false })); }} className="hover:text-success-900"><X className="w-3.5 h-3.5" /></button>
+                <button onClick={() => { setFilters(prev => ({ ...prev, isOrganic: false })); setAppliedFilters(prev => ({ ...prev, isOrganic: false })); }} className="p-1 hover:text-success-900 rounded-md hover:bg-success-100 transition-colors"><X className="w-3.5 h-3.5" /></button>
               </span>
             )}
             {(appliedFilters.minPrice || appliedFilters.maxPrice) && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent-50 text-accent-700 text-sm font-medium rounded-lg border border-accent-100">
+              <span className="inline-flex items-center gap-1.5 pl-3 pr-1 py-1 bg-accent-50 text-accent-700 text-sm font-medium rounded-lg border border-accent-100">
                 ₹{appliedFilters.minPrice || '0'} - ₹{appliedFilters.maxPrice || 'Any'}
-                <button onClick={() => { setFilters(prev => ({ ...prev, minPrice: '', maxPrice: '' })); setAppliedFilters(prev => ({ ...prev, minPrice: '', maxPrice: '' })); }} className="hover:text-accent-900"><X className="w-3.5 h-3.5" /></button>
+                <button onClick={() => { setFilters(prev => ({ ...prev, minPrice: '', maxPrice: '' })); setAppliedFilters(prev => ({ ...prev, minPrice: '', maxPrice: '' })); }} className="p-1 hover:text-accent-900 rounded-md hover:bg-accent-100 transition-colors"><X className="w-3.5 h-3.5" /></button>
               </span>
             )}
             <button 
