@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ShoppingBag, MapPin, Calendar, CheckCircle, Package, Truck, Award, XCircle, ChevronDown, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { EmptyState } from '@/components/common/EmptyState';
 
 const STATUS_TRANSITION_LABELS: Record<string, string> = {
   pending: 'Accept Order',
@@ -160,13 +161,11 @@ export default function FarmerOrdersPage() {
           ))}
         </div>
       ) : filteredOrders.length === 0 ? (
-        <div className="card text-center p-16">
-          <div className="w-20 h-20 bg-earth-50 rounded-full flex items-center justify-center mx-auto mb-4 border border-earth-100">
-            <ShoppingBag className="w-10 h-10 text-earth-300" />
-          </div>
-          <p className="text-earth-900 font-bold font-display text-lg mb-1">No orders found</p>
-          <p className="text-earth-500">There are no orders matching this filter.</p>
-        </div>
+        <EmptyState
+          icon={<ShoppingBag className="w-10 h-10 text-earth-400" />}
+          title="No orders found"
+          description="There are no orders matching this filter."
+        />
       ) : (
         <div className="space-y-4">
           <AnimatePresence>

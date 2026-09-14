@@ -6,6 +6,7 @@ import axios from 'axios';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
 import { useToast } from '@/context/ToastContext';
 import { Package, XCircle, ChevronRight, Loader2, Clock, CheckCircle, MapPin, Store } from 'lucide-react';
+import { EmptyState } from '@/components/common/EmptyState';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -109,14 +110,13 @@ function ConsumerOrdersContent() {
             ))}
           </div>
         ) : orders.length === 0 ? (
-          <div className="card text-center py-20 px-6">
-            <Package className="w-16 h-16 text-earth-200 mx-auto mb-4" />
-            <p className="text-lg font-bold font-display text-earth-900">No {activeTab !== 'all' ? activeTab : ''} orders found</p>
-            <p className="text-earth-500 mt-1 mb-6">Looks like you haven't placed any orders yet.</p>
-            <Link href="/marketplace" className="btn-primary inline-flex">
-              Start Shopping
-            </Link>
-          </div>
+          <EmptyState
+            icon={<Package className="w-10 h-10 text-earth-400" />}
+            title={`No ${activeTab !== 'all' ? activeTab : ''} orders found`}
+            description="Looks like you haven't placed any orders yet."
+            actionText="Start Shopping"
+            actionHref="/marketplace"
+          />
         ) : (
           <div className="space-y-5">
             {orders.map((order: any) => {
