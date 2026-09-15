@@ -20,6 +20,7 @@ export default function ConsumerRegisterPage() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [resendTimer, setResendTimer] = useState(0);
   
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -47,6 +48,7 @@ export default function ConsumerRegisterPage() {
         action: 'register'
       });
       setStep('otp');
+      startResendTimer();
     } catch (err: any) {
       setError(err.response?.data?.error?.message || err.response?.data?.message || 'Failed to send OTP. Try again.');
     } finally {
@@ -99,6 +101,26 @@ export default function ConsumerRegisterPage() {
     if (pasted.length === 6) {
       setOtp(pasted.split(''));
       handleVerifyOTP(pasted);
+    }
+  };
+
+  const startResendTimer = () => {
+    setResendTimer(60);
+    const interval = setInterval(() => {
+      setResendTimer(prev => {
+        if (prev <= 1) { clearInterval(interval); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleResend = async () => {
+    setError('');
+    try {
+      await axios.post(`${API}/auth/send-otp`, { phone: formData.phone, userType: 'consumer', action: 'register' });
+      startResendTimer();
+    } catch {
+      setError('Failed to resend OTP');
     }
   };
 
@@ -292,6 +314,16 @@ export default function ConsumerRegisterPage() {
                     <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
                     Edit number
                   </button>
+
+                  {resendTimer > 0 ? (
+                    <span className="text-sm font-medium text-earth-400 bg-earth-50 px-3 py-1.5 rounded-md border border-earth-200">
+                      Resend in {resendTimer}s
+                    </span>
+                  ) : (
+                    <button onClick={handleResend} className="text-sm text-primary-600 hover:text-primary-800 font-bold transition-colors">
+                      Resend code
+                    </button>
+                  )}
                 </div>
               </motion.div>
             )}

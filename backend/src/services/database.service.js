@@ -103,7 +103,7 @@ const getProductsByCity = async (filters) => {
       p.minimum_order_quantity,
       p.is_organic,
       p.harvest_date,
-      p.image_url,
+      p.primary_image_url AS image_url,
       f.id          AS farmer_id,
       f.name        AS farmer_name,
       f.city        AS farmer_city,

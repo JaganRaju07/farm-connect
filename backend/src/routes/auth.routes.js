@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const newAuthController = require('../controllers/auth.controller');
 const oldAuthController = require('../../../src/controllers/authController');
-const authenticateToken = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 const { body, validationResult } = require('express-validator');
 
 // Validation helper

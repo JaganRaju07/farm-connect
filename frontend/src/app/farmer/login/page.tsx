@@ -72,7 +72,7 @@ export default function FarmerLoginPage() {
       login(token, user, 'farmer');
 
       if (requiresProfileCompletion) {
-        router.push('/farmer/complete-profile');
+        router.push('/complete-profile');
       } else {
         router.push(redirectTo);
       }

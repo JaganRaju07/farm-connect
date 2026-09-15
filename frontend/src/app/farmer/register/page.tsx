@@ -19,6 +19,7 @@ export default function FarmerRegisterPage() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [resendTimer, setResendTimer] = useState(0);
 
   const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -44,6 +45,7 @@ export default function FarmerRegisterPage() {
         action: 'register'
       });
       setStep('otp');
+      startResendTimer();
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Failed to send OTP. Try again.');
     } finally {
@@ -65,7 +67,7 @@ export default function FarmerRegisterPage() {
 
       const { token, user } = res.data.data;
       login(token, user, 'farmer');
-      router.push('/farmer/complete-profile');
+      router.push('/complete-profile');
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Invalid OTP. Try again.');
       setOtp(['', '', '', '', '', '']);
@@ -95,6 +97,26 @@ export default function FarmerRegisterPage() {
     if (pasted.length === 6) {
       setOtp(pasted.split(''));
       handleVerifyOTP(pasted);
+    }
+  };
+
+  const startResendTimer = () => {
+    setResendTimer(60);
+    const interval = setInterval(() => {
+      setResendTimer(prev => {
+        if (prev <= 1) { clearInterval(interval); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const handleResend = async () => {
+    setError('');
+    try {
+      await axios.post(`${API}/auth/send-otp`, { phone: formData.phone, userType: 'farmer', action: 'register' });
+      startResendTimer();
+    } catch {
+      setError('Failed to resend OTP');
     }
   };
 
@@ -262,6 +284,16 @@ export default function FarmerRegisterPage() {
                 >
                   ← Edit number
                 </button>
+
+                {resendTimer > 0 ? (
+                  <span className="text-sm text-earth-400">
+                    Resend in {resendTimer}s
+                  </span>
+                ) : (
+                  <button onClick={handleResend} className="text-sm text-primary-700 hover:text-primary-900 font-medium transition-colors">
+                    Resend code
+                  </button>
+                )}
               </div>
             </div>
           )}

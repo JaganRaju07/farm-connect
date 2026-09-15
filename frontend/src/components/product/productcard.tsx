@@ -1,5 +1,4 @@
 // src/components/product/ProductCard.tsx
-import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, User, Star, ShieldCheck, Clock } from 'lucide-react';
 import { Product } from '@/types';
@@ -14,12 +13,31 @@ interface ProductCardProps {
   };
 }
 
+// Helper to return a professional Unsplash image based on product category or name
+const getFallbackImageUrl = (category: string, name: string): string => {
+  const n = name.toLowerCase();
+  
+  if (n.includes('tomato')) return 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('spinach') || n.includes('leaf') || n.includes('cabbage')) return 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('milk')) return 'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('egg')) return 'https://images.unsplash.com/photo-1587486913049-53fc88980cfc?q=80&w=600&auto=format&fit=crop';
+  
+  switch (category?.toLowerCase()) {
+    case 'fruits': return 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=600&auto=format&fit=crop';
+    case 'vegetables': return 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=600&auto=format&fit=crop';
+    case 'dairy': return 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?q=80&w=600&auto=format&fit=crop';
+    case 'grains': return 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=600&auto=format&fit=crop';
+    default: return 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=600&auto=format&fit=crop';
+  }
+};
+
 export default function ProductCard({ product }: ProductCardProps) {
   const {
     id,
     name,
     price,
     unit,
+    category,
     farmerName,
     farmerCity,
     imageUrl,
@@ -51,12 +69,14 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         {/* ── Image Container ── */}
         <div className="relative h-56 w-full overflow-hidden bg-earth-100">
-          <Image
-            src={imageUrl || '/images/placeholder-product.jpg'}
+          <img
+            src={imageUrl || getFallbackImageUrl(category, name)}
             alt={name}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            onError={(e) => {
+              // If the provided imageUrl itself is broken, fallback to category image
+              e.currentTarget.src = getFallbackImageUrl(category, name);
+            }}
           />
           
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

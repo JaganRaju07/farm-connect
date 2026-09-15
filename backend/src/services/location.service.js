@@ -186,6 +186,8 @@ async function findFarmersInRadius(consumerLat, consumerLon, radiusKm = 10) {
  *   );
  */
 async function getProductsInRadius(consumerLat, consumerLon, radiusKm = 10, filters = {}) {
+  const hasLocation = typeof consumerLat === 'number' && !isNaN(consumerLat) && typeof consumerLon === 'number' && !isNaN(consumerLon);
+
   // Base query – always applied
   let query = `
     SELECT
@@ -198,7 +200,7 @@ async function getProductsInRadius(consumerLat, consumerLon, radiusKm = 10, filt
       p.unit,
       p.stock_available,
       p.minimum_order_quantity,
-      p.image_url,
+      p.primary_image_url AS image_url,
       p.is_organic,
       p.harvest_date,
       p.created_at,
@@ -213,7 +215,7 @@ async function getProductsInRadius(consumerLat, consumerLon, radiusKm = 10, filt
 
       -- Distance from the consumer to this product's farm
       -- This is the KEY field replacing city-based filtering
-      calculate_distance_km($1, $2, f.latitude, f.longitude) AS distance_km
+      ${hasLocation ? 'calculate_distance_km($1, $2, f.latitude, f.longitude)' : 'NULL'} AS distance_km
 
     FROM products p
     JOIN farmers f ON p.farmer_id = f.id
@@ -223,12 +225,12 @@ async function getProductsInRadius(consumerLat, consumerLon, radiusKm = 10, filt
       AND f.is_verified    = TRUE
       AND f.verification_status = 'approved'
       AND p.stock_available > 0
-      AND calculate_distance_km($1, $2, f.latitude, f.longitude) <= $3
+      ${hasLocation ? 'AND calculate_distance_km($1, $2, f.latitude, f.longitude) <= $3' : ''}
   `;
 
-  // Start with the three required parameters
-  const params = [consumerLat, consumerLon, radiusKm];
-  let paramIndex = 4; // next placeholder will be $4
+  // Start with the parameters depending on location availability
+  const params = hasLocation ? [consumerLat, consumerLon, radiusKm] : [];
+  let paramIndex = hasLocation ? 4 : 1;
 
   // ---- Optional filters (appended dynamically) ----
   // WHY dynamic: Not every request uses all filters. Building the WHERE
@@ -258,8 +260,12 @@ async function getProductsInRadius(consumerLat, consumerLon, radiusKm = 10, filt
     paramIndex++;
   }
 
-  // Sort: closest farm first, then newest products within same farm
-  query += ` ORDER BY distance_km ASC, p.created_at DESC`;
+  // Sort: closest farm first if location exists, then newest products within same farm
+  if (hasLocation) {
+    query += ` ORDER BY distance_km ASC, p.created_at DESC`;
+  } else {
+    query += ` ORDER BY p.created_at DESC`;
+  }
 
   const result = await db.query(query, params);
   return result.rows;

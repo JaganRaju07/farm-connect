@@ -41,28 +41,20 @@ function FarmerDashboardContent() {
           }
         };
 
-        const [productsData, ordersData, profileData, allOrdersData] = await Promise.all([
-          fetchSafe(`${API_BASE}/farmers/products?status=active`),
-          fetchSafe(`${API_BASE}/farmers/orders?status=pending`),
-          fetchSafe(`${API_BASE}/farmers/profile`),
-          fetchSafe(`${API_BASE}/farmers/orders`)
+        const [dashboardData, lowStockData] = await Promise.all([
+          fetchSafe(`${API_BASE}/farmers/dashboard`),
+          fetchSafe(`${API_BASE}/farmers/products/low-stock`)
         ]);
 
-        const productsList = productsData?.products ?? [];
-        const activeCount = productsData?.count ?? productsList.length ?? 0;
-        const lowStockCount = productsList.filter((p: any) => p.stock_available < 10).length;
-        
-        const pendingCount = ordersData?.count ?? ordersData?.orders?.length ?? 0;
-        const earnings = profileData?.farmer?.total_earnings ?? 0;
-        
-        const ordersList = allOrdersData?.orders ?? [];
+        const overview = dashboardData?.overview || {};
+        const recentOrders = dashboardData?.recentOrders || [];
 
         setStats({
-          activeProducts: activeCount,
-          pendingOrders: pendingCount,
-          totalEarnings: earnings,
-          lowStockCount: lowStockCount,
-          recentOrders: ordersList.slice(0, 5),
+          activeProducts: Number(overview.active_products) || 0,
+          pendingOrders: Number(overview.pending_count) || 0,
+          totalEarnings: Number(overview.total_earnings) || 0,
+          lowStockCount: lowStockData?.count || 0,
+          recentOrders: recentOrders,
         });
       } catch (error) {
         console.error('Dashboard load error:', error);
@@ -150,12 +142,6 @@ function FarmerDashboardContent() {
       <div>
         <h1 className="text-2xl font-bold font-display text-earth-900 tracking-tight">Overview</h1>
         <p className="text-earth-500 text-sm mt-1">Here's what's happening with your farm today.</p>
-        {(!stats?.activeProducts && !stats?.pendingOrders && !stats?.totalEarnings) && (
-          <div className="mt-4 inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg text-sm border border-blue-100 font-medium">
-            <AlertCircle className="w-4 h-4" />
-            Backend integration pending: Connect the farmer endpoints to see real metrics here.
-          </div>
-        )}
       </div>
       
       {/* Low Stock Warning */}

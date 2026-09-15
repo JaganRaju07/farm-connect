@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import axios from 'axios';
+import { apiClient } from '@/lib/api-client';
 import { Shield, Users, ShoppingCart, Tag, IndianRupee, LogOut, CheckCircle, Clock } from 'lucide-react';
 import Link from 'next/link';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
@@ -23,8 +23,7 @@ function AdminDashboardContent() {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
-        const res = await axios.get(`${API}/admin/analytics`);
+        const res = await apiClient.get('/admin/platform-analytics');
         setAnalytics(res.data.data);
       } catch (err: any) {
         if (err.response?.status === 401 || err.response?.status === 403) {

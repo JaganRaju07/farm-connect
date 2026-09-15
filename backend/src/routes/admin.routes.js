@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../config/database');
 const {
   adminLogin,
   getAnalytics,
@@ -14,7 +15,7 @@ const {
   getPlatformAnalytics
 } = require('../controllers/admin.controller');
 
-const authenticateToken = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 const roleAuth = require('../middleware/roleAuth');
 
 // Public

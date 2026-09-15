@@ -64,6 +64,9 @@ app.use('/api/v1/admin', adminRoutes);
 const notificationRoutes = require('./routes/notification.routes');
 app.use('/api/v1/notifications', notificationRoutes);
 
+const uploadRoutes = require('./routes/upload.routes');
+app.use('/api/v1/upload', uploadRoutes);
+
 // --- 404 & Global Error Handler ---
 app.use((req, res) => {
   res.status(404).json({
@@ -76,6 +79,7 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
+  require('fs').writeFileSync('C:\\Users\\Lenovo\\farm-connect\\backend\\global_error.log', String(err.stack || err.message));
   console.error(err);
   res.status(500).json({
     success: false,
@@ -97,4 +101,4 @@ const startServer = async () => {
 };
 
 startServer();
-module.exports = app;
+module.exports = app;

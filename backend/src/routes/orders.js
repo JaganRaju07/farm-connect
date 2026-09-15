@@ -2,6 +2,11 @@ const express = require('express');
 const router = express.Router();
 const { placeOrder } = require('../services/order.service');
 
+const { authenticateToken, requireRole } = require('../middleware/auth');
+
+router.use(authenticateToken);
+router.use(requireRole('consumer'));
+
 // Handle POST /api/orders/place
 router.post('/place', async (req, res) => {
   try {

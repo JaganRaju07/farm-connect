@@ -70,49 +70,45 @@ export default function CompleteProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!latitude || !longitude) {
-      setError('Location required. Please allow location access and refresh.');
-      return;
-    }
+
+    const finalLat = latitude || 12.9716; // Default to Bangalore if geolocation fails
+    const finalLng = longitude || 77.5946;
 
     setLoading(true);
     setError('');
 
     try {
-      // Build FormData for multipart/form-data request (required for file upload)
-      const data = new FormData();
-      data.append('name', formData.name);
-      data.append('email', formData.email);
-      data.append('latitude', latitude.toString());
-      data.append('longitude', longitude.toString());
-      data.append('city', formData.city);
-      data.append('pincode', formData.pincode);
+      const payload: any = {
+        name: formData.name,
+        latitude: finalLat,
+        longitude: finalLng,
+        city: formData.city,
+        pincode: formData.pincode,
+      };
 
-      if (userRole === 'farmer') {
-        data.append('address', formData.address);
-        data.append('farming_type', formData.farming_type);
-        data.append('bio', formData.bio);
-        data.append('years_of_farming', formData.years_of_farming);
-      } else {
-        data.append('delivery_address', formData.address);
+      if (formData.email?.trim()) {
+        payload.email = formData.email.trim();
       }
 
-      if (photoFile) {
-        data.append('photo', photoFile);
+      if (userRole === 'farmer') {
+        payload.address = formData.address;
+        payload.farming_type = formData.farming_type;
+        payload.bio = formData.bio;
+        payload.years_of_farming = formData.years_of_farming;
+      } else {
+        payload.delivery_address = formData.address;
       }
 
       const token = localStorage.getItem('auth_token');
-      const endpoint = userRole === 'farmer'
-        ? '/api/v1/farmer/profile'
-        : '/api/v1/consumer/profile';
+      const endpoint = '/auth/complete-registration';
 
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${endpoint}`,
-        data,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            // DO NOT set Content-Type — axios sets multipart/form-data automatically with boundary
+            'Content-Type': 'application/json'
           }
         }
       );
@@ -300,11 +296,16 @@ export default function CompleteProfilePage() {
           {/* GPS Location indicator */}
           <div className="bg-primary-50 border border-primary-200 rounded-xl p-4 flex items-center gap-3">
             <MapPin className="w-5 h-5 text-primary-600 flex-shrink-0" />
-            <p className="text-sm text-primary-800">
-              {latitude && longitude
-                ? `Location detected: ${latitude.toFixed(5)}°N, ${longitude.toFixed(5)}°E`
-                : 'Detecting your location...'}
-            </p>
+            <div className="text-sm text-primary-800">
+              {latitude && longitude ? (
+                `Location detected: ${latitude.toFixed(5)}°N, ${longitude.toFixed(5)}°E`
+              ) : (
+                <>
+                  <p>{error || 'Detecting your location...'}</p>
+                  <p className="text-xs mt-1 opacity-80">If location cannot be detected, a default city center location will be used.</p>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Error */}
@@ -317,7 +318,7 @@ export default function CompleteProfilePage() {
           {/* Submit */}
           <button
             type="submit"
-            disabled={loading || !latitude}
+            disabled={loading}
             className="w-full bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {loading ? 'Saving...' : 'Complete Profile'}

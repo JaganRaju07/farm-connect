@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import {
@@ -14,15 +13,8 @@ import { ShinyText } from '@/components/magicui/ShinyText';
 
 export default function HomePage() {
   const { isAuthenticated, role, isLoading } = useAuth();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      if (role === 'farmer') router.push('/farmer/dashboard');
-      if (role === 'consumer') router.push('/marketplace');
-      if (role === 'admin') router.push('/admin/dashboard');
-    }
-  }, [isAuthenticated, role, isLoading]);
+  // Removed auto-redirect so the homepage remains accessible to authenticated users.
 
   if (isLoading) {
     return (
@@ -45,12 +37,20 @@ export default function HomePage() {
             <span className="text-xl font-bold text-earth-900 tracking-tight font-display">Farm Connect</span>
           </Link>
           <div className="flex items-center gap-4 sm:gap-6">
-            <Link href="/login" className="text-sm font-semibold text-earth-600 hover:text-earth-900 transition-colors hidden sm:block">
-              Log In
-            </Link>
-            <Link href="/register" className="btn-primary text-sm px-5 py-2.5">
-              Get Started
-            </Link>
+            {!isLoading && isAuthenticated ? (
+              <Link href={role === 'farmer' ? '/farmer/dashboard' : role === 'admin' ? '/admin/dashboard' : '/marketplace'} className="btn-primary text-sm px-5 py-2.5">
+                Go to {role === 'farmer' ? 'Dashboard' : role === 'admin' ? 'Dashboard' : 'Marketplace'}
+              </Link>
+            ) : (
+              <>
+                <Link href="/login" className="text-sm font-semibold text-earth-600 hover:text-earth-900 transition-colors hidden sm:block">
+                  Log In
+                </Link>
+                <Link href="/register" className="btn-primary text-sm px-5 py-2.5">
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>

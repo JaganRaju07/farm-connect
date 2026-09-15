@@ -28,7 +28,7 @@ async function getWishlist(consumerId) {
  const result = await db.query(
  `SELECT
  p.id, p.name, p.category, p.price, p.unit,
- p.stock_available, p.primary_image_url, p.is_organic,
+ p.stock_available, p.primary_image_url AS image_url, p.is_organic,
  p.average_rating, p.review_count,
  p.is_active,
  f.name AS farmer_name, f.city AS farmer_city,

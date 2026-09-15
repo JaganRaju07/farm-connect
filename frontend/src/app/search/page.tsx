@@ -11,6 +11,23 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 const CATEGORIES = ['vegetables', 'fruits', 'dairy', 'grains', 'other'];
 
+const getFallbackImageUrl = (category: string, name: string): string => {
+  const n = (name || '').toLowerCase();
+  
+  if (n.includes('tomato')) return 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('spinach') || n.includes('leaf') || n.includes('cabbage')) return 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('milk')) return 'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('egg')) return 'https://images.unsplash.com/photo-1587486913049-53fc88980cfc?q=80&w=600&auto=format&fit=crop';
+  
+  switch (category?.toLowerCase()) {
+    case 'fruits': return 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=600&auto=format&fit=crop';
+    case 'vegetables': return 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=600&auto=format&fit=crop';
+    case 'dairy': return 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?q=80&w=600&auto=format&fit=crop';
+    case 'grains': return 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=600&auto=format&fit=crop';
+    default: return 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=600&auto=format&fit=crop';
+  }
+};
+
 export default function SearchPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -179,12 +196,14 @@ export default function SearchPage() {
                 <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                   
                   <div className="relative h-56 bg-gray-100 overflow-hidden">
-                    {p.primary_image_url
-                      ? <img src={p.primary_image_url} alt={p.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                      : <div className="w-full h-full flex items-center justify-center bg-gray-50 text-gray-300">
-                          <Leaf className="w-12 h-12" />
-                        </div>
-                    }
+                    <img 
+                      src={p.primary_image_url || getFallbackImageUrl(p.category, p.name)} 
+                      alt={p.name} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      onError={(e) => {
+                        e.currentTarget.src = getFallbackImageUrl(p.category, p.name);
+                      }}
+                    />
                     {p.is_organic && (
                       <span className="absolute top-3 left-3 bg-primary-500/90 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium shadow-sm flex items-center gap-1">
                         <Leaf className="w-3 h-3" /> Organic

@@ -80,7 +80,7 @@ async function getFarmerDashboardData(farmerId) {
         p.price,
         p.unit,
         p.stock_available,
-        p.primary_image_url,
+        p.primary_image_url AS image_url,
         p.order_count,
         p.view_count,
         COALESCE(recent.revenue, 0) AS revenue_generated,
