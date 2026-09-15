@@ -1,7 +1,8 @@
 // src/components/product/ProductCard.tsx
 import Link from 'next/link';
-import { MapPin, User, Star, ShieldCheck, Clock } from 'lucide-react';
+import { MapPin, User, Star, ShieldCheck, Clock, Leaf } from 'lucide-react';
 import { Product } from '@/types';
+import { getRelativeHarvestDate } from '@/lib/utils';
 import WishlistButton from '@/components/product/WishlistButton';
 import { ShineBorder } from '@/components/magicui/ShineBorder';
 
@@ -45,7 +46,8 @@ export default function ProductCard({ product }: ProductCardProps) {
     isOrganic,
     distance_km,
     rating,
-    reviews_count
+    reviews_count,
+    harvestDate
   } = product;
 
   const isOutOfStock = stockAvailable === 0;
@@ -83,6 +85,16 @@ export default function ProductCard({ product }: ProductCardProps) {
           
           {/* Top Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+            {distance_km !== undefined && distance_km !== null && (
+              <span className={`inline-flex items-center gap-1 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-bold shadow-sm ${
+                distance_km < 2 ? 'bg-primary-500/90 text-white' : 
+                distance_km < 5 ? 'bg-primary-100/90 text-primary-700' : 
+                'bg-white/90 text-earth-700'
+              }`}>
+                <MapPin className="w-3 h-3" />
+                {distance_km < 2 ? 'Super Local' : distance_km < 5 ? 'Local' : 'Regional'}
+              </span>
+            )}
             {isOrganic && (
               <span className="inline-flex items-center gap-1 bg-white/90 backdrop-blur-sm text-primary-700 px-2.5 py-1 rounded-md text-xs font-bold shadow-sm">
                 <ShieldCheck className="w-3 h-3" />
@@ -161,6 +173,13 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </span>
               )}
             </div>
+
+            {harvestDate && getRelativeHarvestDate(harvestDate) && (
+              <div className="flex items-center text-xs font-medium text-success-700 bg-success-50 mt-2 px-2 py-1 rounded">
+                <Leaf className="w-3 h-3 mr-1.5" />
+                {getRelativeHarvestDate(harvestDate)}
+              </div>
+            )}
           </div>
 
         </div>

@@ -230,9 +230,12 @@ export default function CompleteProfilePage() {
                 type="text"
                 required
                 value={formData.pincode}
-                onChange={e => setFormData(prev => ({ ...prev, pincode: e.target.value }))}
+                onChange={e => setFormData(prev => ({ ...prev, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                 placeholder="560001"
+                maxLength={6}
+                pattern="[0-9]{6}"
+                inputMode="numeric"
               />
             </div>
           </div>

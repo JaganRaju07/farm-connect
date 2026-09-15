@@ -3,12 +3,20 @@
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/cartcontext';
+import { usePathname } from 'next/navigation';
 import { Sprout, ShoppingCart, LogOut, User, Tractor } from 'lucide-react';
 import NotificationBell from '@/components/notifications/NotificationBell';
 
 export default function Header() {
   const { isAuthenticated, user, role, logout } = useAuth();
   const { getItemCount } = useCart();
+  const pathname = usePathname();
+
+  // Hide header on dashboard layouts (which have their own sidebars) and auth pages
+  const hideHeaderPaths = ['/farmer', '/admin', '/login', '/register'];
+  if (hideHeaderPaths.some(path => pathname?.startsWith(path))) {
+    return null;
+  }
 
   const dashboardLink = 
     role === 'farmer' ? '/farmer/dashboard' : 

@@ -160,10 +160,12 @@ export default function CheckoutPage() {
                         type="text"
                         required
                         value={pincode}
-                        onChange={e => setPincode(e.target.value)}
+                        onChange={e => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                         className="input-field"
                         placeholder="560001"
                         maxLength={6}
+                        pattern="[0-9]{6}"
+                        inputMode="numeric"
                       />
                     </div>
                   </div>

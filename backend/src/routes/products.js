@@ -52,9 +52,12 @@ router.get('/', async (req, res) => {
       farmerId: p.farmer_id,
       farmerName: p.farmer_name,
       farmerCity: p.farmer_city,
+      farmerLat: p.farmer_latitude,
+      farmerLon: p.farmer_longitude,
       distance_km: p.distance_km,
       rating: p.rating,
       reviews_count: p.reviews_count,
+      harvestDate: p.harvest_date,
       createdAt: p.created_at
     }));
 
@@ -62,6 +65,57 @@ router.get('/', async (req, res) => {
   } catch (err) {
     require('fs').writeFileSync('C:\\Users\\Lenovo\\farm-connect\\backend\\error.log', String(err.stack || err.message));
     console.error('Error fetching nearby products:', err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const db = require('../config/database');
+    const result = await db.query(
+      `SELECT p.*, 
+              f.name as farmer_name, 
+              f.city as farmer_city, 
+              f.latitude as farmer_latitude, 
+              f.longitude as farmer_longitude 
+       FROM products p 
+       JOIN farmers f ON p.farmer_id = f.id 
+       WHERE p.id = $1`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+
+    const p = result.rows[0];
+    const product = {
+      id: p.id,
+      name: p.name,
+      category: p.category,
+      description: p.description,
+      price: p.price,
+      unit: p.unit,
+      stockAvailable: p.stock_available,
+      minimumOrderQuantity: p.minimum_order_quantity,
+      imageUrl: p.primary_image_url || p.image_url,
+      isOrganic: p.is_organic,
+      isActive: p.is_active,
+      farmerId: p.farmer_id,
+      farmerName: p.farmer_name,
+      farmerCity: p.farmer_city,
+      farmerLat: p.farmer_latitude,
+      farmerLon: p.farmer_longitude,
+      rating: p.rating,
+      reviews_count: p.reviews_count,
+      harvestDate: p.harvest_date,
+      createdAt: p.created_at
+    };
+
+    res.json({ success: true, data: product });
+  } catch (err) {
+    console.error('Error fetching product by id:', err);
     res.status(500).json({ success: false, message: err.message });
   }
 });

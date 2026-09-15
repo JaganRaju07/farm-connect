@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { upload } = require('../middleware/upload');
 const { uploadImage } = require('../services/cloudinary.service');
-const authenticateToken = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 
 router.use(authenticateToken);
 

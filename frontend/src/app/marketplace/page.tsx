@@ -7,8 +7,10 @@ import ProtectedRoute from '@/components/common/ProtectedRoute';
 import ProductCard from '@/components/product/productcard';
 import ProductSkeleton from '@/components/product/ProductSkeleton';
 import { ProductFilter, FilterState } from '@/components/product/productfilter';
-import { MapPin, Search, Loader2, SlidersHorizontal, ChevronDown, X } from 'lucide-react';
+import { MapPin, Search, Loader2, SlidersHorizontal, ChevronDown, X, Map, Grid } from 'lucide-react';
 import { Product } from '@/types';
+import MapExplorer from '@/components/common/MapExplorer';
+import LocalInsightsWidget from '@/components/marketplace/LocalInsightsWidget';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -17,6 +19,7 @@ function MarketplaceContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
   
   const initialFilters: FilterState = {
     category: '',
@@ -69,7 +72,7 @@ function MarketplaceContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* ── Page Header & Search ── */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-earth-900 tracking-tight font-display">Fresh Marketplace</h1>
             <div className="flex items-center gap-2 mt-2">
@@ -85,15 +88,31 @@ function MarketplaceContent() {
             </div>
           </div>
 
-          <div className="flex gap-3 w-full md:w-auto">
-            <div className="relative flex-1 md:w-80">
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            {/* View Toggle */}
+            <div className="flex bg-white rounded-xl p-1 border border-earth-200 shadow-sm shrink-0">
+              <button 
+                onClick={() => setViewMode('grid')}
+                className={`px-3 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${viewMode === 'grid' ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-earth-500 hover:text-earth-900'}`}
+              >
+                <Grid className="w-4 h-4" /> Grid
+              </button>
+              <button 
+                onClick={() => setViewMode('map')}
+                className={`px-3 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${viewMode === 'map' ? 'bg-primary-50 text-primary-700 shadow-sm' : 'text-earth-500 hover:text-earth-900'}`}
+              >
+                <Map className="w-4 h-4" /> Map
+              </button>
+            </div>
+            
+            <div className="relative flex-1 md:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-earth-400" />
               <input
                 type="text"
                 placeholder="Search products or farms..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-field pl-10"
+                className="input-field pl-10 h-full"
               />
             </div>
             <button 
@@ -108,6 +127,9 @@ function MarketplaceContent() {
             </button>
           </div>
         </div>
+        
+        {/* Local Insights Widget */}
+        <LocalInsightsWidget products={products} isLoading={loading} />
 
         {/* ── Active Filters Display ── */}
         {(appliedFilters.category || appliedFilters.isOrganic || appliedFilters.minPrice || appliedFilters.maxPrice) && (
@@ -139,37 +161,48 @@ function MarketplaceContent() {
           </div>
         )}
 
-        {/* ── Product Grid ── */}
-        {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-              <ProductSkeleton key={i} />
-            ))}
-          </div>
-        ) : filteredProducts.length === 0 ? (
-          <div className="card text-center py-20 px-6">
-            <Search className="w-12 h-12 text-earth-300 mx-auto mb-4" />
-            <h3 className="text-lg font-bold font-display text-earth-900 mb-1">No products found</h3>
-            <p className="text-earth-500">Try expanding your search radius or modifying your filters.</p>
-            <div className="mt-6">
-              <button 
-                onClick={() => {
-                  const newRadius = appliedFilters.radius === 25 ? 50 : 100;
-                  setFilters(prev => ({ ...prev, radius: newRadius }));
-                  setAppliedFilters(prev => ({ ...prev, radius: newRadius }));
-                }}
-                className="btn-secondary"
-              >
-                Expand Search Radius to {appliedFilters.radius === 25 ? '50km' : '100km'}
-              </button>
-            </div>
+        {/* ── Main Content Area ── */}
+        {viewMode === 'map' ? (
+          <div className="animate-enter mb-8">
+            <MapExplorer 
+              products={filteredProducts} 
+              consumerLocation={latitude && longitude ? { lat: latitude, lon: longitude } : null} 
+            />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-enter">
-            {filteredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <>
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map(i => (
+                  <ProductSkeleton key={i} />
+                ))}
+              </div>
+            ) : filteredProducts.length === 0 ? (
+              <div className="card text-center py-20 px-6">
+                <Search className="w-12 h-12 text-earth-300 mx-auto mb-4" />
+                <h3 className="text-lg font-bold font-display text-earth-900 mb-1">No products found</h3>
+                <p className="text-earth-500">Try expanding your search radius or modifying your filters.</p>
+                <div className="mt-6">
+                  <button 
+                    onClick={() => {
+                      const newRadius = appliedFilters.radius === 25 ? 50 : 100;
+                      setFilters(prev => ({ ...prev, radius: newRadius }));
+                      setAppliedFilters(prev => ({ ...prev, radius: newRadius }));
+                    }}
+                    className="btn-secondary"
+                  >
+                    Expand Search Radius to {appliedFilters.radius === 25 ? '50km' : '100km'}
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-enter">
+                {filteredProducts.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
 

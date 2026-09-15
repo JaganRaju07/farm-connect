@@ -293,10 +293,13 @@ function FarmerProfileContent() {
                 <input
                   type="text"
                   value={form.pincode}
-                  onChange={e => setForm({ ...form, pincode: e.target.value })}
+                  onChange={e => setForm({ ...form, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) })}
                   placeholder="571401"
                   disabled={!editing}
                   className="input-field"
+                  maxLength={6}
+                  pattern="[0-9]{6}"
+                  inputMode="numeric"
                 />
               </div>
             </div>

@@ -1,10 +1,30 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 const { testConnection } = require('./config/database');
 const sanitizeInputs = require('./middleware/sanitizer');
 
 const app = express();
+
+// Security Headers
+app.use(helmet());
+
+// HTTP Request Logging
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+// Rate Limiting (Global)
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 300, // Limit each IP to 300 requests per `window`
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  message: { success: false, message: 'Too many requests, please try again later.' }
+});
+app.use('/api', globalLimiter);
+
 
 const getAllowedOrigins = () => {
   const origins = process.env.ALLOWED_ORIGINS;
@@ -79,13 +99,13 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  require('fs').writeFileSync('C:\\Users\\Lenovo\\farm-connect\\backend\\global_error.log', String(err.stack || err.message));
-  console.error(err);
+  console.error('Unhandled Error:', err);
+  // Remove synchronous fs.writeFileSync to avoid blocking the event loop in production.
   res.status(500).json({
     success: false,
     error: {
       code: 'SERVER_ERROR',
-      message: err.message || 'Internal Server Error'
+      message: process.env.NODE_ENV === 'production' ? 'Internal Server Error' : (err.message || 'Internal Server Error')
     }
   });
 });

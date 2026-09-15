@@ -21,6 +21,7 @@ export interface Product {
   farmerCity: string;
   rating?: number;
   reviewCount?: number;
+  harvestDate?: string;
   createdAt: string;
   updatedAt: string;
 }

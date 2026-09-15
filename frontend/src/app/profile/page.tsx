@@ -133,10 +133,18 @@ function ProfileContent() {
               <input
                 type={field.type}
                 value={(form as any)[field.key]}
-                onChange={e => setForm(prev => ({ ...prev, [field.key]: e.target.value }))}
+                onChange={e => setForm(prev => ({ 
+                  ...prev, 
+                  [field.key]: field.key === 'pincode' 
+                    ? e.target.value.replace(/\D/g, '').slice(0, 6) 
+                    : e.target.value 
+                }))}
                 placeholder={field.placeholder}
                 disabled={!editing}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 disabled:bg-gray-50 disabled:text-gray-500 transition-shadow"
+                maxLength={field.key === 'pincode' ? 6 : undefined}
+                pattern={field.key === 'pincode' ? "[0-9]{6}" : undefined}
+                inputMode={field.key === 'pincode' ? "numeric" : undefined}
               />
             </div>
           ))}

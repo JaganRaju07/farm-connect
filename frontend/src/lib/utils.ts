@@ -59,6 +59,30 @@ export function truncate(text: string, maxLength: number): string {
 }
 
 /**
+ * Get relative time string for harvest date
+ */
+export function getRelativeHarvestDate(dateString: string | null | undefined): string | null {
+  if (!dateString) return null;
+  
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return null;
+
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  
+  const harvest = new Date(date);
+  harvest.setHours(0, 0, 0, 0);
+
+  const diffTime = now.getTime() - harvest.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) return null; // Invalid if harvested in the future
+  if (diffDays === 0) return 'Harvested today';
+  if (diffDays === 1) return 'Harvested yesterday';
+  return `Harvested ${diffDays} days ago`;
+}
+
+/**
  * Debounce function for search inputs
  */
 export function debounce<T extends (...args: unknown[]) => unknown>(

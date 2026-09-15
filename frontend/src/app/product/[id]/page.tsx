@@ -12,6 +12,7 @@ import ReviewForm from '@/components/reviews/ReviewForm';
 import Link from 'next/link';
 import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton';
 import Button from '@/components/common/button';
+import { getRelativeHarvestDate } from '@/lib/utils';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -189,17 +190,29 @@ export default function ProductDetailPage() {
 
             {/* Availability */}
             <div className="mt-auto pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="font-semibold text-earth-900">Availability</span>
-                {product.stock_available > 0 ? (
-                  <span className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-md border border-primary-100">
-                    <Package className="w-4 h-4" />
-                    {product.stock_available} {product.unit} in stock
-                  </span>
-                ) : (
-                  <span className="text-sm font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-md border border-red-100">
-                    Out of stock
-                  </span>
+              <div className="flex flex-col gap-3 mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-earth-900">Availability</span>
+                  {product.stock_available > 0 ? (
+                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-md border border-primary-100">
+                      <Package className="w-4 h-4" />
+                      {product.stock_available} {product.unit} in stock
+                    </span>
+                  ) : (
+                    <span className="text-sm font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-md border border-red-100">
+                      Out of stock
+                    </span>
+                  )}
+                </div>
+
+                {product.harvestDate && getRelativeHarvestDate(product.harvestDate) && (
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-earth-900">Freshness</span>
+                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-success-700 bg-success-50 px-2.5 py-1 rounded-md border border-success-100">
+                      <Leaf className="w-4 h-4" />
+                      {getRelativeHarvestDate(product.harvestDate)}
+                    </span>
+                  </div>
                 )}
               </div>
             </div>

@@ -5,6 +5,7 @@ import "./globals.css";
 import { CartProvider } from "@/context/cartcontext";
 import { LocationProvider } from "@/context/LocationContext";
 import AxiosInterceptorWrapper from "@/components/layout/AxiosInterceptorWrapper";
+import Header from "@/components/layout/header";
 import { AuthProvider } from "@/context/AuthContext";
 import { ToastProvider } from "@/context/ToastContext";
 
@@ -44,6 +45,7 @@ export default function RootLayout({
             <CartProvider>
               <ToastProvider>
                 <AxiosInterceptorWrapper>
+                  <Header />
                   {children}
                 </AxiosInterceptorWrapper>
               </ToastProvider>
