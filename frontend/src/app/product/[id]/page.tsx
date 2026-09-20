@@ -80,10 +80,10 @@ export default function ProductDetailPage() {
   if (loading) return <ProductDetailSkeleton />;
 
   if (!product) return (
-    <div className="min-h-screen flex items-center justify-center bg-earth-50 font-sans">
-      <div className="card text-center p-12">
-        <Package className="w-12 h-12 text-earth-300 mx-auto mb-4" />
-        <p className="text-lg text-earth-900 font-bold font-display mb-4">Product not found</p>
+    <div className="min-h-screen flex items-center justify-center bg-background font-sans transition-colors duration-200">
+      <div className="card text-center p-12 bg-surface border-border-default transition-colors">
+        <Package className="w-12 h-12 text-foreground-muted mx-auto mb-4" />
+        <p className="text-lg text-foreground font-bold font-display mb-4">Product not found</p>
         <Button onClick={() => router.push('/marketplace')} variant="secondary">
           Return to Marketplace
         </Button>
@@ -136,12 +136,12 @@ export default function ProductDetailPage() {
   }).format(product.price * qty);
 
   return (
-    <div className="min-h-screen bg-earth-50 font-sans pb-24">
+    <div className="min-h-screen bg-background font-sans pb-24 transition-colors duration-200">
       
       {/* ── Top Nav Area ── */}
-      <div className="bg-white border-b border-earth-200 sticky top-0 z-40">
+      <div className="bg-surface border-b border-border-default sticky top-0 z-40 transition-colors">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center">
-          <Link href="/marketplace" className="inline-flex items-center gap-2 text-earth-600 hover:text-earth-900 font-medium transition-colors">
+          <Link href="/marketplace" className="inline-flex items-center gap-2 text-foreground-secondary hover:text-foreground font-medium transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Back to Marketplace
           </Link>
@@ -153,7 +153,7 @@ export default function ProductDetailPage() {
           
           {/* ── Left: Image Gallery ── */}
           <div className="space-y-4">
-            <div className="relative aspect-square bg-earth-100 rounded-2xl overflow-hidden border border-earth-200 group shadow-sm">
+            <div className="relative aspect-square bg-surface-muted rounded-2xl overflow-hidden border border-border-default group shadow-sm transition-colors">
               <Image 
                 src={images[activeImage]} 
                 alt={product.name} 
@@ -161,7 +161,7 @@ export default function ProductDetailPage() {
                 className="object-cover transition-transform duration-500 group-hover:scale-105" 
               />
               {product.isOrganic && (
-                <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-primary-700 text-sm px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm font-bold border border-primary-100">
+                <span className="absolute top-4 left-4 bg-surface/90 backdrop-blur-md text-primary-700 dark:text-primary-400 text-sm px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm font-bold border border-border-default">
                   <ShieldCheck className="w-4 h-4" /> Organic Certified
                 </span>
               )}
@@ -172,7 +172,7 @@ export default function ProductDetailPage() {
                 {images.map((img: string, i: number) => (
                   <button key={i} onClick={() => setActiveImage(i)}
                     className={`relative w-20 h-20 rounded-xl overflow-hidden border-2 flex-shrink-0 transition-all ${
-                      activeImage === i ? 'border-primary-600 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'
+                      activeImage === i ? 'border-primary-600 dark:border-primary-400 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'
                     }`}>
                     <Image src={img} alt="" fill className="object-cover" />
                   </button>
@@ -183,27 +183,27 @@ export default function ProductDetailPage() {
 
           {/* ── Right: Product Info ── */}
           <div className="flex flex-col">
-            <div className="mb-6 border-b border-earth-200 pb-6">
+            <div className="mb-6 border-b border-border-default pb-6 transition-colors">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-bold text-primary-600 uppercase tracking-widest">{product.category}</p>
-                <button onClick={handleShare} className="p-2 text-earth-500 hover:text-earth-900 bg-earth-100 hover:bg-earth-200 rounded-full transition-colors">
+                <p className="text-xs font-bold text-primary-600 dark:text-primary-400 uppercase tracking-widest">{product.category}</p>
+                <button onClick={handleShare} className="p-2 text-foreground-muted hover:text-foreground bg-surface-elevated hover:bg-surface-muted rounded-full transition-colors">
                   <Share2 className="w-4 h-4" />
                 </button>
               </div>
-              <h1 className="text-3xl md:text-4xl font-extrabold text-earth-900 mb-4 tracking-tight leading-tight font-display">{product.name}</h1>
+              <h1 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4 tracking-tight leading-tight font-display">{product.name}</h1>
               
               {/* Rating */}
               {product.rating > 0 && (
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex gap-0.5">
                     {[1,2,3,4,5].map(s => (
-                      <Star key={s} className={`w-4 h-4 ${s <= Math.round(product.rating) ? 'text-amber-400 fill-amber-400' : 'text-earth-200'}`} />
+                      <Star key={s} className={`w-4 h-4 ${s <= Math.round(product.rating) ? 'text-amber-400 fill-amber-400' : 'text-foreground-muted'}`} />
                     ))}
                   </div>
-                  <span className="text-sm font-bold text-earth-800">
+                  <span className="text-sm font-bold text-foreground-secondary">
                     {parseFloat(product.rating).toFixed(1)}
                   </span>
-                  <span className="text-sm text-earth-500">
+                  <span className="text-sm text-foreground-muted">
                     ({product.reviews_count || 0} reviews)
                   </span>
                 </div>
@@ -211,16 +211,16 @@ export default function ProductDetailPage() {
 
               {/* Price */}
               <div className="flex items-baseline gap-2 mt-2">
-                <span className="text-4xl font-black text-primary-700 tracking-tight">{formattedPrice}</span>
-                <span className="text-lg text-earth-500 font-medium">/ {product.unit}</span>
+                <span className="text-4xl font-black text-primary-700 dark:text-primary-400 tracking-tight">{formattedPrice}</span>
+                <span className="text-lg text-foreground-secondary font-medium">/ {product.unit}</span>
               </div>
             </div>
 
             {/* Description */}
             {product.description && (
               <div className="mb-8">
-                <h3 className="text-sm font-bold text-earth-900 mb-2 uppercase tracking-wider">About this product</h3>
-                <p className="text-earth-600 leading-relaxed text-sm md:text-base">{product.description}</p>
+                <h3 className="text-sm font-bold text-foreground-secondary mb-2 uppercase tracking-wider">About this product</h3>
+                <p className="text-foreground leading-relaxed text-sm md:text-base">{product.description}</p>
               </div>
             )}
 
@@ -228,22 +228,22 @@ export default function ProductDetailPage() {
             <FreshnessSnapshot harvestDate={product.harvestDate} distanceKm={product.distance_km} />
 
             {/* Farmer Trust Card */}
-            <div className="card p-5 mt-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="card p-5 mt-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border-border-default transition-colors">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center font-bold text-primary-800 text-lg border border-primary-200 shrink-0">
+                <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center font-bold text-primary-800 dark:text-primary-300 text-lg border border-primary-200 dark:border-primary-800 shrink-0 transition-colors">
                   {product.farmerName ? product.farmerName[0] : 'F'}
                 </div>
                 <div>
-                  <p className="text-xs text-earth-500 font-medium mb-0.5">Grown by</p>
-                  <p className="font-bold text-earth-900 text-lg leading-tight">{product.farmerName || 'Local Farmer'}</p>
+                  <p className="text-xs text-foreground-muted font-medium mb-0.5">Grown by</p>
+                  <p className="font-bold text-foreground text-lg leading-tight">{product.farmerName || 'Local Farmer'}</p>
                 </div>
               </div>
-              <div className="bg-earth-100/50 px-3 py-2 rounded-lg text-right">
-                <div className="flex items-center gap-1.5 text-earth-700 font-medium text-sm">
-                  <MapPin className="w-4 h-4 text-earth-400" /> {product.farmerCity || 'Nearby'}
+              <div className="bg-surface-muted px-3 py-2 rounded-lg text-right transition-colors">
+                <div className="flex items-center gap-1.5 text-foreground-secondary font-medium text-sm">
+                  <MapPin className="w-4 h-4 text-foreground-muted" /> {product.farmerCity || 'Nearby'}
                 </div>
                 {product.distance_km && (
-                  <p className="text-xs font-semibold text-primary-700 mt-1">{product.distance_km.toFixed(1)} km away</p>
+                  <p className="text-xs font-semibold text-primary-700 dark:text-primary-400 mt-1">{product.distance_km.toFixed(1)} km away</p>
                 )}
               </div>
             </div>
@@ -252,14 +252,14 @@ export default function ProductDetailPage() {
             <div className="mt-auto pt-6">
               <div className="flex flex-col gap-3 mb-4">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-earth-900">Availability</span>
+                  <span className="font-semibold text-foreground">Availability</span>
                   {product.stock_available > 0 ? (
-                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-700 bg-primary-50 px-2.5 py-1 rounded-md border border-primary-100">
+                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2.5 py-1 rounded-md border border-primary-100 dark:border-primary-800">
                       <Package className="w-4 h-4" />
                       {product.stock_available} {product.unit} in stock
                     </span>
                   ) : (
-                    <span className="text-sm font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-md border border-red-100">
+                    <span className="text-sm font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 px-2.5 py-1 rounded-md border border-red-100 dark:border-red-800">
                       Out of stock
                     </span>
                   )}
@@ -267,8 +267,8 @@ export default function ProductDetailPage() {
 
                 {product.harvestDate && getRelativeHarvestDate(product.harvestDate) && (
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-earth-900">Freshness</span>
-                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-success-700 bg-success-50 px-2.5 py-1 rounded-md border border-success-100">
+                    <span className="font-semibold text-foreground">Freshness</span>
+                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-success-700 dark:text-success-400 bg-success-50 dark:bg-success-900/30 px-2.5 py-1 rounded-md border border-success-100 dark:border-success-800">
                       <Leaf className="w-4 h-4" />
                       {getRelativeHarvestDate(product.harvestDate)}
                     </span>
@@ -279,15 +279,15 @@ export default function ProductDetailPage() {
 
             {/* Sticky Mobile / Inline Desktop Purchase Action */}
             {product.stock_available > 0 && (
-              <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-earth-200 p-4 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)] lg:static lg:bg-transparent lg:border-0 lg:p-0 lg:shadow-none lg:mt-2">
+              <div className="fixed bottom-0 left-0 right-0 z-50 bg-surface border-t border-border-default p-4 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)] lg:static lg:bg-transparent lg:border-0 lg:p-0 lg:shadow-none lg:mt-2 transition-colors">
                 <div className="max-w-6xl mx-auto flex items-center gap-3 sm:gap-4">
                   {/* Qty Selector */}
-                  <div className="flex items-center justify-between bg-earth-50 border border-earth-200 rounded-xl p-1 h-14 shrink-0 w-28 sm:w-32">
-                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 sm:w-10 h-full flex items-center justify-center text-earth-600 hover:text-earth-900 hover:bg-white rounded-lg transition-colors">
+                  <div className="flex items-center justify-between bg-surface-muted border border-border-default rounded-xl p-1 h-14 shrink-0 w-28 sm:w-32 transition-colors">
+                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 sm:w-10 h-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-surface rounded-lg transition-colors">
                       <Minus className="w-4 h-4" />
                     </button>
-                    <span className="text-center font-bold text-lg text-earth-900 flex-1">{qty}</span>
-                    <button onClick={() => setQty(q => Math.min(product.stock_available, q + 1))} className="w-8 sm:w-10 h-full flex items-center justify-center text-earth-600 hover:text-earth-900 hover:bg-white rounded-lg transition-colors">
+                    <span className="text-center font-bold text-lg text-foreground flex-1">{qty}</span>
+                    <button onClick={() => setQty(q => Math.min(product.stock_available, q + 1))} className="w-8 sm:w-10 h-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-surface rounded-lg transition-colors">
                       <Plus className="w-4 h-4" />
                     </button>
                   </div>
@@ -306,50 +306,50 @@ export default function ProductDetailPage() {
         </div>
 
         {/* ── Reviews Section ── */}
-        <div className="card p-8 lg:p-12 mt-16">
-          <h2 className="text-2xl font-bold mb-8 text-earth-900 tracking-tight font-display">Customer Reviews</h2>
+        <div className="card p-8 lg:p-12 mt-16 bg-surface border-border-default transition-colors">
+          <h2 className="text-2xl font-bold mb-8 text-foreground tracking-tight font-display">Customer Reviews</h2>
           
           {reviews?.summary && (
-            <div className="flex flex-col sm:flex-row items-center gap-8 mb-10 pb-10 border-b border-earth-100">
-              <div className="text-center sm:text-left flex flex-col items-center sm:items-start bg-earth-50 p-6 rounded-2xl border border-earth-200">
-                <p className="text-5xl font-black text-earth-900 tracking-tighter">
+            <div className="flex flex-col sm:flex-row items-center gap-8 mb-10 pb-10 border-b border-border-default transition-colors">
+              <div className="text-center sm:text-left flex flex-col items-center sm:items-start bg-surface-muted p-6 rounded-2xl border border-border-default transition-colors">
+                <p className="text-5xl font-black text-foreground tracking-tighter">
                   {parseFloat(reviews.summary.average_rating || '0').toFixed(1)}
                 </p>
                 <div className="flex gap-1 mt-3 mb-2">
                   {[1,2,3,4,5].map(s => (
-                    <Star key={s} className={`w-5 h-5 ${s <= Math.round(reviews.summary.average_rating) ? 'text-amber-400 fill-amber-400' : 'text-earth-200'}`} />
+                    <Star key={s} className={`w-5 h-5 ${s <= Math.round(reviews.summary.average_rating) ? 'text-amber-400 fill-amber-400' : 'text-foreground-muted'}`} />
                   ))}
                 </div>
-                <p className="text-sm font-semibold text-earth-500">Based on {reviews.summary.review_count} verified ratings</p>
+                <p className="text-sm font-semibold text-foreground-secondary">Based on {reviews.summary.review_count} verified ratings</p>
               </div>
             </div>
           )}
 
           {reviews?.reviews?.length === 0 && (
             <div className="text-center py-12">
-              <Star className="w-12 h-12 text-earth-200 mx-auto mb-3" />
-              <p className="text-earth-500 font-medium">No reviews yet. Be the first to review this product!</p>
+              <Star className="w-12 h-12 text-foreground-muted mx-auto mb-3" />
+              <p className="text-foreground-secondary font-medium">No reviews yet. Be the first to review this product!</p>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             {reviews?.reviews?.map((review: any) => (
-              <div key={review.id} className="bg-earth-50 p-6 rounded-2xl border border-earth-100">
+              <div key={review.id} className="bg-surface-muted p-6 rounded-2xl border border-border-default transition-colors">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-white border border-earth-200 flex items-center justify-center text-base font-bold text-earth-700 shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-surface border border-border-default flex items-center justify-center text-base font-bold text-foreground-secondary shrink-0 transition-colors">
                     {review.consumer_name[0]}
                   </div>
                   <div>
-                    <p className="font-bold text-earth-900">{review.consumer_name}</p>
+                    <p className="font-bold text-foreground">{review.consumer_name}</p>
                     <div className="flex gap-0.5 mt-0.5">
                       {[1,2,3,4,5].map(s => (
-                        <Star key={s} className={`w-3.5 h-3.5 ${s <= review.rating ? 'text-amber-400 fill-amber-400' : 'text-earth-200'}`} />
+                        <Star key={s} className={`w-3.5 h-3.5 ${s <= review.rating ? 'text-amber-400 fill-amber-400' : 'text-foreground-muted'}`} />
                       ))}
                     </div>
                   </div>
                 </div>
                 {review.review_text && (
-                  <p className="text-earth-700 leading-relaxed text-sm">"{review.review_text}"</p>
+                  <p className="text-foreground leading-relaxed text-sm">"{review.review_text}"</p>
                 )}
               </div>
             ))}
@@ -357,8 +357,8 @@ export default function ProductDetailPage() {
           
           {/* Review Form - Consumers can leave reviews */}
           {isAuthenticated && (
-            <div className="pt-8 border-t border-earth-100">
-              <h3 className="text-lg font-bold text-earth-900 mb-4">Leave a Review</h3>
+            <div className="pt-8 border-t border-border-default transition-colors">
+              <h3 className="text-lg font-bold text-foreground mb-4">Leave a Review</h3>
               <ReviewForm 
                 productId={Number(id)} 
                 orderId={0} /* In a real app, you'd pass the actual orderId they purchased from */
@@ -372,13 +372,13 @@ export default function ProductDetailPage() {
 
         {/* ── Recently Viewed Products ── */}
         {recentlyViewed.length > 0 && (
-          <div className="mt-16 border-t border-earth-200 pt-16">
-            <h2 className="text-2xl font-extrabold text-earth-900 mb-8 font-display">Recently Viewed</h2>
+          <div className="mt-16 border-t border-border-default pt-16 transition-colors">
+            <h2 className="text-2xl font-extrabold text-foreground mb-8 font-display">Recently Viewed</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {recentlyViewed.map((p: any) => (
                 <Link key={p.id} href={`/product/${p.id}`} className="group block">
-                  <div className="bg-white rounded-2xl p-3 border border-earth-100 shadow-sm hover:shadow-md transition-all hover:border-primary-200">
-                    <div className="aspect-square relative rounded-xl overflow-hidden bg-earth-50 mb-3">
+                  <div className="bg-surface rounded-2xl p-3 border border-border-default shadow-sm hover:shadow-md transition-all hover:border-primary-500">
+                    <div className="aspect-square relative rounded-xl overflow-hidden bg-surface-muted mb-3">
                       <Image 
                         src={p.primary_image_url || getFallbackImageUrl(p.category, p.name)} 
                         alt={p.name} 
@@ -387,8 +387,8 @@ export default function ProductDetailPage() {
                         className="object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
-                    <p className="font-bold text-sm text-earth-900 truncate group-hover:text-primary-700 transition-colors">{p.name}</p>
-                    <p className="text-primary-700 font-extrabold mt-1">₹{p.price} <span className="text-xs text-earth-500 font-medium">/{p.unit}</span></p>
+                    <p className="font-bold text-sm text-foreground truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{p.name}</p>
+                    <p className="text-primary-700 dark:text-primary-400 font-extrabold mt-1">₹{p.price} <span className="text-xs text-foreground-muted font-medium">/{p.unit}</span></p>
                   </div>
                 </Link>
               ))}

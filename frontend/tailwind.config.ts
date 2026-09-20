@@ -10,6 +10,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        background: 'var(--background)',
+        surface: 'var(--surface)',
+        'surface-elevated': 'var(--surface-elevated)',
+        'surface-muted': 'var(--surface-muted)',
+        foreground: 'var(--foreground)',
+        'foreground-secondary': 'var(--foreground-secondary)',
+        'foreground-muted': 'var(--foreground-muted)',
+        'border-default': 'var(--border-default)',
+        'border-subtle': 'var(--border-subtle)',
         primary: {
           50: '#f3faf5',
           100: '#e1f3e7',

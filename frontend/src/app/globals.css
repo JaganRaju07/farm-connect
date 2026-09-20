@@ -8,11 +8,34 @@
 @layer base {
   :root {
     --background: #faf9f7; /* earth-50 */
+    --surface: #ffffff;
+    --surface-elevated: #ffffff;
+    --surface-muted: #f4f2ee; /* earth-100 */
+    
     --foreground: #1c1917; /* earth-900 */
+    --foreground-secondary: #676056; /* earth-700 */
+    --foreground-muted: #9b9182; /* earth-500 */
+    
+    --border-default: #e7e3dc; /* earth-200 */
+    --border-subtle: #f4f2ee; /* earth-100 */
+  }
+
+  .dark {
+    --background: #1c1917; /* earth-900 */
+    --surface: #2f2c28; /* earth-950 */
+    --surface-elevated: #3b3732; 
+    --surface-muted: #25221f;
+    
+    --foreground: #faf9f7; /* earth-50 */
+    --foreground-secondary: #d5cec4; /* earth-300 */
+    --foreground-muted: #9b9182; /* earth-500 */
+    
+    --border-default: #554f47; /* earth-800 */
+    --border-subtle: #3b3732; 
   }
 
   * {
-    border-color: #e7e3dc; /* earth-200 */
+    border-color: var(--border-default);
   }
 
   html, body {

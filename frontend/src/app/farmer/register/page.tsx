@@ -134,7 +134,7 @@ export default function FarmerRegisterPage() {
   };
 
   return (
-    <AuroraBackground className="w-full flex-row items-stretch bg-earth-50 p-0">
+    <AuroraBackground className="min-h-screen w-full flex-row items-stretch bg-earth-50 p-0">
       
       {/* ── Left Side: Beautiful Visual ── */}
       <div className="hidden lg:flex w-1/2 bg-earth-900 relative overflow-hidden flex-col justify-between p-12">
@@ -159,7 +159,7 @@ export default function FarmerRegisterPage() {
                 <TrendingUp className="w-5 h-5 text-primary-400" />
               </div>
               <div>
-                <h3 className="text-white font-medium">Keep 100% of the profits</h3>
+                <div className="text-white font-medium tracking-normal text-lg">Keep 100% of the profits</div>
                 <p className="text-earth-300 text-sm mt-1 leading-relaxed">No middlemen. You set your prices and sell directly to consumers.</p>
               </div>
             </div>
@@ -169,7 +169,7 @@ export default function FarmerRegisterPage() {
                 <Tractor className="w-5 h-5 text-primary-400" />
               </div>
               <div>
-                <h3 className="text-white font-medium">Easy Inventory Management</h3>
+                <div className="text-white font-medium tracking-normal text-lg">Easy Inventory Management</div>
                 <p className="text-earth-300 text-sm mt-1 leading-relaxed">Update your available stock from your phone, right from the field.</p>
               </div>
             </div>
@@ -179,7 +179,7 @@ export default function FarmerRegisterPage() {
                 <ShieldCheck className="w-5 h-5 text-primary-400" />
               </div>
               <div>
-                <h3 className="text-white font-medium">Guaranteed Payments</h3>
+                <div className="text-white font-medium tracking-normal text-lg">Guaranteed Payments</div>
                 <p className="text-earth-300 text-sm mt-1 leading-relaxed">Secure, fast payouts directly to your linked bank account.</p>
               </div>
             </div>
@@ -188,21 +188,21 @@ export default function FarmerRegisterPage() {
       </div>
 
       {/* ── Right Side: Auth Form ── */}
-      <div className="flex-1 flex flex-col relative bg-white/80 backdrop-blur-xl">
-        <div className="lg:hidden sticky top-0 z-50 w-full bg-white px-6 py-4 border-b border-earth-100 flex items-center">
+      <div className="flex-1 flex flex-col relative bg-surface/80 backdrop-blur-xl transition-colors duration-200">
+        <div className="lg:hidden sticky top-0 z-50 w-full bg-surface px-6 py-4 border-b border-border-default flex items-center">
           <Link href="/" className="inline-flex items-center gap-2">
-            <Sprout className="w-6 h-6 text-primary-600" />
-            <span className="text-lg font-bold text-earth-900 font-display">Farm Connect</span>
+            <Sprout className="w-6 h-6 text-primary-600 dark:text-primary-500" />
+            <span className="text-lg font-bold text-foreground font-display">Farm Connect</span>
           </Link>
         </div>
 
         <div className="flex-1 flex flex-col justify-center px-4 sm:px-12 lg:px-24 xl:px-32 py-8 lg:py-0">
           <div className="w-full max-w-sm mx-auto">
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-earth-900 mb-2">
+            <h2 className="text-2xl font-bold text-foreground mb-2">
               {step === 'details' ? 'Join as a Farmer' : 'Check your phone'}
             </h2>
-            <p className="text-earth-500 text-sm">
+            <p className="text-foreground-secondary text-sm">
               {step === 'details'
                 ? 'Create your digital farm front today.'
                 : `We sent a 6-digit verification code to ${formData.phone}.`}
@@ -225,27 +225,27 @@ export default function FarmerRegisterPage() {
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-earth-800">Mobile Number</label>
-                <div className="relative flex flex-row items-center bg-white border border-earth-300 rounded-xl overflow-hidden focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-600/20 transition-all shadow-sm">
-                  <div className="flex shrink-0 items-center justify-center bg-earth-50 px-4 py-3 border-r border-earth-200">
-                    <span className="text-earth-600 font-semibold">+91</span>
+                <label className="text-sm font-medium text-foreground-secondary">Mobile Number</label>
+                <div className="relative flex flex-row items-center bg-surface border border-border-default rounded-xl overflow-hidden focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 transition-all shadow-sm">
+                  <div className="flex shrink-0 items-center justify-center bg-surface-muted px-4 py-3 border-r border-border-default">
+                    <span className="text-foreground-secondary font-semibold">+91</span>
                   </div>
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
                     placeholder="9876543210"
-                    className="w-full bg-transparent px-4 py-3 outline-none text-earth-900 font-medium tracking-wide"
+                    className="w-full bg-transparent px-4 py-3 outline-none text-foreground font-medium tracking-wide"
                     disabled={loading}
                   />
                 </div>
               </div>
 
               {error && (
-                <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-600 animate-enter">
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-lg text-sm text-red-600 dark:text-red-400 animate-enter">
                   {error}
                   {error.includes('already registered') && (
-                    <Link href="/farmer/login" className="block mt-1 font-semibold underline underline-offset-2 hover:text-red-700 transition-colors">
+                    <Link href="/farmer/login" className="block mt-1 font-semibold underline underline-offset-2 hover:text-red-700 dark:hover:text-red-300 transition-colors">
                       Log in instead
                     </Link>
                   )}
@@ -269,7 +269,7 @@ export default function FarmerRegisterPage() {
           {step === 'otp' && (
             <div className="space-y-6 animate-enter">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-earth-800">Verification Code</label>
+                <label className="text-sm font-medium text-foreground-secondary">Verification Code</label>
                 <div className="flex gap-2 justify-between" onPaste={handleOtpPaste}>
                   {otp.map((digit, i) => (
                     <input
@@ -282,7 +282,7 @@ export default function FarmerRegisterPage() {
                       onChange={e => handleOtpChange(i, e.target.value)}
                       onKeyDown={e => handleOtpKeyDown(i, e)}
                       disabled={loading}
-                      className="w-12 h-14 text-center text-xl font-semibold border border-earth-300 rounded-lg focus:border-primary-600 focus:ring-1 focus:ring-primary-600 outline-none transition-all disabled:bg-earth-50"
+                      className="w-12 h-14 text-center text-xl font-semibold border border-border-default rounded-lg focus:border-primary-500 focus:ring-1 focus:ring-primary-500 outline-none transition-all disabled:bg-surface-muted bg-surface text-foreground"
                       autoFocus={i === 0}
                     />
                   ))}
@@ -290,7 +290,7 @@ export default function FarmerRegisterPage() {
               </div>
 
               {error && (
-                <div className="p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-600 text-center animate-enter">
+                <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-lg text-sm text-red-600 dark:text-red-400 text-center animate-enter">
                   {error}
                 </div>
               )}
@@ -298,17 +298,17 @@ export default function FarmerRegisterPage() {
               <div className="flex items-center justify-between mt-6">
                 <button
                   onClick={() => { setStep('details'); setOtp(['', '', '', '', '', '']); setError(''); }}
-                  className="text-sm text-earth-500 hover:text-earth-800 font-medium transition-colors"
+                  className="text-sm text-foreground-muted hover:text-foreground font-medium transition-colors"
                 >
                   ← Edit number
                 </button>
 
                 {resendTimer > 0 ? (
-                  <span className="text-sm text-earth-400">
+                  <span className="text-sm text-foreground-muted">
                     Resend in {resendTimer}s
                   </span>
                 ) : (
-                  <button onClick={handleResend} className="text-sm text-primary-700 hover:text-primary-900 font-medium transition-colors">
+                  <button onClick={handleResend} className="text-sm text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 font-medium transition-colors">
                     Resend code
                   </button>
                 )}
@@ -316,38 +316,38 @@ export default function FarmerRegisterPage() {
             </div>
           )}
 
-          <div className="mt-8 pt-8 border-t border-earth-100">
-            <p className="text-sm text-earth-500 text-center">
+          <div className="mt-8 pt-8 border-t border-border-default">
+            <p className="text-sm text-foreground-muted text-center">
               Already have an account?{' '}
-              <Link href="/farmer/login" className="text-earth-900 font-semibold hover:underline">
+              <Link href="/farmer/login" className="text-foreground font-semibold hover:underline">
                 Sign in
               </Link>
             </p>
           </div>
 
           {/* ── Farmer Value Proposition ── */}
-          <div className="mt-12 pt-8 border-t border-earth-200/60 hidden sm:block">
-            <h3 className="text-sm font-bold text-earth-800 uppercase tracking-widest text-center mb-6">Grow with Farm Connect</h3>
+          <div className="mt-12 pt-8 border-t border-border-default hidden sm:block">
+            <h3 className="text-sm font-bold text-foreground-secondary uppercase tracking-widest text-center mb-6">Grow with Farm Connect</h3>
             <div className="grid gap-5">
               <div className="flex items-start gap-4">
-                <div className="p-2 bg-primary-50 rounded-lg text-primary-700 shrink-0"><Store className="w-4 h-4" /></div>
+                <div className="p-2 bg-primary-50 dark:bg-primary-900/30 rounded-lg text-primary-700 dark:text-primary-400 shrink-0"><Store className="w-5 h-5" /></div>
                 <div>
-                  <h4 className="text-sm font-bold text-earth-900">Digital Storefront</h4>
-                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Showcase your harvest to thousands of local buyers instantly.</p>
+                  <div className="text-sm font-bold text-foreground tracking-normal">Digital Storefront</div>
+                  <p className="text-sm text-foreground-muted leading-relaxed mt-0.5">Showcase your harvest to thousands of local buyers instantly.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="p-2 bg-primary-50 rounded-lg text-primary-700 shrink-0"><Users className="w-4 h-4" /></div>
+                <div className="p-2 bg-primary-50 dark:bg-primary-900/30 rounded-lg text-primary-700 dark:text-primary-400 shrink-0"><Users className="w-5 h-5" /></div>
                 <div>
-                  <h4 className="text-sm font-bold text-earth-900">Direct to Consumer</h4>
-                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Skip the middlemen and build lasting relationships with buyers.</p>
+                  <div className="text-sm font-bold text-foreground tracking-normal">Direct to Consumer</div>
+                  <p className="text-sm text-foreground-muted leading-relaxed mt-0.5">Skip the middlemen and build lasting relationships with buyers.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="p-2 bg-primary-50 rounded-lg text-primary-700 shrink-0"><Package className="w-4 h-4" /></div>
+                <div className="p-2 bg-primary-50 dark:bg-primary-900/30 rounded-lg text-primary-700 dark:text-primary-400 shrink-0"><Package className="w-5 h-5" /></div>
                 <div>
-                  <h4 className="text-sm font-bold text-earth-900">Easy Inventory</h4>
-                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Manage your stock, update prices, and track orders effortlessly.</p>
+                  <div className="text-sm font-bold text-foreground tracking-normal">Manage Inventory</div>
+                  <p className="text-sm text-foreground-muted leading-relaxed mt-0.5">Track your stock, update prices, and manage orders all in one place.</p>
                 </div>
               </div>
             </div>

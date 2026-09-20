@@ -149,7 +149,7 @@ export default function ConsumerRegisterPage() {
   }, [step]);
 
   return (
-    <AuroraBackground className="w-full flex-row items-stretch bg-earth-50 p-0">
+    <AuroraBackground className="min-h-screen w-full flex-row items-stretch bg-background p-0">
       
       {/* ── Left Side: Beautiful Visual ── */}
       <div className="hidden lg:flex w-[45%] bg-earth-900 relative overflow-hidden flex-col justify-between p-16 shadow-2xl z-10">
@@ -177,7 +177,7 @@ export default function ConsumerRegisterPage() {
                 <Leaf className="w-6 h-6 text-primary-400" />
               </div>
               <div>
-                <h3 className="text-white font-semibold text-lg">100% Organic Options</h3>
+                <div className="text-white font-bold text-lg tracking-normal">100% Organic Options</div>
                 <p className="text-earth-300 text-sm mt-1.5 leading-relaxed">Connect with certified organic farmers in your local community.</p>
               </div>
             </motion.div>
@@ -187,7 +187,7 @@ export default function ConsumerRegisterPage() {
                 <ShieldCheck className="w-6 h-6 text-primary-400" />
               </div>
               <div>
-                <h3 className="text-white font-semibold text-lg">Fair Trade Verified</h3>
+                <div className="text-white font-bold text-lg tracking-normal">Fair Trade Verified</div>
                 <p className="text-earth-300 text-sm mt-1.5 leading-relaxed">Your purchase goes directly to the farmer. No middleman cuts.</p>
               </div>
             </motion.div>
@@ -197,7 +197,7 @@ export default function ConsumerRegisterPage() {
                 <MapPin className="w-6 h-6 text-primary-400" />
               </div>
               <div>
-                <h3 className="text-white font-semibold text-lg">Hyperlocal Delivery</h3>
+                <div className="text-white font-bold text-lg tracking-normal">Hyperlocal Delivery</div>
                 <p className="text-earth-300 text-sm mt-1.5 leading-relaxed">Food so fresh it was harvested this morning, delivered today.</p>
               </div>
             </motion.div>
@@ -210,11 +210,11 @@ export default function ConsumerRegisterPage() {
       </div>
 
       {/* ── Right Side: Auth Form ── */}
-      <div className="flex-1 flex flex-col relative bg-white/80 backdrop-blur-xl lg:rounded-l-[2rem] lg:-ml-6 z-20 shadow-[0_0_50px_rgba(0,0,0,0.1)]">
-        <div className="lg:hidden sticky top-0 z-50 w-full bg-white px-6 py-4 border-b border-earth-100 flex items-center">
+      <div className="flex-1 flex flex-col relative bg-surface/80 backdrop-blur-xl lg:rounded-l-[2rem] lg:-ml-6 z-20 shadow-[0_0_50px_rgba(0,0,0,0.1)] transition-colors duration-200">
+        <div className="lg:hidden sticky top-0 z-50 w-full bg-surface px-6 py-4 border-b border-border-default flex items-center">
           <Link href="/" className="inline-flex items-center gap-2">
-            <Sprout className="w-6 h-6 text-primary-600" />
-            <span className="text-lg font-bold text-earth-900 font-display">Farm Connect</span>
+            <Sprout className="w-6 h-6 text-primary-600 dark:text-primary-500" />
+            <span className="text-lg font-bold text-foreground font-display">Farm Connect</span>
           </Link>
         </div>
 
@@ -222,10 +222,10 @@ export default function ConsumerRegisterPage() {
 
         <div className="w-full max-w-sm mx-auto">
           <div className="mb-10">
-            <h2 className="font-display text-3xl font-extrabold text-earth-900 mb-3 tracking-tight">
+            <h2 className="font-display text-3xl font-extrabold text-foreground mb-3 tracking-tight">
               {step === 'details' ? 'Create an account' : 'Check your phone'}
             </h2>
-            <p className="text-earth-500 text-base">
+            <p className="text-foreground-secondary text-base">
               {step === 'details'
                 ? 'Sign up to start buying fresh produce.'
                 : `We sent a 6-digit verification code to ${formData.phone}.`}
@@ -255,10 +255,10 @@ export default function ConsumerRegisterPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-earth-700">Mobile Number</label>
-                  <div className="relative flex flex-row items-center bg-white border border-earth-300 rounded-xl overflow-hidden focus-within:border-primary-600 focus-within:ring-2 focus-within:ring-primary-600/20 transition-all shadow-sm">
-                    <div className="flex shrink-0 items-center justify-center bg-earth-50 px-4 py-3 border-r border-earth-200 h-full">
-                      <span className="text-earth-600 font-semibold">+91</span>
+                  <label className="text-sm font-semibold text-foreground-secondary">Mobile Number</label>
+                  <div className="relative flex flex-row items-center bg-surface border border-border-default rounded-xl overflow-hidden focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20 transition-all shadow-sm">
+                    <div className="flex shrink-0 items-center justify-center bg-surface-muted px-4 py-3 border-r border-border-default h-full">
+                      <span className="text-foreground-secondary font-semibold">+91</span>
                     </div>
                     <input
                       type="tel"
@@ -272,10 +272,10 @@ export default function ConsumerRegisterPage() {
                 </div>
 
                 {error && (
-                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-3.5 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600 font-medium">
+                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-3.5 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-xl text-sm text-red-600 dark:text-red-400 font-medium">
                     {error}
                     {error.includes('already registered') && (
-                      <Link href="/login" className="block mt-1 font-bold underline underline-offset-2 hover:text-red-700 transition-colors">
+                      <Link href="/login" className="block mt-1 font-bold underline underline-offset-2 hover:text-red-700 dark:hover:text-red-300 transition-colors">
                         Log in instead
                       </Link>
                     )}
@@ -303,7 +303,7 @@ export default function ConsumerRegisterPage() {
                 className="space-y-6"
               >
                 <div className="space-y-3">
-                  <label className="text-sm font-semibold text-earth-700">Verification Code</label>
+                  <label className="text-sm font-semibold text-foreground-secondary">Verification Code</label>
                   <div className="flex gap-3 justify-between" onPaste={handleOtpPaste}>
                     {otp.map((digit, i) => (
                       <input
@@ -317,34 +317,34 @@ export default function ConsumerRegisterPage() {
                         onKeyDown={e => handleOtpKeyDown(i, e)}
                         disabled={loading}
                         className={`w-12 h-14 md:w-14 md:h-16 text-center text-2xl font-bold rounded-xl outline-none transition-all duration-200 
-                          ${digit ? 'border-primary-600 ring-1 ring-primary-600 bg-primary-50 text-primary-900' : 'border-earth-300 bg-white hover:border-earth-400 focus:border-primary-600 focus:ring-2 focus:ring-primary-600/20'}
-                          disabled:bg-earth-100 disabled:border-earth-200 border shadow-sm`}
+                          ${digit ? 'border-primary-600 ring-1 ring-primary-600 bg-primary-50 text-primary-900 dark:bg-primary-900/30 dark:text-primary-300' : 'border-border-default bg-surface hover:border-border-subtle focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20'}
+                          disabled:bg-surface-muted disabled:border-border-default border shadow-sm text-foreground`}
                       />
                     ))}
                   </div>
                 </div>
 
                 {error && (
-                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-3.5 bg-red-50 border border-red-100 rounded-xl text-sm text-red-600 font-medium text-center">
+                  <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-3.5 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-xl text-sm text-red-600 dark:text-red-400 font-medium text-center">
                     {error}
                   </motion.div>
                 )}
 
-                <div className="flex items-center justify-between mt-8 pt-4 border-t border-earth-100">
+                <div className="flex items-center justify-between mt-8 pt-4 border-t border-border-subtle">
                   <button
                     onClick={() => { setStep('details'); setOtp(['', '', '', '', '', '']); setError(''); }}
-                    className="text-sm text-earth-500 hover:text-earth-900 font-semibold transition-colors flex items-center gap-1 group"
+                    className="text-sm text-foreground-muted hover:text-foreground font-semibold transition-colors flex items-center gap-1 group"
                   >
                     <ArrowRight className="w-4 h-4 rotate-180 group-hover:-translate-x-1 transition-transform" />
                     Edit number
                   </button>
 
                   {resendTimer > 0 ? (
-                    <span className="text-sm font-medium text-earth-400 bg-earth-50 px-3 py-1.5 rounded-md border border-earth-200">
+                    <span className="text-sm font-medium text-foreground-muted bg-surface-muted px-3 py-1.5 rounded-md border border-border-default">
                       Resend in {resendTimer}s
                     </span>
                   ) : (
-                    <button onClick={handleResend} className="text-sm text-primary-600 hover:text-primary-800 font-bold transition-colors">
+                    <button onClick={handleResend} className="text-sm text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300 font-bold transition-colors">
                       Resend code
                     </button>
                   )}
@@ -355,9 +355,9 @@ export default function ConsumerRegisterPage() {
 
           {step === 'details' && (
             <div className="mt-10 text-center">
-              <p className="text-sm text-earth-500">
+              <p className="text-sm text-foreground-muted">
                 Already have an account?{' '}
-                <Link href="/login" className="text-primary-600 font-bold hover:text-primary-700 transition-colors">
+                <Link href="/login" className="text-primary-600 dark:text-primary-400 font-bold hover:text-primary-500 transition-colors">
                   Sign in
                 </Link>
               </p>
@@ -365,28 +365,28 @@ export default function ConsumerRegisterPage() {
           )}
 
           {/* ── Value Proposition Section ── */}
-          <div className="mt-12 pt-8 border-t border-earth-200/60 hidden sm:block">
-            <h3 className="text-sm font-bold text-earth-800 uppercase tracking-widest text-center mb-6">Why Farm Connect?</h3>
+          <div className="mt-12 pt-8 border-t border-border-default hidden sm:block">
+            <h3 className="text-sm font-bold text-foreground-secondary uppercase tracking-widest text-center mb-6">Why Farm Connect?</h3>
             <div className="grid gap-5">
               <div className="flex items-start gap-4">
-                <div className="p-2 bg-primary-50 rounded-lg text-primary-600 shrink-0"><Leaf className="w-4 h-4" /></div>
+                <div className="p-2 bg-primary-50 dark:bg-primary-900/30 rounded-lg text-primary-600 dark:text-primary-400 shrink-0"><Leaf className="w-5 h-5" /></div>
                 <div>
-                  <h4 className="text-sm font-bold text-earth-900">Fresh from the Source</h4>
-                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Discover products directly from local farmers.</p>
+                  <div className="text-foreground font-bold text-sm tracking-normal">Fresh from the Source</div>
+                  <p className="text-sm text-foreground-muted leading-relaxed mt-0.5">Discover products directly from local farmers.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="p-2 bg-primary-50 rounded-lg text-primary-600 shrink-0"><MapPin className="w-4 h-4" /></div>
+                <div className="p-2 bg-primary-50 dark:bg-primary-900/30 rounded-lg text-primary-600 dark:text-primary-400 shrink-0"><MapPin className="w-5 h-5" /></div>
                 <div>
-                  <h4 className="text-sm font-bold text-earth-900">Nearby by Design</h4>
-                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Find products based on actual geographic proximity.</p>
+                  <div className="text-foreground font-bold text-sm tracking-normal">Nearby by Design</div>
+                  <p className="text-sm text-foreground-muted leading-relaxed mt-0.5">Find products based on actual geographic proximity.</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="p-2 bg-primary-50 rounded-lg text-primary-600 shrink-0"><ShieldCheck className="w-4 h-4" /></div>
+                <div className="p-2 bg-primary-50 dark:bg-primary-900/30 rounded-lg text-primary-600 dark:text-primary-400 shrink-0"><ShieldCheck className="w-5 h-5" /></div>
                 <div>
-                  <h4 className="text-sm font-bold text-earth-900">Know Your Farmer</h4>
-                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">See farmer information and locality for a transparent experience.</p>
+                  <div className="text-foreground font-bold text-sm tracking-normal">Know Your Farmer</div>
+                  <p className="text-sm text-foreground-muted leading-relaxed mt-0.5">See farmer information and locality for a transparent experience.</p>
                 </div>
               </div>
             </div>

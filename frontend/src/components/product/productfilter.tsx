@@ -44,7 +44,7 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-earth-900/40 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 transition-opacity"
           />
 
           {/* Drawer / Bottom Sheet */}
@@ -53,22 +53,22 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
             animate={{ y: 0, x: 0 }}
             exit={{ y: '100%', x: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-x-0 bottom-0 z-50 w-full h-[85vh] bg-white rounded-t-3xl shadow-2xl flex flex-col overflow-hidden md:inset-y-0 md:right-0 md:left-auto md:h-full md:max-w-sm md:rounded-none md:border-l md:border-earth-200"
+            className="fixed inset-x-0 bottom-0 z-50 w-full h-[85vh] bg-surface rounded-t-3xl shadow-2xl flex flex-col overflow-hidden md:inset-y-0 md:right-0 md:left-auto md:h-full md:max-w-sm md:rounded-none md:border-l md:border-border-default transition-colors duration-200"
           >
             {/* Mobile Drag Handle */}
-            <div className="w-full flex justify-center pt-3 pb-1 md:hidden bg-earth-50/50">
-              <div className="w-12 h-1.5 bg-earth-200 rounded-full" />
+            <div className="w-full flex justify-center pt-3 pb-1 md:hidden bg-surface-muted/50">
+              <div className="w-12 h-1.5 bg-border-default rounded-full" />
             </div>
 
             {/* Header */}
-            <div className="flex items-center justify-between p-4 md:p-6 border-b border-earth-100 bg-earth-50/50">
+            <div className="flex items-center justify-between p-4 md:p-6 border-b border-border-default bg-surface-muted/50 transition-colors">
               <div className="flex items-center gap-2">
-                <SlidersHorizontal className="w-5 h-5 text-primary-600" />
-                <h2 className="text-lg font-bold font-display text-earth-900">Filters</h2>
+                <SlidersHorizontal className="w-5 h-5 text-primary-600 dark:text-primary-500" />
+                <h2 className="text-lg font-bold font-display text-foreground">Filters</h2>
               </div>
               <button 
                 onClick={onClose}
-                className="w-8 h-8 rounded-full bg-earth-100 flex items-center justify-center text-earth-500 hover:text-earth-900 hover:bg-earth-200 transition-colors"
+                className="w-8 h-8 rounded-full bg-surface-elevated flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-surface-muted transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -79,7 +79,7 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
               
               {/* Category */}
               <div className="space-y-4">
-                <h3 className="text-sm font-bold text-earth-900 uppercase tracking-wider">Category</h3>
+                <h3 className="text-sm font-bold text-foreground-secondary uppercase tracking-wider">Category</h3>
                 <div className="flex flex-wrap gap-2">
                   {CATEGORIES.map(cat => {
                     const isActive = (cat === 'All' && !filters.category) || filters.category === cat.toLowerCase();
@@ -89,8 +89,8 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
                         onClick={() => handleCategory(cat.toLowerCase())}
                         className={`px-4 py-2 rounded-xl text-sm font-medium transition-all border ${
                           isActive 
-                            ? 'bg-primary-50 text-primary-700 border-primary-200 shadow-sm' 
-                            : 'bg-white text-earth-600 border-earth-200 hover:border-primary-300 hover:bg-earth-50'
+                            ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 border-primary-200 dark:border-primary-800 shadow-sm' 
+                            : 'bg-surface text-foreground-secondary border-border-default hover:border-primary-500 hover:bg-surface-muted'
                         }`}
                       >
                         {cat}
@@ -100,13 +100,13 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
                 </div>
               </div>
 
-              <hr className="border-earth-100" />
+              <hr className="border-border-default" />
 
               {/* Radius */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-earth-900 uppercase tracking-wider">Distance Radius</h3>
-                  <span className="text-sm font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-md">
+                  <h3 className="text-sm font-bold text-foreground-secondary uppercase tracking-wider">Distance Radius</h3>
+                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2 py-0.5 rounded-md">
                     {filters.radius} km
                   </span>
                 </div>
@@ -117,22 +117,22 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
                   step="5"
                   value={filters.radius}
                   onChange={(e) => setFilters(prev => ({ ...prev, radius: Number(e.target.value) }))}
-                  className="w-full accent-primary-600 h-2 bg-earth-200 rounded-lg appearance-none cursor-pointer"
+                  className="w-full accent-primary-600 dark:accent-primary-500 h-2 bg-border-default rounded-lg appearance-none cursor-pointer"
                 />
-                <div className="flex justify-between text-xs font-medium text-earth-400">
+                <div className="flex justify-between text-xs font-medium text-foreground-muted">
                   <span>5km</span>
                   <span>100km</span>
                 </div>
               </div>
 
-              <hr className="border-earth-100" />
+              <hr className="border-border-default" />
 
               {/* Price Range */}
               <div className="space-y-4">
-                <h3 className="text-sm font-bold text-earth-900 uppercase tracking-wider">Price Range (₹)</h3>
+                <h3 className="text-sm font-bold text-foreground-secondary uppercase tracking-wider">Price Range (₹)</h3>
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
-                    <label className="text-xs text-earth-500 mb-1 block">Min</label>
+                    <label className="text-xs text-foreground-secondary mb-1 block">Min</label>
                     <Input
                       type="number"
                       placeholder="0"
@@ -141,9 +141,9 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
                       className="py-2"
                     />
                   </div>
-                  <div className="text-earth-300 mt-5">-</div>
+                  <div className="text-foreground-muted mt-5">-</div>
                   <div className="flex-1">
-                    <label className="text-xs text-earth-500 mb-1 block">Max</label>
+                    <label className="text-xs text-foreground-secondary mb-1 block">Max</label>
                     <Input
                       type="number"
                       placeholder="Max"
@@ -155,11 +155,11 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
                 </div>
               </div>
 
-              <hr className="border-earth-100" />
+              <hr className="border-border-default" />
 
               {/* Organic Only */}
               <label className="flex items-center justify-between cursor-pointer group">
-                <span className="text-sm font-bold text-earth-900">Organic Produce Only</span>
+                <span className="text-sm font-bold text-foreground">Organic Produce Only</span>
                 <div className="relative">
                   <input
                     type="checkbox"
@@ -167,7 +167,7 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
                     checked={filters.isOrganic}
                     onChange={(e) => setFilters(prev => ({ ...prev, isOrganic: e.target.checked }))}
                   />
-                  <div className={`w-12 h-6 rounded-full transition-colors ${filters.isOrganic ? 'bg-primary-600' : 'bg-earth-200 group-hover:bg-earth-300'}`}>
+                  <div className={`w-12 h-6 rounded-full transition-colors ${filters.isOrganic ? 'bg-primary-600 dark:bg-primary-500' : 'bg-border-default group-hover:bg-border-strong'}`}>
                     <div className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${filters.isOrganic ? 'translate-x-6' : 'translate-x-0'}`} />
                   </div>
                 </div>
@@ -176,7 +176,7 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
             </div>
 
             {/* Footer */}
-            <div className="p-6 border-t border-earth-100 bg-earth-50/50 flex gap-3">
+            <div className="p-6 border-t border-border-default bg-surface-muted/50 flex gap-3 transition-colors">
               <button 
                 onClick={() => {
                   onReset();

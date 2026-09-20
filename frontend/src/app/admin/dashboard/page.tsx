@@ -48,18 +48,18 @@ function AdminDashboardContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center transition-colors">
         <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-earth-50 flex">
+    <div className="min-h-screen bg-background flex transition-colors">
       {/* Sidebar */}
-      <aside className="w-64 bg-slate-900 text-white flex flex-col justify-between p-6">
+      <aside className="w-64 bg-surface-muted text-foreground border-r border-border-default flex flex-col justify-between p-6 transition-colors">
         <div className="space-y-8">
-          <div className="flex items-center gap-3 font-bold text-lg text-primary-400">
+          <div className="flex items-center gap-3 font-bold text-lg text-primary-600 dark:text-primary-400">
             <Shield className="w-6 h-6" />
             <span>FC Admin Console</span>
           </div>
@@ -67,13 +67,13 @@ function AdminDashboardContent() {
           <nav className="flex flex-col gap-2">
             <Link 
               href="/admin/dashboard" 
-              className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-slate-800 text-white font-medium shadow-xs"
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-primary-600 dark:bg-primary-500 text-white font-medium shadow-xs"
             >
               <span>📊 Dashboard</span>
             </Link>
             <Link 
               href="/admin/farmers" 
-              className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-300 hover:bg-slate-850 hover:text-white transition-all font-medium"
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-foreground-secondary hover:bg-surface-elevated hover:text-foreground transition-all font-medium"
             >
               <span>🧑‍🌾 Farmer Verification</span>
             </Link>
@@ -82,7 +82,7 @@ function AdminDashboardContent() {
 
         <button
           onClick={handleLogout}
-          className="flex items-center justify-center gap-2 w-full py-2.5 border border-slate-700 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white transition-all cursor-pointer font-medium"
+          className="flex items-center justify-center gap-2 w-full py-2.5 border border-border-default rounded-lg text-foreground-secondary hover:bg-surface-elevated hover:text-foreground transition-all cursor-pointer font-medium"
         >
           <LogOut className="w-4 h-4" />
           Logout
@@ -93,10 +93,10 @@ function AdminDashboardContent() {
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-gray-200 pb-5">
+          <div className="flex items-center justify-between border-b border-border-default pb-5 transition-colors">
             <div>
-              <h1 className="text-3xl font-extrabold font-display text-earth-900">Platform Analytics</h1>
-              <p className="text-earth-500 text-sm mt-1">Real-time statistics across the Farm Connect network</p>
+              <h1 className="text-3xl font-extrabold font-display text-foreground">Platform Analytics</h1>
+              <p className="text-foreground-secondary text-sm mt-1">Real-time statistics across the Farm Connect network</p>
             </div>
             <Link href="/admin/farmers">
               <Button variant="primary" size="sm" className="shadow-xs">
@@ -107,7 +107,7 @@ function AdminDashboardContent() {
           </div>
 
           {error && (
-            <div className="bg-red-50 text-red-700 p-4 rounded-xl border border-red-200">
+            <div className="bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 p-4 rounded-xl border border-red-200 dark:border-red-800 transition-colors">
               {error}
             </div>
           )}
@@ -118,56 +118,56 @@ function AdminDashboardContent() {
             <div className="card flex flex-col justify-between">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Gross GMV</p>
-                  <p className="text-3xl font-black text-primary-600">₹{analytics?.revenue?.total_gmv || 0}</p>
+                  <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">Gross GMV</p>
+                  <p className="text-3xl font-black text-primary-600 dark:text-primary-400">₹{analytics?.revenue?.total_gmv || 0}</p>
                 </div>
-                <div className="p-2.5 bg-primary-50 rounded-xl text-primary-600 border border-primary-100">
+                <div className="p-2.5 bg-primary-50 dark:bg-primary-900/30 rounded-xl text-primary-600 dark:text-primary-400 border border-primary-100 dark:border-primary-800 transition-colors">
                   <IndianRupee className="w-6 h-6" />
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-4">Last 30 Days: <strong className="text-gray-900 font-semibold">₹{analytics?.revenue?.last_30_days || 0}</strong></p>
+              <p className="text-xs text-foreground-secondary mt-4">Last 30 Days: <strong className="text-foreground font-semibold">₹{analytics?.revenue?.last_30_days || 0}</strong></p>
             </div>
 
             {/* Farmers card */}
             <div className="card flex flex-col justify-between">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Farmers</p>
-                  <p className="text-3xl font-black text-gray-900">{analytics?.farmers?.total || 0}</p>
+                  <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">Total Farmers</p>
+                  <p className="text-3xl font-black text-foreground">{analytics?.farmers?.total || 0}</p>
                 </div>
-                <div className="p-2.5 bg-amber-50 rounded-xl text-amber-600 border border-amber-100">
+                <div className="p-2.5 bg-amber-50 dark:bg-amber-900/30 rounded-xl text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800 transition-colors">
                   <Users className="w-6 h-6" />
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-4">Verified: <strong className="text-primary-600 font-semibold">{analytics?.farmers?.verified || 0}</strong> • Pending: <strong className="text-amber-600 font-semibold">{analytics?.farmers?.pending_verification || 0}</strong></p>
+              <p className="text-xs text-foreground-secondary mt-4">Verified: <strong className="text-primary-600 dark:text-primary-400 font-semibold">{analytics?.farmers?.verified || 0}</strong> • Pending: <strong className="text-amber-600 dark:text-amber-400 font-semibold">{analytics?.farmers?.pending_verification || 0}</strong></p>
             </div>
 
             {/* Consumers card */}
             <div className="card flex flex-col justify-between">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Consumers</p>
-                  <p className="text-3xl font-black text-gray-900">{analytics?.consumers?.total || 0}</p>
+                  <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">Total Consumers</p>
+                  <p className="text-3xl font-black text-foreground">{analytics?.consumers?.total || 0}</p>
                 </div>
-                <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600 border border-blue-100">
+                <div className="p-2.5 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400 border border-blue-100 dark:border-blue-800 transition-colors">
                   <Users className="w-6 h-6" />
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-4">New this week: <strong className="text-gray-900 font-semibold">{analytics?.consumers?.new_this_week || 0}</strong></p>
+              <p className="text-xs text-foreground-secondary mt-4">New this week: <strong className="text-foreground font-semibold">{analytics?.consumers?.new_this_week || 0}</strong></p>
             </div>
 
             {/* Orders card */}
             <div className="card flex flex-col justify-between">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total Orders</p>
-                  <p className="text-3xl font-black text-gray-900">{analytics?.orders?.total || 0}</p>
+                  <p className="text-xs font-semibold text-foreground-muted uppercase tracking-wider">Total Orders</p>
+                  <p className="text-3xl font-black text-foreground">{analytics?.orders?.total || 0}</p>
                 </div>
-                <div className="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 border border-indigo-100">
+                <div className="p-2.5 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 transition-colors">
                   <ShoppingCart className="w-6 h-6" />
                 </div>
               </div>
-              <p className="text-xs text-gray-500 mt-4">Delivered: <strong className="text-primary-600 font-semibold">{analytics?.orders?.delivered || 0}</strong> • Pending: <strong className="text-amber-600 font-semibold">{analytics?.orders?.pending || 0}</strong></p>
+              <p className="text-xs text-foreground-secondary mt-4">Delivered: <strong className="text-primary-600 dark:text-primary-400 font-semibold">{analytics?.orders?.delivered || 0}</strong> • Pending: <strong className="text-amber-600 dark:text-amber-400 font-semibold">{analytics?.orders?.pending || 0}</strong></p>
             </div>
           </div>
 
@@ -175,44 +175,44 @@ function AdminDashboardContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Products & Inventory Metrics */}
             <div className="card p-6">
-              <h2 className="text-lg font-bold font-display text-earth-900 mb-4 flex items-center gap-2">
-                <Tag className="w-5 h-5 text-gray-500" />
+              <h2 className="text-lg font-bold font-display text-foreground mb-4 flex items-center gap-2">
+                <Tag className="w-5 h-5 text-foreground-muted" />
                 Products & Inventory
               </h2>
               <div className="space-y-4">
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600 text-sm">Total Products Listed</span>
-                  <span className="font-bold text-gray-900">{analytics?.products?.total || 0}</span>
+                <div className="flex justify-between items-center py-2 border-b border-border-default transition-colors">
+                  <span className="text-foreground-secondary text-sm">Total Products Listed</span>
+                  <span className="font-bold text-foreground">{analytics?.products?.total || 0}</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600 text-sm">Active Listings</span>
-                  <span className="font-bold text-primary-600">{analytics?.products?.active || 0}</span>
+                <div className="flex justify-between items-center py-2 border-b border-border-default transition-colors">
+                  <span className="text-foreground-secondary text-sm">Active Listings</span>
+                  <span className="font-bold text-primary-600 dark:text-primary-400">{analytics?.products?.active || 0}</span>
                 </div>
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-600 text-sm">Product Categories</span>
-                  <span className="font-bold text-gray-900">{analytics?.products?.categories || 0}</span>
+                  <span className="text-foreground-secondary text-sm">Product Categories</span>
+                  <span className="font-bold text-foreground">{analytics?.products?.categories || 0}</span>
                 </div>
               </div>
             </div>
 
             {/* Order Pipelines */}
             <div className="card p-6">
-              <h2 className="text-lg font-bold font-display text-earth-900 mb-4 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-gray-500" />
+              <h2 className="text-lg font-bold font-display text-foreground mb-4 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-foreground-muted" />
                 Order Pipelines
               </h2>
               <div className="space-y-4">
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600 text-sm">Pending Confirmation</span>
-                  <span className="font-bold text-amber-600">{analytics?.orders?.pending || 0}</span>
+                <div className="flex justify-between items-center py-2 border-b border-border-default transition-colors">
+                  <span className="text-foreground-secondary text-sm">Pending Confirmation</span>
+                  <span className="font-bold text-amber-600 dark:text-amber-400">{analytics?.orders?.pending || 0}</span>
                 </div>
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600 text-sm">Delivered / Completed</span>
-                  <span className="font-bold text-primary-600">{analytics?.orders?.delivered || 0}</span>
+                <div className="flex justify-between items-center py-2 border-b border-border-default transition-colors">
+                  <span className="text-foreground-secondary text-sm">Delivered / Completed</span>
+                  <span className="font-bold text-primary-600 dark:text-primary-400">{analytics?.orders?.delivered || 0}</span>
                 </div>
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-600 text-sm">Cancelled Orders</span>
-                  <span className="font-bold text-red-600">{analytics?.orders?.cancelled || 0}</span>
+                  <span className="text-foreground-secondary text-sm">Cancelled Orders</span>
+                  <span className="font-bold text-red-600 dark:text-red-400">{analytics?.orders?.cancelled || 0}</span>
                 </div>
               </div>
             </div>
