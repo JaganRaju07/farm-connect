@@ -4,6 +4,7 @@ require('dotenv').config();
 // Use the DATABASE_URL from your .env file
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 // Force a test connection immediately so we can see the console log
