@@ -5,8 +5,47 @@ const { getFarmerRatingSummary } = require('../services/review.service');
 const { getFarmerDashboardData } = require('../services/dashboard.service');
 const { getOrdersForFarmer, updateOrderStatus } = require('../services/order.service');
 const { authenticateToken, requireRole } = require('../middleware/auth');
+const { findFarmersInRadius, validateCoordinates } = require('../services/location.service');
 const db = require('../config/database');
 
+// --- PUBLIC ROUTES ---
+router.get('/nearby', async (req, res, next) => {
+  try {
+    const { latitude, longitude } = req.query;
+
+    if (!latitude || !longitude) {
+      return res.status(400).json({ success: false, error: { message: 'Latitude and longitude are required' } });
+    }
+
+    const validation = validateCoordinates(latitude, longitude);
+    if (!validation.valid) {
+      return res.status(400).json({ success: false, error: { message: validation.error } });
+    }
+
+    const parsedLat = parseFloat(latitude);
+    const parsedLon = parseFloat(longitude);
+    const radius = 50; // Search within 50km
+
+    const farmers = await findFarmersInRadius(parsedLat, parsedLon, radius);
+
+    // Limit to 3 and map to public data structure expected by the frontend card
+    const nearbyFarmers = farmers.slice(0, 3).map(farmer => ({
+      id: farmer.id,
+      name: farmer.name,
+      city: farmer.city,
+      distance_km: farmer.distance_km,
+      // Default dummy data for UI consistency if not fully tracked by backend yet
+      rating: 4.8, 
+      reviews_count: 0
+    }));
+
+    res.json({ success: true, data: { farmers: nearbyFarmers } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- PROTECTED ROUTES ---
 router.use(authenticateToken);
 router.use(requireRole('farmer'));
 

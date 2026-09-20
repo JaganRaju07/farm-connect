@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
+import Input from '@/components/ui/Input';
 import { useToast } from '@/context/ToastContext';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
 import { Camera, Tractor, Check, ShieldCheck } from 'lucide-react';
@@ -156,13 +157,13 @@ function FarmerProfileContent() {
             <div className="grid grid-cols-1 gap-6">
               <div>
                 <label className="block text-sm font-medium text-earth-700 mb-1.5">Farm/Farmer Name</label>
-                <input
+                <Input
                   type="text"
                   value={form.name}
                   onChange={e => setForm({ ...form, name: e.target.value })}
                   placeholder="Kisan Farm"
                   disabled={!editing}
-                  className="input-field max-w-md"
+                  className="max-w-md"
                 />
               </div>
 
@@ -174,7 +175,7 @@ function FarmerProfileContent() {
                   disabled={!editing}
                   rows={4}
                   placeholder="Tell consumers about your farming practices and history..."
-                  className="input-field resize-none"
+                  className="w-full px-4 py-2 border rounded-lg text-earth-900 placeholder:text-earth-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-earth-300 focus:border-primary-500 focus:ring-primary-500 disabled:bg-earth-100 disabled:cursor-not-allowed resize-none"
                 />
                 <p className="text-xs text-earth-500 mt-1.5">Brief description for your farm profile.</p>
               </div>
@@ -200,7 +201,7 @@ function FarmerProfileContent() {
                     value={form.farming_type}
                     onChange={e => setForm({ ...form, farming_type: e.target.value })}
                     disabled={!editing}
-                    className="input-field appearance-none"
+                    className="w-full px-4 py-2 border rounded-lg text-earth-900 placeholder:text-earth-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-earth-300 focus:border-primary-500 focus:ring-primary-500 disabled:bg-earth-100 disabled:cursor-not-allowed appearance-none"
                   >
                     <option value="">Select type</option>
                     <option value="organic">100% Organic</option>
@@ -216,25 +217,23 @@ function FarmerProfileContent() {
               
               <div>
                 <label className="block text-sm font-medium text-earth-700 mb-1.5">Farm Size (Acres)</label>
-                <input
+                <Input
                   type="number"
                   value={form.farm_size_acres}
                   onChange={e => setForm({ ...form, farm_size_acres: e.target.value })}
                   disabled={!editing}
                   placeholder="e.g. 5"
-                  className="input-field"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-earth-700 mb-1.5">Years of Farming</label>
-                <input
+                <Input
                   type="number"
                   value={form.years_of_farming}
                   onChange={e => setForm({ ...form, years_of_farming: e.target.value })}
                   disabled={!editing}
                   placeholder="e.g. 10"
-                  className="input-field"
                 />
               </div>
             </div>
@@ -254,49 +253,45 @@ function FarmerProfileContent() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="sm:col-span-2">
                 <label className="block text-sm font-medium text-earth-700 mb-1.5">Email Address (Optional)</label>
-                <input
+                <Input
                   type="email"
                   value={form.email}
                   onChange={e => setForm({ ...form, email: e.target.value })}
                   placeholder="kisan@example.com"
                   disabled={!editing}
-                  className="input-field"
                 />
               </div>
               
               <div className="sm:col-span-2">
                 <label className="block text-sm font-medium text-earth-700 mb-1.5">Farm Address</label>
-                <input
+                <Input
                   type="text"
                   value={form.delivery_address}
                   onChange={e => setForm({ ...form, delivery_address: e.target.value })}
                   placeholder="Survey No 12..."
                   disabled={!editing}
-                  className="input-field"
                 />
               </div>
               
               <div>
                 <label className="block text-sm font-medium text-earth-700 mb-1.5">City / District</label>
-                <input
+                <Input
                   type="text"
                   value={form.city}
                   onChange={e => setForm({ ...form, city: e.target.value })}
                   placeholder="Mandya"
                   disabled={!editing}
-                  className="input-field"
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-earth-700 mb-1.5">Pincode</label>
-                <input
+                <Input
                   type="text"
                   value={form.pincode}
                   onChange={e => setForm({ ...form, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) })}
                   placeholder="571401"
                   disabled={!editing}
-                  className="input-field"
                   maxLength={6}
                   pattern="[0-9]{6}"
                   inputMode="numeric"

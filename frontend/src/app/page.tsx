@@ -1,5 +1,8 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+
 
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
@@ -10,9 +13,73 @@ import {
 import { AuroraBackground } from '@/components/reactbits/AuroraBackground';
 import { BlobCursor } from '@/components/reactbits/BlobCursor';
 import { ShinyText } from '@/components/magicui/ShinyText';
+import FarmerStorefrontCard from '@/components/marketplace/FarmerStorefrontCard';
+import FarmerSpotlightCard from '@/components/marketplace/FarmerSpotlightCard';
+import { getButtonClasses } from '@/components/ui/button';
+
+const DEFAULT_FEATURED_FARMERS = [
+  {
+    id: 1,
+    name: "Ramesh Gowda",
+    city: "Mysuru Rural",
+    distance_km: 4.2,
+    rating: 4.9,
+    reviews_count: 128,
+  },
+  {
+    id: 2,
+    name: "Lakshmi Farms",
+    city: "Mandya",
+    distance_km: 12.5,
+    rating: 4.7,
+    reviews_count: 84,
+  },
+  {
+    id: 3,
+    name: "Green Valley Organics",
+    city: "Srirangapatna",
+    distance_km: 8.1,
+    rating: 5.0,
+    reviews_count: 32,
+  }
+];
 
 export default function HomePage() {
   const { isAuthenticated, role, isLoading } = useAuth();
+
+  const [featuredFarmers, setFeaturedFarmers] = useState(DEFAULT_FEATURED_FARMERS);
+  const [isLoadingFarmers, setIsLoadingFarmers] = useState(true);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      setIsLoadingFarmers(false);
+      return;
+    }
+
+    const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await axios.get(`${API}/farmers/nearby?latitude=${latitude}&longitude=${longitude}`);
+          
+          if (res.data.success && res.data.data.farmers && res.data.data.farmers.length > 0) {
+            setFeaturedFarmers(res.data.data.farmers);
+          }
+        } catch (err) {
+          console.error('Failed to fetch nearby farmers:', err);
+        } finally {
+          setIsLoadingFarmers(false);
+        }
+      },
+      (error) => {
+        console.warn('Geolocation denied or failed:', error.message);
+        setIsLoadingFarmers(false);
+      },
+      { timeout: 10000, maximumAge: 300000 } // 5 min cache
+    );
+  }, []);
 
   // Removed auto-redirect so the homepage remains accessible to authenticated users.
 
@@ -38,7 +105,7 @@ export default function HomePage() {
           </Link>
           <div className="flex items-center gap-4 sm:gap-6">
             {!isLoading && isAuthenticated ? (
-              <Link href={role === 'farmer' ? '/farmer/dashboard' : role === 'admin' ? '/admin/dashboard' : '/marketplace'} className="btn-primary text-sm px-5 py-2.5">
+              <Link href={role === 'farmer' ? '/farmer/dashboard' : role === 'admin' ? '/admin/dashboard' : '/marketplace'} className={getButtonClasses('primary', 'sm', false, 'px-5 py-2.5')}>
                 Go to {role === 'farmer' ? 'Dashboard' : role === 'admin' ? 'Dashboard' : 'Marketplace'}
               </Link>
             ) : (
@@ -46,7 +113,7 @@ export default function HomePage() {
                 <Link href="/login" className="text-sm font-semibold text-earth-600 hover:text-earth-900 transition-colors hidden sm:block">
                   Log In
                 </Link>
-                <Link href="/register" className="btn-primary text-sm px-5 py-2.5">
+                <Link href="/register" className={getButtonClasses('primary', 'sm', false, 'px-5 py-2.5')}>
                   Get Started
                 </Link>
               </>
@@ -79,7 +146,7 @@ export default function HomePage() {
               </p>
               
               <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-                <Link href="/register" className="btn-primary w-full sm:w-auto text-base px-8 h-12">
+                <Link href="/register" className={getButtonClasses('primary', 'md', false, 'w-full sm:w-auto text-base px-8 h-12')}>
                   <ShoppingCart className="w-5 h-5 mr-2" />
                   Shop Fresh Produce
                 </Link>
@@ -214,6 +281,44 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Featured Local Farmers (Showcase) ── */}
+      <section className="bg-white py-24 lg:py-32 relative z-10 border-t border-earth-200">
+        <div className="max-w-7xl mx-auto px-4 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-success-50 text-success-700 border border-success-200 text-xs font-semibold px-3 py-1 rounded-full mb-4">
+                <MapPin className="w-3.5 h-3.5" /> Platform Showcase
+              </div>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-earth-900 font-display tracking-tight">Meet Your Local Farmers</h2>
+              <p className="text-earth-600 text-lg mt-3 max-w-2xl">Discover the people growing your food. Support your local agricultural community by buying direct. (Example profiles)</p>
+            </div>
+            <Link href="/farmers" className="btn-secondary whitespace-nowrap">
+              View All Farmers <ArrowRight className="w-4 h-4 ml-2" />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {isLoadingFarmers ? (
+              // Loading skeletons
+              Array(3).fill(0).map((_, i) => (
+                <div key={i} className="h-48 bg-earth-100 rounded-3xl animate-pulse"></div>
+              ))
+            ) : featuredFarmers.length > 0 ? (
+              <>
+                <FarmerSpotlightCard farmer={featuredFarmers[0]} />
+                {featuredFarmers.slice(1).map(farmer => (
+                  <FarmerStorefrontCard key={farmer.id} farmer={farmer} />
+                ))}
+              </>
+            ) : (
+              <div className="col-span-full py-12 text-center bg-earth-50 rounded-3xl border border-earth-100">
+                <p className="text-earth-600 font-medium">No nearby farmers found at the moment.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* ── Farmer CTA ── */}
       <section className="py-24 px-4 bg-white border-t border-earth-200">
         <div className="max-w-4xl mx-auto">
@@ -229,7 +334,7 @@ export default function HomePage() {
               <p className="text-earth-300 text-lg mb-10 max-w-xl text-center leading-relaxed">
                 Take control of your pricing. Sell directly to consumers in your city without middlemen eating into your margins.
               </p>
-              <Link href="/farmer/register" className="btn-primary text-base px-8 h-12 rounded-xl group">
+              <Link href="/farmer/register" className={getButtonClasses('primary', 'md', false, 'text-base px-8 h-12 rounded-xl group')}>
                 Register Your Farm <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>

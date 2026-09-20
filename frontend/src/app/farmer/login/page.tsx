@@ -1,16 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
-import { Sprout, ArrowRight, Loader2, Tractor, TrendingUp, ShieldCheck } from 'lucide-react';
+import Button from '@/components/ui/button';
+import { Sprout, ArrowRight, Loader2, Tractor, TrendingUp, ShieldCheck, Store, Users, Package } from 'lucide-react';
 import { AuroraBackground } from '@/components/reactbits/AuroraBackground';
 
 type Step = 'phone' | 'otp';
 
-export default function FarmerLoginPage() {
+function FarmerLoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/farmer/dashboard';
@@ -22,6 +23,14 @@ export default function FarmerLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
+  const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
   const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -110,9 +119,13 @@ export default function FarmerLoginPage() {
 
   const startResendTimer = () => {
     setResendTimer(60);
-    const interval = setInterval(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
       setResendTimer(prev => {
-        if (prev <= 1) { clearInterval(interval); return 0; }
+        if (prev <= 1) { 
+          if (timerRef.current) clearInterval(timerRef.current);
+          return 0; 
+        }
         return prev - 1;
       });
     }, 1000);
@@ -236,10 +249,16 @@ export default function FarmerLoginPage() {
                 </div>
               )}
 
-              <button type="submit" disabled={phone.length !== 10 || loading} className="btn-primary w-full h-11">
-                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                {loading ? 'Sending code...' : 'Continue'}
-              </button>
+              <Button
+                type="submit"
+                disabled={phone.length !== 10 || loading}
+                isLoading={loading}
+                loadingText="Sending code..."
+                variant="primary"
+                className="w-full h-11"
+              >
+                Continue
+              </Button>
             </form>
           )}
 
@@ -307,9 +326,45 @@ export default function FarmerLoginPage() {
               </Link>
             </p>
           </div>
+
+          {/* ── Farmer Value Proposition ── */}
+          <div className="mt-12 pt-8 border-t border-earth-200/60 hidden sm:block">
+            <h3 className="text-sm font-bold text-earth-800 uppercase tracking-widest text-center mb-6">Grow with Farm Connect</h3>
+            <div className="grid gap-5">
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-primary-50 rounded-lg text-primary-700 shrink-0"><Store className="w-4 h-4" /></div>
+                <div>
+                  <h4 className="text-sm font-bold text-earth-900">Digital Storefront</h4>
+                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Showcase your harvest to thousands of local buyers instantly.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-primary-50 rounded-lg text-primary-700 shrink-0"><Users className="w-4 h-4" /></div>
+                <div>
+                  <h4 className="text-sm font-bold text-earth-900">Direct to Consumer</h4>
+                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Skip the middlemen and build lasting relationships with buyers.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-primary-50 rounded-lg text-primary-700 shrink-0"><Package className="w-4 h-4" /></div>
+                <div>
+                  <h4 className="text-sm font-bold text-earth-900">Easy Inventory</h4>
+                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Manage your stock, update prices, and track orders effortlessly.</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       </div>
     </AuroraBackground>
+  );
+}
+
+export default function FarmerLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary-600" /></div>}>
+      <FarmerLoginContent />
+    </Suspense>
   );
 }

@@ -7,12 +7,15 @@ import Image from 'next/image';
 import { useCart } from '@/context/cartcontext';
 import { useToast } from '@/context/ToastContext';
 import { useAuth } from '@/context/AuthContext';
-import { MapPin, Star, Leaf, Package, Minus, Plus, ShoppingCart, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { MapPin, Star, Leaf, Package, Minus, Plus, ShoppingCart, ArrowLeft, ShieldCheck, Share2, Clock } from 'lucide-react';
 import ReviewForm from '@/components/reviews/ReviewForm';
 import Link from 'next/link';
 import ProductDetailSkeleton from '@/components/product/ProductDetailSkeleton';
 import Button from '@/components/common/button';
 import { getRelativeHarvestDate } from '@/lib/utils';
+import { getFallbackImageUrl } from '@/components/product/productcard';
+import Input from '@/components/ui/Input';
+import FreshnessSnapshot from '@/components/product/FreshnessSnapshot';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -30,17 +33,49 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
+  const [recentlyViewed, setRecentlyViewed] = useState<any[]>([]);
 
   useEffect(() => {
     Promise.all([
       axios.get(`${API}/products/${id}`),
       axios.get(`${API}/reviews/product/${id}`)
     ]).then(([pRes, rRes]) => {
-      setProduct(pRes.data.data.product);
+      setProduct(pRes.data.data.product || pRes.data.data);
       setReviews(rRes.data.data);
+      
+      // Handle Recently Viewed
+      const saved = localStorage.getItem('farmconnect_recently_viewed');
+      let viewed = [];
+      if (saved) {
+        try { viewed = JSON.parse(saved); } catch (e) { viewed = []; }
+      }
+      setRecentlyViewed(viewed.filter((v: any) => v.id !== parseInt(id))); // Don't show current product in recently viewed
+      
     }).catch(console.error)
       .finally(() => setLoading(false));
   }, [id]);
+
+  useEffect(() => {
+    if (product) {
+      const saved = localStorage.getItem('farmconnect_recently_viewed');
+      let viewed = [];
+      if (saved) {
+        try { viewed = JSON.parse(saved); } catch (e) { viewed = []; }
+      }
+      viewed = viewed.filter((p: any) => p.id !== product.id);
+      viewed.unshift({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        unit: product.unit,
+        category: product.category,
+        primary_image_url: product.imageUrl,
+        is_organic: product.isOrganic
+      });
+      if (viewed.length > 5) viewed = viewed.slice(0, 5);
+      localStorage.setItem('farmconnect_recently_viewed', JSON.stringify(viewed));
+    }
+  }, [product]);
 
   if (loading) return <ProductDetailSkeleton />;
 
@@ -58,7 +93,7 @@ export default function ProductDetailPage() {
 
   const images = product.image_urls?.length > 0 
     ? product.image_urls 
-    : ['/placeholder-product.jpg'];
+    : product.imageUrl ? [product.imageUrl] : [getFallbackImageUrl(product.category, product.name)];
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
@@ -67,6 +102,23 @@ export default function ProductDetailPage() {
     }
     addToCart(product, qty);
     success(`${product.name} added to cart!`);
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product.name,
+          text: `Check out ${product.name} on Farm Connect!`,
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.log('Error sharing:', err);
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      success('Product link copied!');
+    }
   };
 
   const formattedPrice = new Intl.NumberFormat('en-IN', {
@@ -108,7 +160,7 @@ export default function ProductDetailPage() {
                 fill 
                 className="object-cover transition-transform duration-500 group-hover:scale-105" 
               />
-              {product.is_organic && (
+              {product.isOrganic && (
                 <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-md text-primary-700 text-sm px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm font-bold border border-primary-100">
                   <ShieldCheck className="w-4 h-4" /> Organic Certified
                 </span>
@@ -132,22 +184,27 @@ export default function ProductDetailPage() {
           {/* ── Right: Product Info ── */}
           <div className="flex flex-col">
             <div className="mb-6 border-b border-earth-200 pb-6">
-              <p className="text-xs font-bold text-primary-600 uppercase tracking-widest mb-2">{product.category}</p>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-bold text-primary-600 uppercase tracking-widest">{product.category}</p>
+                <button onClick={handleShare} className="p-2 text-earth-500 hover:text-earth-900 bg-earth-100 hover:bg-earth-200 rounded-full transition-colors">
+                  <Share2 className="w-4 h-4" />
+                </button>
+              </div>
               <h1 className="text-3xl md:text-4xl font-extrabold text-earth-900 mb-4 tracking-tight leading-tight font-display">{product.name}</h1>
               
               {/* Rating */}
-              {product.average_rating > 0 && (
+              {product.rating > 0 && (
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex gap-0.5">
                     {[1,2,3,4,5].map(s => (
-                      <Star key={s} className={`w-4 h-4 ${s <= Math.round(product.average_rating) ? 'text-amber-400 fill-amber-400' : 'text-earth-200'}`} />
+                      <Star key={s} className={`w-4 h-4 ${s <= Math.round(product.rating) ? 'text-amber-400 fill-amber-400' : 'text-earth-200'}`} />
                     ))}
                   </div>
                   <span className="text-sm font-bold text-earth-800">
-                    {parseFloat(product.average_rating).toFixed(1)}
+                    {parseFloat(product.rating).toFixed(1)}
                   </span>
                   <span className="text-sm text-earth-500">
-                    ({product.review_count} reviews)
+                    ({product.reviews_count || 0} reviews)
                   </span>
                 </div>
               )}
@@ -167,20 +224,23 @@ export default function ProductDetailPage() {
               </div>
             )}
 
+            {/* Freshness Snapshot */}
+            <FreshnessSnapshot harvestDate={product.harvestDate} distanceKm={product.distance_km} />
+
             {/* Farmer Trust Card */}
-            <div className="card p-5 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="card p-5 mt-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center font-bold text-primary-800 text-lg border border-primary-200 shrink-0">
-                  {product.farmer_name[0]}
+                  {product.farmerName ? product.farmerName[0] : 'F'}
                 </div>
                 <div>
                   <p className="text-xs text-earth-500 font-medium mb-0.5">Grown by</p>
-                  <p className="font-bold text-earth-900 text-lg leading-tight">{product.farmer_name}</p>
+                  <p className="font-bold text-earth-900 text-lg leading-tight">{product.farmerName || 'Local Farmer'}</p>
                 </div>
               </div>
               <div className="bg-earth-100/50 px-3 py-2 rounded-lg text-right">
                 <div className="flex items-center gap-1.5 text-earth-700 font-medium text-sm">
-                  <MapPin className="w-4 h-4 text-earth-400" /> {product.farmer_city}
+                  <MapPin className="w-4 h-4 text-earth-400" /> {product.farmerCity || 'Nearby'}
                 </div>
                 {product.distance_km && (
                   <p className="text-xs font-semibold text-primary-700 mt-1">{product.distance_km.toFixed(1)} km away</p>
@@ -309,6 +369,33 @@ export default function ProductDetailPage() {
             </div>
           )}
         </div>
+
+        {/* ── Recently Viewed Products ── */}
+        {recentlyViewed.length > 0 && (
+          <div className="mt-16 border-t border-earth-200 pt-16">
+            <h2 className="text-2xl font-extrabold text-earth-900 mb-8 font-display">Recently Viewed</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {recentlyViewed.map((p: any) => (
+                <Link key={p.id} href={`/product/${p.id}`} className="group block">
+                  <div className="bg-white rounded-2xl p-3 border border-earth-100 shadow-sm hover:shadow-md transition-all hover:border-primary-200">
+                    <div className="aspect-square relative rounded-xl overflow-hidden bg-earth-50 mb-3">
+                      <Image 
+                        src={p.primary_image_url || getFallbackImageUrl(p.category, p.name)} 
+                        alt={p.name} 
+                        fill 
+                        sizes="(max-width: 768px) 50vw, 20vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                    <p className="font-bold text-sm text-earth-900 truncate group-hover:text-primary-700 transition-colors">{p.name}</p>
+                    <p className="text-primary-700 font-extrabold mt-1">₹{p.price} <span className="text-xs text-earth-500 font-medium">/{p.unit}</span></p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

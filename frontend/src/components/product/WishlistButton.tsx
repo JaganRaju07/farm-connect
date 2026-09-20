@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Heart } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
 import { useRouter } from 'next/navigation';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
@@ -15,6 +16,7 @@ interface WishlistButtonProps {
 
 export default function WishlistButton({ productId, size = 'md' }: WishlistButtonProps) {
   const { isAuthenticated, role } = useAuth();
+  const { success, error } = useToast();
   const router = useRouter();
   
   const [saved, setSaved] = useState(false);
@@ -29,6 +31,8 @@ export default function WishlistButton({ productId, size = 'md' }: WishlistButto
   const iconSize = size === 'sm' ? 'w-4 h-4' : 'w-5 h-5';
   const btnSize = size === 'sm' ? 'p-1.5' : 'p-2.5';
 
+  const isMutating = useRef(false);
+
   const handleToggle = async (e: React.MouseEvent) => {
     e.preventDefault(); 
     e.stopPropagation();
@@ -38,16 +42,27 @@ export default function WishlistButton({ productId, size = 'md' }: WishlistButto
       return;
     }
 
+    // Protection against rapid-click race conditions before React re-renders
+    if (isMutating.current) return;
+    isMutating.current = true;
+
     const prevState = saved;
     setSaved(!saved); // Optimistic UI Update
     setLoading(true);
 
     try {
       await axios.post(`${API}/wishlist`, { productId });
+      if (!prevState) {
+        success('Added to wishlist');
+      } else {
+        success('Removed from wishlist');
+      }
     } catch {
       setSaved(prevState); // Revert on failure
+      error('Failed to update wishlist');
     } finally {
       setLoading(false);
+      isMutating.current = false;
     }
   };
 

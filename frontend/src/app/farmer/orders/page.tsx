@@ -3,7 +3,8 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { ShoppingBag, MapPin, Calendar, CheckCircle, Package, Truck, Award, XCircle, ChevronDown, Clock } from 'lucide-react';
+import { ShoppingBag, MapPin, Calendar, CheckCircle, Package, Truck, Award, XCircle, ChevronDown, Clock, Loader2, IndianRupee, Store } from 'lucide-react';
+import Button from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { EmptyState } from '@/components/common/EmptyState';
 
@@ -186,7 +187,12 @@ export default function FarmerOrdersPage() {
           <AnimatePresence>
             {filteredOrders.map((order, i) => {
               const isExpanded = expandedOrderId === order.id;
-              const itemsList = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+              let itemsList: any[] = [];
+              try {
+                itemsList = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+              } catch (e) {
+                itemsList = [];
+              }
               const status = order.order_status;
               const nextStat = NEXT_STATUS[status];
               const nextLabel = STATUS_TRANSITION_LABELS[status];
@@ -318,17 +324,17 @@ export default function FarmerOrdersPage() {
 
                               {/* Transition Action Button */}
                               {nextStat && nextLabel && (
-                                <button
+                                <Button
                                   onClick={() => handleUpdateStatus(order.id, status, nextStat)}
                                   disabled={isActionLoading}
-                                  className="btn-primary"
+                                  variant="primary"
                                 >
                                   {status === 'pending' && <CheckCircle className="w-4 h-4" />}
                                   {status === 'confirmed' && <Package className="w-4 h-4" />}
                                   {status === 'packed' && <Truck className="w-4 h-4" />}
                                   {status === 'out_for_delivery' && <Award className="w-4 h-4" />}
                                   {nextLabel}
-                                </button>
+                                </Button>
                               )}
                             </div>
                           </div>

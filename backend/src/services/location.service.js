@@ -236,6 +236,12 @@ async function getProductsInRadius(consumerLat, consumerLon, radiusKm = 10, filt
   // WHY dynamic: Not every request uses all filters. Building the WHERE
   // clause string avoids empty IN clauses and keeps queries lean.
 
+  if (filters.search && filters.search.trim()) {
+    query += ` AND (p.name ILIKE $${paramIndex} OR p.description ILIKE $${paramIndex} OR f.name ILIKE $${paramIndex})`;
+    params.push(`%${filters.search.trim()}%`);
+    paramIndex++;
+  }
+
   if (filters.category) {
     query += ` AND p.category = $${paramIndex}`;
     params.push(filters.category);

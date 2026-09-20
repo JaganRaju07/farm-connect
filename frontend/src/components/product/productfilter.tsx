@@ -1,6 +1,8 @@
 import React from 'react';
 import { X, SlidersHorizontal, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Button from '@/components/ui/button';
+import Input from '@/components/ui/Input';
 
 export interface FilterState {
   category: string;
@@ -131,23 +133,23 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
                 <div className="flex items-center gap-4">
                   <div className="flex-1">
                     <label className="text-xs text-earth-500 mb-1 block">Min</label>
-                    <input 
+                    <Input
                       type="number"
                       placeholder="0"
                       value={filters.minPrice}
-                      onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
-                      className="input-field py-2"
+                      onChange={(e: any) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
+                      className="py-2"
                     />
                   </div>
                   <div className="text-earth-300 mt-5">-</div>
                   <div className="flex-1">
                     <label className="text-xs text-earth-500 mb-1 block">Max</label>
-                    <input 
+                    <Input
                       type="number"
                       placeholder="Max"
                       value={filters.maxPrice}
-                      onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
-                      className="input-field py-2"
+                      onChange={(e: any) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
+                      className="py-2"
                     />
                   </div>
                 </div>
@@ -184,9 +186,9 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
               >
                 Clear All
               </button>
-              <button onClick={handleApply} className="btn-primary flex-1">
+              <Button onClick={handleApply} variant="primary" className="flex-1">
                 Apply Filters
-              </button>
+              </Button>
             </div>
           </motion.div>
         </>

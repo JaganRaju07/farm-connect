@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getButtonClasses } from '@/components/ui/button';
 import { Sprout, Home, Search } from 'lucide-react';
 
 export default function NotFound() {
@@ -21,7 +22,7 @@ export default function NotFound() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link href="/" className="btn-primary w-full sm:w-auto justify-center shadow-[0_4px_20px_rgba(21,128,61,0.2)]">
+          <Link href="/" className={getButtonClasses('primary', 'md', false, 'w-full sm:w-auto justify-center shadow-[0_4px_20px_rgba(21,128,61,0.2)]')}>
             <Home className="w-5 h-5" /> Go Home
           </Link>
           <Link href="/marketplace" className="btn-secondary w-full sm:w-auto justify-center">

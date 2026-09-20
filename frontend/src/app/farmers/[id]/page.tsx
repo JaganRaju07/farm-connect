@@ -1,10 +1,12 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
-import { MapPin, Sprout, Tractor, Calendar, Package, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Tractor, MapPin, Leaf, ShieldCheck, Star, Package, CheckCircle2, Navigation, MessageCircle, Heart, ArrowLeft, Info, Calendar, Sprout, ArrowRight } from 'lucide-react';
+import { getButtonClasses } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
@@ -35,7 +37,7 @@ export default function PublicFarmerProfilePage() {
         <Tractor className="w-16 h-16 text-earth-300 mx-auto mb-4" />
         <p className="text-xl font-bold text-earth-900 mb-2">Farmer not found</p>
         <p className="text-earth-500 mb-8">We couldn't locate this farmer in our system.</p>
-        <Link href="/marketplace" className="btn-primary w-full">Return to Marketplace</Link>
+        <Link href="/marketplace" className={getButtonClasses('primary', 'md', true)}>Return to Marketplace</Link>
       </div>
     </div>
   );
@@ -72,9 +74,9 @@ export default function PublicFarmerProfilePage() {
               transition={{ type: 'spring', stiffness: 200, damping: 20 }}
               className="w-40 h-40 sm:w-48 sm:h-48 bg-white rounded-full p-2 shadow-xl relative z-10"
             >
-              <div className="w-full h-full rounded-full bg-earth-50 flex items-center justify-center overflow-hidden border border-earth-100">
+              <div className="w-full h-full rounded-full bg-earth-50 flex items-center justify-center overflow-hidden border border-earth-100 relative">
                 {farmer.profile_photo_url ? (
-                  <img src={farmer.profile_photo_url} alt={farmer.name} className="w-full h-full object-cover" />
+                  <Image src={farmer.profile_photo_url} alt={farmer.name} fill sizes="192px" className="object-cover" />
                 ) : (
                   <Tractor className="w-20 h-20 text-earth-300" />
                 )}
@@ -179,7 +181,7 @@ export default function PublicFarmerProfilePage() {
                     <Link href={`/product/${p.id}`} className="card overflow-hidden group flex h-36 hover:border-primary-300">
                       <div className="w-36 bg-earth-100 overflow-hidden relative shrink-0">
                         {p.primary_image_url ? (
-                          <img src={p.primary_image_url} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                          <Image src={p.primary_image_url} alt={p.name} fill sizes="144px" className="object-cover group-hover:scale-110 transition-transform duration-500" />
                         ) : (
                           <Sprout className="w-8 h-8 text-earth-300 absolute inset-0 m-auto" />
                         )}

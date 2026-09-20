@@ -72,38 +72,7 @@
     transform: translateY(-2px);
   }
 
-  /* Polished Buttons */
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    background: #15803d; /* primary-700 (Dark forest green) */
-    color: #ffffff;
-    padding: 0.75rem 1.5rem;
-    border-radius: 0.75rem; /* xl */
-    font-weight: 600;
-    font-size: 0.9375rem; /* 15px */
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 4px 14px 0 rgba(21, 128, 61, 0.39);
-  }
 
-  .btn-primary:hover {
-    background: #166534; /* primary-800 */
-    transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(21, 128, 61, 0.23);
-  }
-  
-  .btn-primary:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 10px rgba(43, 122, 75, 0.3);
-  }
-  
-  .btn-primary:disabled {
-    opacity: 0.6;
-    pointer-events: none;
-    box-shadow: none;
-  }
 
   .btn-secondary {
     display: inline-flex;
@@ -147,34 +116,6 @@
     box-shadow: 0 6px 20px rgba(231, 111, 81, 0.23);
   }
 
-  /* Polished Inputs */
-  .input-field {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    background: #ffffff;
-    border: 1px solid #d5cec4; /* earth-300 */
-    border-radius: 0.75rem;
-    color: #1c1917;
-    font-size: 0.9375rem;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    outline: none;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-  }
-
-  .input-field::placeholder {
-    color: #b8afa1; /* earth-400 */
-  }
-
-  .input-field:focus {
-    border-color: #2b7a4b; /* primary-600 */
-    box-shadow: 0 0 0 2px rgba(43, 122, 75, 0.2);
-  }
-  
-  .input-field:disabled {
-    background: #f4f2ee;
-    color: #9b9182;
-    cursor: not-allowed;
-  }
 }
 
 /* -------------- UTILITIES ------------- */

@@ -1,6 +1,7 @@
 // frontend/src/app/admin/farmers/page.tsx
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
@@ -158,11 +159,15 @@ export default function AdminFarmerVerificationPage() {
                     {/* Header: photo preview + name */}
                     <div className="flex flex-col sm:flex-row gap-5 items-start">
                       {farmer.profile_photo_url ? (
-                        <img 
-                          src={farmer.profile_photo_url} 
-                          alt="Farmer Profile" 
-                          className="w-20 h-20 rounded-full object-cover border border-gray-150 shadow-xs" 
-                        />
+                        <div className="w-20 h-20 relative rounded-full overflow-hidden border border-gray-150 shadow-xs shrink-0">
+                          <Image 
+                            src={farmer.profile_photo_url} 
+                            alt={farmer.name || "Farmer Profile"} 
+                            fill
+                            sizes="80px"
+                            className="object-cover" 
+                          />
+                        </div>
                       ) : (
                         <div className="w-20 h-20 rounded-full bg-primary-50 flex items-center justify-center border border-primary-100">
                           <User className="w-10 h-10 text-primary-400" />

@@ -1,4 +1,6 @@
-// src/components/product/ProductCard.tsx
+'use client';
+import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin, User, Star, ShieldCheck, Clock, Leaf } from 'lucide-react';
 import { Product } from '@/types';
@@ -15,24 +17,40 @@ interface ProductCardProps {
 }
 
 // Helper to return a professional Unsplash image based on product category or name
-const getFallbackImageUrl = (category: string, name: string): string => {
+export const getFallbackImageUrl = (category: string, name: string): string => {
   const n = name.toLowerCase();
   
-  if (n.includes('tomato')) return 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=600&auto=format&fit=crop';
-  if (n.includes('spinach') || n.includes('leaf') || n.includes('cabbage')) return 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?q=80&w=600&auto=format&fit=crop';
-  if (n.includes('milk')) return 'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=600&auto=format&fit=crop';
-  if (n.includes('egg')) return 'https://images.unsplash.com/photo-1587486913049-53fc88980cfc?q=80&w=600&auto=format&fit=crop';
+  // High-Quality AI Generated Assets
+  if (n.includes('honey')) return '/products/raw_honey_jar.jpg';
+  if (n.includes('chilli') || n.includes('chili') || n.includes('basket')) return '/products/organic_vegetables_basket.jpg';
+  if (n.includes('strawberry')) return '/products/fresh_strawberries.jpg';
+  if (n.includes('spinach')) return '/products/organic_spinach.jpg';
+  if (n.includes('egg')) return '/products/brown_eggs.jpg';
+  if (n.includes('coconut oil')) return '/products/coconut_oil.jpg';
+  if (n.includes('mint')) return '/products/mint_leaves.jpg';
+  if (n.includes('avocado')) return '/products/local_avocados.jpg';
+  if (n.includes('peanut butter')) return '/products/peanut_butter.jpg';
+  if (n.includes('pepper')) return '/products/black_pepper.jpg';
+  if (n.includes('milk') || n.includes('dairy')) return '/products/farm_fresh_dairy.jpg';
+  if (n.includes('bread')) return '/products/artisanal_bread_wheat.jpg';
+  if (n.includes('fruit assortment')) return '/products/exotic_fresh_fruits.jpg';
   
-  switch (category?.toLowerCase()) {
-    case 'fruits': return 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=600&auto=format&fit=crop';
-    case 'vegetables': return 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=600&auto=format&fit=crop';
-    case 'dairy': return 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?q=80&w=600&auto=format&fit=crop';
-    case 'grains': return 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=600&auto=format&fit=crop';
-    default: return 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=600&auto=format&fit=crop';
-  }
+  // Reliable Unsplash Fallbacks
+  if (n.includes('tomato')) return 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('rice')) return 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('flour')) return 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('turmeric') || n.includes('spice')) return 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('onion')) return 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?q=80&w=600&auto=format&fit=crop';
+  
+  // Dynamic Accurate Real Photography fallback for everything else
+  // Uses the product name to pull an exact photo (e.g. "mushroom", "quinoa")
+  const keywords = n.replace(/[^a-z0-9]/g, ',').split(',').filter(x => x.length > 2).slice(0, 2).join(',');
+  return `https://loremflickr.com/600/400/food,${keywords}/all`;
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const [imgSrc, setImgSrc] = useState(product.imageUrl || getFallbackImageUrl(product.category, product.name));
+
   const {
     id,
     name,
@@ -71,13 +89,14 @@ export default function ProductCard({ product }: ProductCardProps) {
         
         {/* ── Image Container ── */}
         <div className="relative h-56 w-full overflow-hidden bg-earth-100">
-          <img
-            src={imageUrl || getFallbackImageUrl(category, name)}
+          <Image
+            src={imgSrc}
             alt={name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-            onError={(e) => {
-              // If the provided imageUrl itself is broken, fallback to category image
-              e.currentTarget.src = getFallbackImageUrl(category, name);
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            onError={() => {
+              setImgSrc(getFallbackImageUrl(category, name));
             }}
           />
           

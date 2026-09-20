@@ -1,21 +1,33 @@
 // frontend/src/app/checkout/page.tsx
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
+import ProtectedRoute from '@/components/common/ProtectedRoute';
 import { useCart } from '@/context/cartcontext';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useRouter } from 'next/navigation';
 import { placeOrder } from '@/lib/api/orders';
 import { MapPin, AlertCircle, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import Input from '@/components/ui/Input';
 import Link from 'next/link';
 import Button from '@/components/common/button';
+import { useToast } from '@/context/ToastContext';
 
 const DELIVERY_FEE = 30;
 
 export default function CheckoutPage() {
+  return (
+    <ProtectedRoute allowedRoles={['consumer']} redirectTo="/login">
+      <CheckoutContent />
+    </ProtectedRoute>
+  );
+}
+
+function CheckoutContent() {
   const { items, getSubtotal, clearCart } = useCart();
   const { latitude, longitude } = useGeolocation();
   const router = useRouter();
+  const { success, error: toastError } = useToast();
 
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
@@ -23,6 +35,7 @@ export default function CheckoutPage() {
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const subtotal = getSubtotal();
 
@@ -72,6 +85,7 @@ export default function CheckoutPage() {
       });
 
       clearCart();
+      success('Order placed successfully!');
       router.push(`/orders/${order.id}?placed=true`);
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Failed to place order.');
@@ -80,8 +94,14 @@ export default function CheckoutPage() {
     }
   };
 
-  if (items.length === 0) {
-    router.push('/cart');
+  useEffect(() => {
+    if (items.length === 0) {
+      setIsRedirecting(true);
+      router.replace('/cart');
+    }
+  }, [items.length, router]);
+
+  if (items.length === 0 || isRedirecting) {
     return null;
   }
 
@@ -137,7 +157,7 @@ export default function CheckoutPage() {
                       value={address}
                       onChange={e => setAddress(e.target.value)}
                       rows={2}
-                      className="input-field resize-none"
+                      className="w-full px-4 py-2 border rounded-lg text-earth-900 placeholder:text-earth-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-earth-300 focus:border-primary-500 focus:ring-primary-500 disabled:bg-earth-100 disabled:cursor-not-allowed resize-none"
                       placeholder="House/Flat, Street, Landmark..."
                     />
                   </div>
@@ -145,23 +165,21 @@ export default function CheckoutPage() {
                   <div className="grid grid-cols-2 gap-5">
                     <div>
                       <label className="block text-sm font-semibold text-earth-700 mb-1.5">City *</label>
-                      <input
+                      <Input
                         type="text"
                         required
                         value={city}
                         onChange={e => setCity(e.target.value)}
-                        className="input-field"
                         placeholder="Bengaluru"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-earth-700 mb-1.5">Pincode *</label>
-                      <input
+                      <Input
                         type="text"
                         required
                         value={pincode}
                         onChange={e => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                        className="input-field"
                         placeholder="560001"
                         maxLength={6}
                         pattern="[0-9]{6}"
@@ -178,7 +196,7 @@ export default function CheckoutPage() {
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
                       rows={2}
-                      className="input-field resize-none"
+                      className="w-full px-4 py-2 border rounded-lg text-earth-900 placeholder:text-earth-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-earth-300 focus:border-primary-500 focus:ring-primary-500 disabled:bg-earth-100 disabled:cursor-not-allowed resize-none"
                       placeholder="Any requests for the farmer (e.g. ring bell upon arrival)..."
                     />
                   </div>

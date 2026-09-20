@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import { getButtonClasses } from '@/components/ui/button';
 import { EmptyState } from '@/components/common/EmptyState';
 import { GradientDivider } from '@/components/common/GradientDivider';
 
@@ -155,13 +156,13 @@ export default function CartPage() {
               </div>
 
               <div className="space-y-3">
-                <button
-                  onClick={() => router.push('/checkout')}
-                  className="btn-primary w-full h-12 text-base flex items-center justify-center gap-2"
+                <Link
+                  href="/checkout"
+                  className={getButtonClasses('primary', 'md', true, 'h-12 text-base flex items-center justify-center gap-2')}
                 >
                   Proceed to Checkout
                   <ArrowRight className="w-4 h-4" />
-                </button>
+                </Link>
 
                 <button
                   onClick={() => router.push('/marketplace')}

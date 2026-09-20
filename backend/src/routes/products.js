@@ -6,7 +6,7 @@ const { getProductsInRadius, validateCoordinates } = require('../services/locati
 router.get('/', async (req, res) => {
   try {
     // 2. Extract lat, lon, and radius instead of city
-    const { lat, lon, radius, category, minPrice, maxPrice, isOrganic } = req.query;
+    const { lat, lon, radius, category, minPrice, maxPrice, isOrganic, search } = req.query;
 
     // 3. Validate the GPS coordinates if provided
     let parsedLat = null;
@@ -23,6 +23,7 @@ router.get('/', async (req, res) => {
     // 4. Bundle the optional filters
     const filters = {
       category,
+      search,
       minPrice: (minPrice && !isNaN(Number(minPrice))) ? Number(minPrice) : undefined,
       maxPrice: (maxPrice && !isNaN(Number(maxPrice))) ? Number(maxPrice) : undefined,
       isOrganic: isOrganic !== undefined ? String(isOrganic) === 'true' : undefined,

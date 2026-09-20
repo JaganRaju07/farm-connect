@@ -1,12 +1,14 @@
 // frontend/src/app/farmer/products/page.tsx
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Edit2, Trash2, Eye, EyeOff, Package, AlertCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, Eye, EyeOff, Package, AlertCircle, Loader2 } from 'lucide-react';
 import ProductFormModal from '@/components/farmer/ProductFormModal';
 import { EmptyState } from '@/components/common/EmptyState';
 import { motion } from 'framer-motion';
+import Button from '@/components/ui/button';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -16,6 +18,7 @@ export default function FarmerProductsPage() {
   const [showModal, setShowModal] = useState(false);
   const [editProduct, setEditProduct] = useState<any>(null);
   const [apiError, setApiError] = useState(false);
+  const [togglingId, setTogglingId] = useState<number | null>(null);
   
   const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : '';
 
@@ -45,6 +48,7 @@ export default function FarmerProductsPage() {
   }, [token]);
 
   const handleToggleActive = async (productId: number, currentStatus: boolean) => {
+    setTogglingId(productId);
     try {
       await axios.put(`${API_BASE}/farmers/products/${productId}`,
         { is_active: !currentStatus },
@@ -56,6 +60,8 @@ export default function FarmerProductsPage() {
       ));
     } catch (error) {
       console.error('Toggle status failed:', error);
+    } finally {
+      setTogglingId(null);
     }
   };
 
@@ -80,13 +86,13 @@ export default function FarmerProductsPage() {
           <h1 className="text-2xl font-bold font-display text-earth-900 tracking-tight">Inventory</h1>
           <p className="text-sm text-earth-500 mt-1">Manage your farm's products and stock levels.</p>
         </div>
-        <button
+        <Button
           onClick={() => { setEditProduct(null); setShowModal(true); }}
-          className="btn-primary shrink-0"
+          className="shrink-0"
+          icon={<Plus className="w-5 h-5" />}
         >
-          <Plus className="w-5 h-5" />
           Add Product
-        </button>
+        </Button>
       </div>
 
       {loading ? (
@@ -139,7 +145,9 @@ export default function FarmerProductsPage() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center gap-4">
                         {product.image_url ? (
-                          <img src={product.image_url} alt="" className="w-12 h-12 rounded-xl object-cover border border-earth-200 shadow-sm group-hover:scale-105 transition-transform" />
+                          <div className="w-12 h-12 relative rounded-xl overflow-hidden border border-earth-200 shadow-sm group-hover:scale-105 transition-transform shrink-0">
+                            <Image src={product.image_url} alt={product.name} fill sizes="48px" className="object-cover" />
+                          </div>
                         ) : (
                           <div className="w-12 h-12 bg-earth-50 rounded-xl flex items-center justify-center border border-earth-200">
                             <Package className="w-5 h-5 text-earth-400" />
@@ -187,10 +195,17 @@ export default function FarmerProductsPage() {
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => handleToggleActive(product.id, product.is_active)}
-                          className="p-2 text-earth-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer"
+                          disabled={togglingId === product.id}
+                          className="p-2 text-earth-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
                           title={product.is_active ? 'Hide Product' : 'Show Product'}
                         >
-                          {product.is_active ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                          {togglingId === product.id ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : product.is_active ? (
+                            <Eye className="w-4 h-4" />
+                          ) : (
+                            <EyeOff className="w-4 h-4" />
+                          )}
                         </button>
                         <button
                           onClick={() => { setEditProduct(product); setShowModal(true); }}

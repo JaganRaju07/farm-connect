@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
 import { Heart, Search, ShoppingBag, Store, MapPin } from 'lucide-react';
 import Link from 'next/link';
+import { getButtonClasses } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 
@@ -24,12 +25,35 @@ function WishlistContent() {
 
   useEffect(() => { fetchWishlist(); }, []);
 
+  const mutatingRef = useRef<Set<number>>(new Set());
+
   const handleRemove = async (productId: number) => {
+    if (mutatingRef.current.has(productId)) return;
+    mutatingRef.current.add(productId);
+
+    const itemIndex = items.findIndex(item => item.id === productId);
+    const itemToRestore = items[itemIndex];
+    
+    setItems(prev => prev.filter(item => item.id !== productId));
+
     try {
       await axios.post(`${API}/wishlist`, { productId });
-      setItems(prev => prev.filter(item => item.id !== productId));
     } catch (err) {
-      console.error(err);
+      console.error('Failed to remove item, reverting:', err);
+      if (itemToRestore) {
+        setItems(prev => {
+          const newItems = [...prev];
+          // Restore at original position if possible, else push to end
+          if (itemIndex >= 0 && itemIndex <= newItems.length) {
+            newItems.splice(itemIndex, 0, itemToRestore);
+          } else {
+            newItems.push(itemToRestore);
+          }
+          return newItems;
+        });
+      }
+    } finally {
+      mutatingRef.current.delete(productId);
     }
   };
 
@@ -62,7 +86,7 @@ function WishlistContent() {
             </div>
             <h2 className="text-xl font-bold font-display text-earth-900 mb-2">Your wishlist is empty</h2>
             <p className="text-earth-500 mb-8 font-medium">Find products you love and save them for later.</p>
-            <Link href="/marketplace" className="btn-primary inline-flex">
+            <Link href="/marketplace" className={getButtonClasses('primary', 'md', false, 'inline-flex')}>
               <Search className="w-4 h-4" /> Discover Fresh Produce
             </Link>
           </div>
@@ -103,7 +127,7 @@ function WishlistContent() {
                     <h3 className="font-bold text-earth-900 text-lg mb-1 truncate">{item.name}</h3>
                     <p className="text-xl font-black text-primary-700 mb-4">{formatPrice(item.price)}<span className="text-xs text-earth-500 font-medium tracking-wide"> / {item.unit}</span></p>
                     
-                    <Link href={`/product/${item.id}`} className="btn-primary w-full mt-auto">
+                    <Link href={`/product/${item.id}`} className={getButtonClasses('primary', 'md', true, 'mt-auto')}>
                       <ShoppingBag className="w-4 h-4" /> View Product
                     </Link>
                   </div>

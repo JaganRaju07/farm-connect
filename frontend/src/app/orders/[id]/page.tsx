@@ -1,18 +1,20 @@
 // frontend/src/app/orders/[id]/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import { getOrderById, Order } from '@/lib/api/orders';
 import OrderTimeline from '@/components/order/OrderTimeline';
-import { CheckCircle, Loader2, Phone, RefreshCw, Package, MapPin, Store, ArrowLeft, Home, Truck } from 'lucide-react';
+import { CheckCircle, Loader2, Phone, RefreshCw, Package, MapPin, Store, ArrowLeft, Home, Truck, Copy } from 'lucide-react';
+import Button from '@/components/ui/button';
 import Link from 'next/link';
+import { useToast } from '@/context/ToastContext';
 import { motion } from 'framer-motion';
 import { useRef } from 'react';
 import { AnimatedBeam } from '@/components/magicui/AnimatedBeam';
 import ReviewForm from '@/components/reviews/ReviewForm';
 
-export default function OrderTrackingPage() {
+function OrderTrackingContent() {
   const params = useParams();
   const searchParams = useSearchParams();
   const orderId = params.id as string;
@@ -22,6 +24,7 @@ export default function OrderTrackingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [apiError, setApiError] = useState(false);
+  const { success } = useToast();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const farmRef = useRef<HTMLDivElement>(null);
@@ -78,7 +81,7 @@ export default function OrderTrackingPage() {
           <p className="text-xl font-bold text-earth-900 mb-2">{error || 'Order not found'}</p>
           <p className="text-earth-500 mb-8">We couldn't locate this order in our system.</p>
           <div className="flex flex-col gap-3">
-            <button onClick={fetchOrder} className="btn-primary w-full justify-center">Retry</button>
+            <Button onClick={fetchOrder} variant="primary" className="w-full justify-center">Retry</Button>
             <Link href="/consumer/orders" className="btn-secondary w-full justify-center">Back to Orders</Link>
           </div>
         </div>
@@ -86,15 +89,27 @@ export default function OrderTrackingPage() {
     );
   }
 
-  const items = JSON.parse(order.items) as Array<{
-    productId: number;
-    name: string;
-    quantity: number;
-    unit: string;
-    price: number;
-  }>;
+  let items: any[] = [];
+  try {
+    items = (typeof order.items === 'string' ? JSON.parse(order.items) : order.items) as Array<{
+      productId: number;
+      name: string;
+      quantity: number;
+      unit: string;
+      price: number;
+    }>;
+  } catch (e) {
+    items = [];
+  }
 
   const formatPrice = (price: string | number) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(parseFloat(price as string));
+
+  const handleCopy = () => {
+    if (order?.order_number) {
+      navigator.clipboard.writeText(order.order_number);
+      success('Order number copied!');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-earth-50 font-sans pb-24">
@@ -168,7 +183,16 @@ export default function OrderTrackingPage() {
         <div className="card p-6 md:p-8 mb-8">
           <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-6 mb-6">
             <div>
-              <h1 className="text-3xl font-extrabold text-earth-900 tracking-tight">Order {order.order_number}</h1>
+              <div className="flex items-center gap-3">
+                <h1 className="text-3xl font-extrabold text-earth-900 tracking-tight">Order {order.order_number}</h1>
+                <button 
+                  onClick={handleCopy}
+                  className="p-1.5 text-earth-400 hover:text-earth-900 bg-earth-100 hover:bg-earth-200 rounded-lg transition-colors"
+                  title="Copy Order Number"
+                >
+                  <Copy className="w-5 h-5" />
+                </button>
+              </div>
               <p className="text-earth-500 font-medium mt-1">
                 Placed on {new Date(order.created_at).toLocaleDateString('en-IN', { dateStyle: 'long', timeStyle: 'short' })}
               </p>
@@ -297,5 +321,13 @@ export default function OrderTrackingPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function OrderTrackingPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center p-8"><Loader2 className="w-8 h-8 animate-spin text-primary-600" /></div>}>
+      <OrderTrackingContent />
+    </Suspense>
   );
 }

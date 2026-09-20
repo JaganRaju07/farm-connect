@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
+import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import Link from 'next/link';
@@ -28,7 +29,7 @@ const getFallbackImageUrl = (category: string, name: string): string => {
   }
 };
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { latitude, longitude } = useGeolocation();
@@ -196,13 +197,10 @@ export default function SearchPage() {
                 <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                   
                   <div className="relative h-56 bg-gray-100 overflow-hidden">
-                    <img 
-                      src={p.primary_image_url || getFallbackImageUrl(p.category, p.name)} 
-                      alt={p.name} 
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      onError={(e) => {
-                        e.currentTarget.src = getFallbackImageUrl(p.category, p.name);
-                      }}
+                    <SearchProductImage 
+                      primaryImageUrl={p.primary_image_url} 
+                      category={p.category} 
+                      name={p.name} 
                     />
                     {p.is_organic && (
                       <span className="absolute top-3 left-3 bg-primary-500/90 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium shadow-sm flex items-center gap-1">
@@ -249,5 +247,30 @@ export default function SearchPage() {
         </>
       )}
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center p-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div></div>}>
+      <SearchPageContent />
+    </Suspense>
+  );
+}
+
+function SearchProductImage({ primaryImageUrl, category, name }: { primaryImageUrl?: string, category: string, name: string }) {
+  const [imgSrc, setImgSrc] = useState(primaryImageUrl || getFallbackImageUrl(category, name));
+
+  return (
+    <Image 
+      src={imgSrc} 
+      alt={name}
+      fill
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      className="object-cover transition-transform duration-500 group-hover:scale-105"
+      onError={() => {
+        setImgSrc(getFallbackImageUrl(category, name));
+      }}
+    />
   );
 }

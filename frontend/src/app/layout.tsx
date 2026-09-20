@@ -42,14 +42,14 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-sans">
         <AuthProvider>
           <LocationProvider>
-            <CartProvider>
-              <ToastProvider>
+            <ToastProvider>
+              <CartProvider>
                 <AxiosInterceptorWrapper>
                   <Header />
                   {children}
                 </AxiosInterceptorWrapper>
-              </ToastProvider>
-            </CartProvider>
+              </CartProvider>
+            </ToastProvider>
           </LocationProvider>
         </AuthProvider>
       </body>

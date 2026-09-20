@@ -120,13 +120,13 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
 
       if (isEdit) {
         await axios.put(
-          `${API_BASE}/api/v1/farmers/products/${product.id}`,
+          `${API_BASE}/farmers/products/${product.id}`,
           payload,
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         await axios.post(
-          `${API_BASE}/api/v1/farmers/products`,
+          `${API_BASE}/farmers/products`,
           payload,
           { headers: { Authorization: `Bearer ${token}` } }
         );

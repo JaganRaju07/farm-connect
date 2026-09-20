@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
 import { Sprout, ArrowRight, Loader2, Leaf, ShieldCheck, MapPin, Tractor } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuroraBackground } from '@/components/reactbits/AuroraBackground';
@@ -12,11 +13,12 @@ import Button from '@/components/common/button';
 
 type Step = 'phone' | 'otp';
 
-export default function ConsumerLoginPage() {
+function ConsumerLoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/marketplace';
   const { login } = useAuth();
+  const { success, error: toastError } = useToast();
 
   const [step, setStep] = useState<Step>('phone');
   const [phone, setPhone] = useState('');
@@ -26,6 +28,13 @@ export default function ConsumerLoginPage() {
   const [resendTimer, setResendTimer] = useState(0);
   
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
   const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -49,6 +58,7 @@ export default function ConsumerLoginPage() {
 
       setStep('otp');
       startResendTimer();
+      success('Verification code sent successfully');
     } catch (err: any) {
       const msg = err.response?.data?.error?.message || '';
       if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('register')) {
@@ -74,6 +84,7 @@ export default function ConsumerLoginPage() {
 
       const { token, user, requiresProfileCompletion } = res.data.data;
       login(token, user, 'consumer');
+      success('Successfully logged in');
 
       if (requiresProfileCompletion) {
         router.push('/complete-profile');
@@ -116,9 +127,13 @@ export default function ConsumerLoginPage() {
 
   const startResendTimer = () => {
     setResendTimer(60);
-    const interval = setInterval(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
       setResendTimer(prev => {
-        if (prev <= 1) { clearInterval(interval); return 0; }
+        if (prev <= 1) { 
+          if (timerRef.current) clearInterval(timerRef.current);
+          return 0; 
+        }
         return prev - 1;
       });
     }, 1000);
@@ -129,6 +144,7 @@ export default function ConsumerLoginPage() {
     try {
       await axios.post(`${API}/auth/send-otp`, { phone, userType: 'consumer', action: 'login' });
       startResendTimer();
+      success('Verification code resent');
     } catch {
       setError('Failed to resend OTP');
     }
@@ -349,9 +365,46 @@ export default function ConsumerLoginPage() {
               </div>
             </div>
           )}
+
+          {/* ── Value Proposition Section ── */}
+          <div className="mt-12 pt-8 border-t border-earth-200/60 hidden sm:block">
+            <h3 className="text-sm font-bold text-earth-800 uppercase tracking-widest text-center mb-6">Why Farm Connect?</h3>
+            <div className="grid gap-5">
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-primary-50 rounded-lg text-primary-600 shrink-0"><Leaf className="w-4 h-4" /></div>
+                <div>
+                  <h4 className="text-sm font-bold text-earth-900">Fresh from the Source</h4>
+                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Discover products directly from local farmers.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-primary-50 rounded-lg text-primary-600 shrink-0"><MapPin className="w-4 h-4" /></div>
+                <div>
+                  <h4 className="text-sm font-bold text-earth-900">Nearby by Design</h4>
+                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Find products based on actual geographic proximity.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-primary-50 rounded-lg text-primary-600 shrink-0"><ShieldCheck className="w-4 h-4" /></div>
+                <div>
+                  <h4 className="text-sm font-bold text-earth-900">Know Your Farmer</h4>
+                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">See farmer information and locality for a transparent experience.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
       </div>
     </AuroraBackground>
+  );
+}
+
+export default function ConsumerLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary-600" /></div>}>
+      <ConsumerLoginContent />
+    </Suspense>
   );
 }

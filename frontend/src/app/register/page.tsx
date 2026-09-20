@@ -5,15 +5,19 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
 import { Sprout, ArrowRight, Loader2, Leaf, ShieldCheck, MapPin } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuroraBackground } from '@/components/reactbits/AuroraBackground';
+import Button from '@/components/ui/button';
+import Input from '@/components/ui/Input';
 
 type Step = 'details' | 'otp';
 
 export default function ConsumerRegisterPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const { success } = useToast();
 
   const [step, setStep] = useState<Step>('details');
   const [formData, setFormData] = useState({ name: '', phone: '' });
@@ -23,6 +27,13 @@ export default function ConsumerRegisterPage() {
   const [resendTimer, setResendTimer] = useState(0);
   
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
 
   const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -49,6 +60,7 @@ export default function ConsumerRegisterPage() {
       });
       setStep('otp');
       startResendTimer();
+      success('Verification code sent successfully');
     } catch (err: any) {
       setError(err.response?.data?.error?.message || err.response?.data?.message || 'Failed to send OTP. Try again.');
     } finally {
@@ -70,6 +82,7 @@ export default function ConsumerRegisterPage() {
 
       const { token, user } = res.data.data;
       login(token, user, 'consumer');
+      success('Registration successful! Welcome to Farm Connect.');
       router.push('/complete-profile');
     } catch (err: any) {
       setError(err.response?.data?.error?.message || err.response?.data?.message || 'Invalid OTP. Try again.');
@@ -106,9 +119,13 @@ export default function ConsumerRegisterPage() {
 
   const startResendTimer = () => {
     setResendTimer(60);
-    const interval = setInterval(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
       setResendTimer(prev => {
-        if (prev <= 1) { clearInterval(interval); return 0; }
+        if (prev <= 1) { 
+          if (timerRef.current) clearInterval(timerRef.current);
+          return 0; 
+        }
         return prev - 1;
       });
     }, 1000);
@@ -119,6 +136,7 @@ export default function ConsumerRegisterPage() {
     try {
       await axios.post(`${API}/auth/send-otp`, { phone: formData.phone, userType: 'consumer', action: 'register' });
       startResendTimer();
+      success('Verification code resent');
     } catch {
       setError('Failed to resend OTP');
     }
@@ -224,13 +242,13 @@ export default function ConsumerRegisterPage() {
                 className="space-y-5"
               >
                 <div className="space-y-2">
-                  <label className="text-sm font-semibold text-earth-700">Full Name</label>
-                  <input
+                  <Input
+                    label="Full Name"
                     type="text"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g. John Doe"
-                    className="input-field py-3 text-base"
+                    className="py-3 text-base"
                     disabled={loading}
                     autoFocus
                   />
@@ -264,10 +282,16 @@ export default function ConsumerRegisterPage() {
                   </motion.div>
                 )}
 
-                <button type="submit" disabled={formData.phone.length !== 10 || formData.name.trim().length < 2 || loading} className="btn-primary w-full h-12 mt-4 text-base shadow-md">
-                  {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-                  {loading ? 'Sending code...' : 'Continue'}
-                </button>
+                <Button 
+                  type="submit" 
+                  disabled={formData.phone.length !== 10 || formData.name.trim().length < 2 || loading} 
+                  isLoading={loading}
+                  loadingText="Sending code..."
+                  variant="primary"
+                  className="w-full h-12 mt-4 text-base shadow-md"
+                >
+                  Continue
+                </Button>
               </motion.form>
             )}
 
@@ -339,6 +363,35 @@ export default function ConsumerRegisterPage() {
               </p>
             </div>
           )}
+
+          {/* ── Value Proposition Section ── */}
+          <div className="mt-12 pt-8 border-t border-earth-200/60 hidden sm:block">
+            <h3 className="text-sm font-bold text-earth-800 uppercase tracking-widest text-center mb-6">Why Farm Connect?</h3>
+            <div className="grid gap-5">
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-primary-50 rounded-lg text-primary-600 shrink-0"><Leaf className="w-4 h-4" /></div>
+                <div>
+                  <h4 className="text-sm font-bold text-earth-900">Fresh from the Source</h4>
+                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Discover products directly from local farmers.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-primary-50 rounded-lg text-primary-600 shrink-0"><MapPin className="w-4 h-4" /></div>
+                <div>
+                  <h4 className="text-sm font-bold text-earth-900">Nearby by Design</h4>
+                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">Find products based on actual geographic proximity.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <div className="p-2 bg-primary-50 rounded-lg text-primary-600 shrink-0"><ShieldCheck className="w-4 h-4" /></div>
+                <div>
+                  <h4 className="text-sm font-bold text-earth-900">Know Your Farmer</h4>
+                  <p className="text-xs text-earth-500 leading-relaxed mt-0.5">See farmer information and locality for a transparent experience.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
       </div>

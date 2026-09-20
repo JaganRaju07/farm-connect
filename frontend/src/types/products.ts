@@ -22,6 +22,7 @@ export interface Product {
   rating?: number;
   reviewCount?: number;
   harvestDate?: string;
+  distance_km?: number;
   createdAt: string;
   updatedAt: string;
 }

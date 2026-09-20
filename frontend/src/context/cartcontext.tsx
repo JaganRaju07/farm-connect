@@ -11,6 +11,7 @@ import {
   ReactNode,
 } from 'react';
 import { Product } from '@/lib/api/products';
+import { useToast } from '@/context/ToastContext';
 
 interface CartItem {
   product: Product;
@@ -20,7 +21,7 @@ interface CartItem {
 interface CartContextType {
   items: CartItem[];
   addToCart: (product: Product, quantity: number) => void;
-  removeFromCart: (productId: number) => void;
+  removeFromCart: (productId: number, productName?: string) => void;
   updateQuantity: (productId: number, quantity: number) => void;
   clearCart: () => void;
   getItemCount: () => number;
@@ -34,6 +35,7 @@ const STORAGE_KEY = 'farmconnect_cart';
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [mounted, setMounted] = useState(false);
+  const { success, error } = useToast();
 
   // Load cart from localStorage after mount
   useEffect(() => {
@@ -60,22 +62,29 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const idx = current.findIndex(i => i.product.id === product.id);
       if (idx >= 0) {
         const updated = [...current];
-        updated[idx] = {
-          ...updated[idx],
-          quantity: Math.min(
-            updated[idx].quantity + quantity,
-            product.stock_available
-          ),
-        };
+        const newQ = updated[idx].quantity + quantity;
+        const finalQ = Math.min(newQ, product.stock_available);
+        updated[idx] = { ...updated[idx], quantity: finalQ };
+        
+        if (newQ > product.stock_available) {
+          error(`Only ${product.stock_available} ${product.unit} available`);
+        } else {
+          success(`Updated ${product.name} in cart`);
+        }
         return updated;
       }
+      
+      success(`Added ${product.name} to cart`);
       return [...current, { product, quantity }];
     });
-  }, []);
+  }, [success, error]);
 
-  const removeFromCart = useCallback((productId: number) => {
+  const removeFromCart = useCallback((productId: number, productName?: string) => {
     setItems(current => current.filter(i => i.product.id !== productId));
-  }, []);
+    if (productName) {
+      success(`Removed ${productName} from cart`);
+    }
+  }, [success]);
 
   const updateQuantity = useCallback((productId: number, quantity: number) => {
     if (quantity <= 0) {
