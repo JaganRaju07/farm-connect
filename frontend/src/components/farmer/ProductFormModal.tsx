@@ -26,7 +26,7 @@ interface ProductFormModalProps {
  *    and allows standard JSON payload processing on the backend product endpoints.
  */
 export default function ProductFormModal({ product, onClose, onSuccess, token }: ProductFormModalProps) {
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+  const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
   const isEdit = !!product;
 
   const [form, setForm] = useState({
@@ -82,7 +82,7 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
       formData.append('image', file);
 
       const response = await axios.post(
-        `${API_BASE}/api/v1/upload/image?folder=products`,
+        `${API}/upload/image?folder=products`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -120,13 +120,13 @@ export default function ProductFormModal({ product, onClose, onSuccess, token }:
 
       if (isEdit) {
         await axios.put(
-          `${API_BASE}/farmers/products/${product.id}`,
+          `${API}/farmers/products/${product.id}`,
           payload,
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         await axios.post(
-          `${API_BASE}/farmers/products`,
+          `${API}/farmers/products`,
           payload,
           { headers: { Authorization: `Bearer ${token}` } }
         );
