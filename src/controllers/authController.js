@@ -1,6 +1,6 @@
 const pool = require("../config/db");
 const jwt = require("jsonwebtoken");
-const { sendOTP, generateOTP } = require("../services/smsService");
+const { sendOTP, generateOTP } = require("../services/smsservice");
 
 exports.sendOTP = async (req, res, next) => {
   try {
