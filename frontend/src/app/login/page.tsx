@@ -26,6 +26,8 @@ function ConsumerLoginContent() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
+  const [demoOtp, setDemoOtp] = useState<string | null>(null);
+  const [demoOtpError, setDemoOtpError] = useState<string | null>(null);
   
   const otpRefs = useRef<(HTMLInputElement | null)[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -37,6 +39,27 @@ function ConsumerLoginContent() {
   }, []);
 
   const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+
+  const fetchDemoOtp = async (phoneNumber: string) => {
+    if (process.env.NEXT_PUBLIC_OTP_DEMO_MODE === 'true') {
+      const demoSecret = process.env.NEXT_PUBLIC_OTP_DEMO_SECRET;
+      if (demoSecret) {
+        try {
+          const demoRes = await axios.get(`${API}/auth/demo-otp/${phoneNumber}`, {
+            headers: { 'x-demo-secret': demoSecret }
+          });
+          if (demoRes.data?.data?.otp_code) {
+            setDemoOtp(demoRes.data.data.otp_code);
+            setDemoOtpError(null);
+          }
+        } catch (demoErr) {
+          setDemoOtpError('Development OTP unavailable. Check demo configuration.');
+        }
+      } else {
+        setDemoOtpError('Development OTP unavailable. Missing demo secret.');
+      }
+    }
+  };
 
   // ─── Step 1: Send OTP ───────────────────────────────────────────────────────
   const handleSendOTP = async (e: React.FormEvent) => {
@@ -59,6 +82,7 @@ function ConsumerLoginContent() {
       setStep('otp');
       startResendTimer();
       success('Verification code sent successfully');
+      fetchDemoOtp(phone);
     } catch (err: any) {
       const msg = err.response?.data?.error?.message || '';
       if (msg.toLowerCase().includes('not found') || msg.toLowerCase().includes('register')) {
@@ -141,10 +165,13 @@ function ConsumerLoginContent() {
 
   const handleResend = async () => {
     setError('');
+    setDemoOtp(null);
+    setDemoOtpError(null);
     try {
       await axios.post(`${API}/auth/send-otp`, { phone, userType: 'consumer', action: 'login' });
       startResendTimer();
       success('Verification code resent');
+      fetchDemoOtp(phone);
     } catch {
       setError('Failed to resend OTP');
     }
@@ -325,6 +352,18 @@ function ConsumerLoginContent() {
                   <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-3.5 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-xl text-sm text-red-600 dark:text-red-400 font-medium text-center">
                     {error}
                   </motion.div>
+                )}
+
+                {process.env.NEXT_PUBLIC_OTP_DEMO_MODE === 'true' && (demoOtp || demoOtpError) && (
+                  <div className="mt-4 p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-xl text-center">
+                    <p className="text-sm font-semibold text-primary-700 dark:text-primary-300">Development OTP</p>
+                    {demoOtp ? (
+                      <p className="text-2xl font-bold tracking-widest text-primary-900 dark:text-primary-100 my-1">{demoOtp}</p>
+                    ) : (
+                      <p className="text-sm text-red-600 dark:text-red-400 mt-1">{demoOtpError}</p>
+                    )}
+                    <p className="text-xs text-primary-600/80 dark:text-primary-400/80">Demo mode — SMS delivery disabled</p>
+                  </div>
                 )}
 
                 <div className="flex items-center justify-between mt-8 pt-4 border-t border-border-subtle">
