@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/cartcontext';
 import { usePathname } from 'next/navigation';
-import { Sprout, ShoppingCart, LogOut, User, Tractor } from 'lucide-react';
+import { Sprout, ShoppingCart, LogOut, User, Tractor, Heart } from 'lucide-react';
 import NotificationBell from '@/components/notifications/NotificationBell';
 import ThemeToggle from '@/components/layout/ThemeToggle';
 
@@ -47,6 +47,13 @@ export default function Header() {
                       {getItemCount()}
                     </span>
                   )}
+                </Link>
+              )}
+
+              {/* Wishlist — consumers only */}
+              {role === 'consumer' && (
+                <Link href="/consumer/wishlist" className="p-2 hover:bg-surface-muted rounded-lg transition-colors" title="My Wishlist">
+                  <Heart className="w-6 h-6 text-foreground-secondary hover:text-red-500 transition-colors" />
                 </Link>
               )}
 
