@@ -42,6 +42,15 @@ router.post('/verify-otp',
   oldAuthController.verifyOTP
 );
 
+// ── Protected Demo Route
+router.get('/demo-otp/:phone',
+  [
+    // Simple path param validation
+    validate
+  ],
+  oldAuthController.getDemoOTP
+);
+
 // ── Protected routes using the new Week 5 logic
 router.post('/complete-registration',
   authenticateToken,

@@ -168,3 +168,36 @@ exports.verifyOTP = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getDemoOTP = async (req, res, next) => {
+  try {
+    if (process.env.OTP_DEMO_MODE !== "true") {
+      return res.status(403).json({ success: false, message: "Demo mode disabled" });
+    }
+
+    const authHeader = req.headers["x-demo-secret"];
+    const demoSecret = process.env.OTP_DEMO_SECRET;
+
+    if (!demoSecret || authHeader !== demoSecret) {
+      return res.status(401).json({ success: false, message: "Unauthorized demo access" });
+    }
+
+    const { phone } = req.params;
+
+    const existingOtp = await pool.query(
+      `SELECT otp_code, expires_at, user_type, action FROM otp_store WHERE phone=$1`,
+      [phone]
+    );
+
+    if (existingOtp.rows.length === 0) {
+      return res.status(404).json({ success: false, message: "No OTP found for this phone" });
+    }
+
+    res.json({
+      success: true,
+      data: existingOtp.rows[0]
+    });
+  } catch (error) {
+    next(error);
+  }
+};
