@@ -28,8 +28,11 @@ app.use('/api', globalLimiter);
 
 const getAllowedOrigins = () => {
   const origins = process.env.ALLOWED_ORIGINS;
-  if (!origins) return ['http://localhost:3000', 'http://localhost:5173', 'https://farm-connect-eta-ten.vercel.app'];
-  return origins.split(',').map(o => o.trim());
+  const defaults = ['http://localhost:3000', 'http://localhost:5173', 'https://farm-connect-eta-ten.vercel.app'];
+  if (!origins) return defaults;
+  
+  const configured = origins.split(',').map(o => o.trim().replace(/\/$/, ''));
+  return [...new Set([...defaults, ...configured])];
 };
 
 app.use(cors({

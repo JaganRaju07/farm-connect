@@ -23,12 +23,12 @@ const getFarmerFallbackImage = (name: string) => {
 
 export default function FarmerStorefrontCard({ farmer }: FarmerStorefrontCardProps) {
   return (
-    <Link href={`/farmer/${farmer.id}`} className="block group">
+    <Link href={`/farmers/${farmer.id}`} className="block group">
       <ShineBorder 
         borderRadius={24} 
         borderWidth={1} 
         color={["#e1f3e7", "#c3e6d1"]}
-        className="card h-full flex flex-col relative overflow-hidden bg-white w-full !min-w-0 !p-0 transition-transform duration-300 hover:-translate-y-1"
+        className="card h-full flex flex-col relative overflow-hidden bg-surface w-full !min-w-0 !p-0 transition-transform duration-300 hover:-translate-y-1"
       >
         <div className="relative h-20 bg-earth-200 w-full overflow-hidden">
           <Image 
@@ -54,12 +54,12 @@ export default function FarmerStorefrontCard({ farmer }: FarmerStorefrontCardPro
             </div>
             
             <div className="flex-1 min-w-0">
-              <h3 className="font-bold text-lg text-earth-900 truncate font-display group-hover:text-primary-700 transition-colors">
+              <h3 className="font-bold text-lg text-foreground truncate font-display group-hover:text-primary-700 dark:group-hover:text-primary-400 transition-colors">
                 {farmer.name}
               </h3>
               
-              <div className="flex items-center text-sm text-earth-500 mt-1">
-                <MapPin className="w-3.5 h-3.5 mr-1 text-earth-400" />
+              <div className="flex items-center text-sm text-foreground-secondary mt-1">
+                <MapPin className="w-3.5 h-3.5 mr-1 text-foreground-muted" />
                 <span className="truncate">{farmer.city}</span>
               </div>
               
@@ -76,13 +76,13 @@ export default function FarmerStorefrontCard({ farmer }: FarmerStorefrontCardPro
             {farmer.rating ? (
               <div className="flex items-center gap-1.5">
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                <span className="font-bold text-earth-900">{farmer.rating}</span>
+                <span className="font-bold text-foreground">{farmer.rating}</span>
                 {farmer.reviews_count && (
-                  <span className="text-xs text-earth-500">({farmer.reviews_count} reviews)</span>
+                  <span className="text-xs text-foreground-secondary">({farmer.reviews_count} reviews)</span>
                 )}
               </div>
             ) : (
-              <span className="text-sm text-earth-400 italic">New Farmer</span>
+              <span className="text-sm text-foreground-muted italic">New Farmer</span>
             )}
             
             <span className="text-sm font-medium text-primary-600 flex items-center group-hover:translate-x-1 transition-transform">

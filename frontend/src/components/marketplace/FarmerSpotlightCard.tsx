@@ -51,7 +51,7 @@ export default function FarmerSpotlightCard({ farmer }: FarmerSpotlightCardProps
         </div>
 
         <div className="flex gap-4">
-          <Link href={`/farmer/${farmer.id}`} className="inline-flex items-center justify-center bg-primary-600 hover:bg-primary-500 text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-lg shadow-primary-900/50">
+          <Link href={`/farmers/${farmer.id}`} className="inline-flex items-center justify-center bg-primary-600 hover:bg-primary-500 text-white font-bold py-3 px-6 rounded-xl transition-colors shadow-lg shadow-primary-900/50">
             <User className="w-4 h-4 mr-2" />
             View Farm Store
           </Link>
