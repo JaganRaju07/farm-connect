@@ -10,7 +10,9 @@ const sanitizeInputs = require('./middleware/sanitizer');
 const app = express();
 
 // Security Headers
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 
 // HTTP Request Logging
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
