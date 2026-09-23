@@ -12,22 +12,7 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 const CATEGORIES = ['vegetables', 'fruits', 'dairy', 'grains', 'other'];
 
-const getFallbackImageUrl = (category: string, name: string): string => {
-  const n = (name || '').toLowerCase();
-  
-  if (n.includes('tomato')) return 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?q=80&w=600&auto=format&fit=crop';
-  if (n.includes('spinach') || n.includes('leaf') || n.includes('cabbage')) return 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?q=80&w=600&auto=format&fit=crop';
-  if (n.includes('milk')) return 'https://images.unsplash.com/photo-1550583724-b2692b85b150?q=80&w=600&auto=format&fit=crop';
-  if (n.includes('egg')) return 'https://images.unsplash.com/photo-1587486913049-53fc88980cfc?q=80&w=600&auto=format&fit=crop';
-  
-  switch (category?.toLowerCase()) {
-    case 'fruits': return 'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=600&auto=format&fit=crop';
-    case 'vegetables': return 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=600&auto=format&fit=crop';
-    case 'dairy': return 'https://images.unsplash.com/photo-1628088062854-d1870b4553da?q=80&w=600&auto=format&fit=crop';
-    case 'grains': return 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=600&auto=format&fit=crop';
-    default: return 'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=600&auto=format&fit=crop';
-  }
-};
+import { getFallbackImageUrl } from '@/components/product/productcard';
 
 function SearchPageContent() {
   const searchParams = useSearchParams();

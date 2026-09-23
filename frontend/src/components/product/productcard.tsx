@@ -41,11 +41,25 @@ export const getFallbackImageUrl = (category: string, name: string): string => {
   if (n.includes('flour')) return 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=600&auto=format&fit=crop';
   if (n.includes('turmeric') || n.includes('spice')) return 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=600&auto=format&fit=crop';
   if (n.includes('onion')) return 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('mushroom')) return 'https://images.unsplash.com/photo-1596464518939-50eb95f903dc?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('quinoa')) return 'https://images.unsplash.com/photo-1580828343064-fde4cad202d0?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('potato')) return 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?q=80&w=600&auto=format&fit=crop';
   
-  // Dynamic Accurate Real Photography fallback for everything else
-  // Uses the product name to pull an exact photo (e.g. "mushroom", "quinoa")
-  const keywords = n.replace(/[^a-z0-9]/g, ',').split(',').filter(x => x.length > 2).slice(0, 2).join(',');
-  return `https://loremflickr.com/600/400/food,${keywords}/all`;
+  // Deterministic fallback from a pool of high-quality general farm images
+  const fallbacks = [
+    'https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=600&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?q=80&w=600&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=600&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1628088062854-d1870b4553da?q=80&w=600&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=600&auto=format&fit=crop'
+  ];
+  
+  // Simple hash based on name to pick a consistent image
+  let hash = 0;
+  for (let i = 0; i < n.length; i++) {
+    hash = n.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return fallbacks[Math.abs(hash) % fallbacks.length];
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
