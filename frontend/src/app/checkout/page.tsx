@@ -71,7 +71,7 @@ function CheckoutContent() {
         quantity: i.quantity,
         unit: i.product.unit,
         price: i.product.price,
-        farmerId: i.product.farmer_id,
+        farmerId: i.product.farmerId,
       }));
 
       const order = await placeOrder({

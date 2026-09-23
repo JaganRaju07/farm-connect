@@ -6,25 +6,26 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v
 
 export interface Product {
   id: number;
-  farmer_id: number;
+  farmerId: number;
   name: string;
   category: string;
   description: string;
   price: number;
   unit: string;
-  stock_available: number;
-  minimum_order_quantity: number;
-  image_url: string | null;
-  is_organic: boolean;
-  is_active: boolean;
-  farmer_name: string;
-  farmer_phone: string;
-  farmer_latitude: number;
-  farmer_longitude: number;
-  farmer_address: string;
-  farmer_city: string;
-  farmer_verified: boolean;
+  stockAvailable: number;
+  minimumOrderQuantity: number;
+  imageUrl: string | null;
+  isOrganic: boolean;
+  isActive: boolean;
+  farmerName: string;
+  farmerCity: string;
+  farmerLat: string;
+  farmerLon: string;
   distance_km: number;
+  rating?: number;
+  reviews_count?: number;
+  harvestDate?: string;
+  createdAt: string;
 }
 
 export interface ProductFilters {

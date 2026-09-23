@@ -253,10 +253,10 @@ export default function ProductDetailPage() {
               <div className="flex flex-col gap-3 mb-4">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-foreground">Availability</span>
-                  {product.stock_available > 0 ? (
+                  {product.stockAvailable > 0 ? (
                     <span className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2.5 py-1 rounded-md border border-primary-100 dark:border-primary-800">
                       <Package className="w-4 h-4" />
-                      {product.stock_available} {product.unit} in stock
+                      {product.stockAvailable} {product.unit} in stock
                     </span>
                   ) : (
                     <span className="text-sm font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 px-2.5 py-1 rounded-md border border-red-100 dark:border-red-800">
@@ -278,7 +278,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Sticky Mobile / Inline Desktop Purchase Action */}
-            {product.stock_available > 0 && (
+            {product.stockAvailable > 0 && (
               <div className="fixed bottom-0 left-0 right-0 z-50 bg-surface border-t border-border-default p-4 pb-safe shadow-[0_-10px_30px_rgba(0,0,0,0.05)] lg:static lg:bg-transparent lg:border-0 lg:p-0 lg:shadow-none lg:mt-2 transition-colors">
                 <div className="max-w-6xl mx-auto flex items-center gap-3 sm:gap-4">
                   {/* Qty Selector */}
@@ -287,7 +287,7 @@ export default function ProductDetailPage() {
                       <Minus className="w-4 h-4" />
                     </button>
                     <span className="text-center font-bold text-lg text-foreground flex-1">{qty}</span>
-                    <button onClick={() => setQty(q => Math.min(product.stock_available, q + 1))} className="w-8 sm:w-10 h-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-surface rounded-lg transition-colors">
+                    <button onClick={() => setQty(q => Math.min(product.stockAvailable, q + 1))} className="w-8 sm:w-10 h-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-surface rounded-lg transition-colors">
                       <Plus className="w-4 h-4" />
                     </button>
                   </div>

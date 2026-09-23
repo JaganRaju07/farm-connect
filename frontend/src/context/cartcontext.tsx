@@ -63,11 +63,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (idx >= 0) {
         const updated = [...current];
         const newQ = updated[idx].quantity + quantity;
-        const finalQ = Math.min(newQ, product.stock_available);
+        const finalQ = Math.min(newQ, product.stockAvailable);
         updated[idx] = { ...updated[idx], quantity: finalQ };
         
-        if (newQ > product.stock_available) {
-          error(`Only ${product.stock_available} ${product.unit} available`);
+        if (newQ > product.stockAvailable) {
+          error(`Only ${product.stockAvailable} ${product.unit} available`);
         } else {
           success(`Updated ${product.name} in cart`);
         }
@@ -94,7 +94,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems(current =>
       current.map(item =>
         item.product.id === productId
-          ? { ...item, quantity: Math.min(quantity, item.product.stock_available) }
+          ? { ...item, quantity: Math.min(quantity, item.product.stockAvailable) }
           : item
       )
     );

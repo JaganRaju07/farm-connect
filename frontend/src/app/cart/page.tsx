@@ -66,7 +66,7 @@ export default function CartPage() {
               >
                 <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-earth-100 rounded-xl overflow-hidden border border-earth-100">
                   <Image
-                    src={product.image_url || '/placeholder-product.jpg'}
+                    src={product.imageUrl || '/placeholder-product.jpg'}
                     alt={product.name}
                     fill
                     className="object-cover"
@@ -78,7 +78,7 @@ export default function CartPage() {
                     <div>
                       <h3 className="font-bold text-lg text-earth-900 truncate">{product.name}</h3>
                       <div className="flex items-center gap-1.5 text-xs font-medium text-earth-500 mt-1">
-                        <span>{product.farmer_name}</span>
+                        <span>{product.farmerName}</span>
                         {product.distance_km && (
                           <>
                             <span className="w-1 h-1 rounded-full bg-earth-300" />
@@ -106,7 +106,7 @@ export default function CartPage() {
                       <span className="w-10 text-center font-bold text-sm text-earth-900">{quantity}</span>
                       <button
                         onClick={() => updateQuantity(product.id, quantity + 1)}
-                        disabled={quantity >= product.stock_available}
+                        disabled={quantity >= product.stockAvailable}
                         className="w-8 h-8 flex items-center justify-center text-earth-600 hover:bg-white hover:text-earth-900 rounded-lg transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
                       >
                         <Plus className="w-3.5 h-3.5" />
@@ -122,9 +122,9 @@ export default function CartPage() {
                     </button>
                   </div>
                   
-                  {quantity > product.stock_available && (
+                  {quantity > product.stockAvailable && (
                     <p className="text-red-600 text-xs font-semibold mt-2">
-                      Only {product.stock_available} available in stock
+                      Only {product.stockAvailable} available in stock
                     </p>
                   )}
                 </div>
