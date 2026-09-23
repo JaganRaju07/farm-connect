@@ -41,8 +41,8 @@ export const getFallbackImageUrl = (category: string, name: string): string => {
   if (n.includes('flour')) return 'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=600&auto=format&fit=crop';
   if (n.includes('turmeric') || n.includes('spice')) return 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=600&auto=format&fit=crop';
   if (n.includes('onion')) return 'https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?q=80&w=600&auto=format&fit=crop';
-  if (n.includes('mushroom')) return 'https://images.unsplash.com/photo-1596464518939-50eb95f903dc?q=80&w=600&auto=format&fit=crop';
-  if (n.includes('quinoa')) return 'https://images.unsplash.com/photo-1580828343064-fde4cad202d0?q=80&w=600&auto=format&fit=crop';
+  if (n.includes('mushroom')) return '/products/organic_vegetables_basket.jpg'; // Using local asset to guarantee it works
+  if (n.includes('quinoa')) return 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?q=80&w=600&auto=format&fit=crop';
   if (n.includes('potato')) return 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?q=80&w=600&auto=format&fit=crop';
   
   // Deterministic fallback from a pool of high-quality general farm images
@@ -109,8 +109,14 @@ export default function ProductCard({ product }: ProductCardProps) {
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
-            onError={() => {
-              setImgSrc(getFallbackImageUrl(category, name));
+            onError={(e) => {
+              const fallback = getFallbackImageUrl(category, name);
+              if (imgSrc !== fallback) {
+                setImgSrc(fallback);
+              } else {
+                // If even the fallback fails, set a guaranteed local safe asset
+                setImgSrc('/products/organic_vegetables_basket.jpg');
+              }
             }}
           />
           
