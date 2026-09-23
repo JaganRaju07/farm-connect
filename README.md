@@ -344,8 +344,6 @@ Farm Connect successfully acts as an end-to-end minimum viable marketplace. It s
 - **Project Type**: 6-Month Internship Capstone Project  
 - **Affiliation**: IEEE Computer Society & IamPro  
 
-### Contributing
-This project is an academic capstone and is currently maintained by the core internship team. External contributions are not actively reviewed at this time, but forks are welcome for educational purposes.
 
 ### License
 This project is developed for academic/internship purposes. See repository metadata for licensing details if applicable.
