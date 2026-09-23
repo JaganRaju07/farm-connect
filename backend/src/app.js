@@ -9,7 +9,7 @@ const sanitizeInputs = require('./middleware/sanitizer');
 
 const app = express();
 
-app.set('trust proxy', 1);
+app.set('trust proxy', true);
 
 // Security Headers
 app.use(helmet({
