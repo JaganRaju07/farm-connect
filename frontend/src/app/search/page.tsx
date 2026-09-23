@@ -57,7 +57,7 @@ function SearchPageContent() {
         params.radius = radius;
       }
 
-      const res = await axios.get(`${API}/products/search`, { params });
+      const res = await axios.get(`${API}/products`, { params });
       setProducts(res.data.data.products);
     } catch (e) {
       console.error(e);
@@ -198,11 +198,11 @@ function SearchPageContent() {
                   
                   <div className="relative h-56 bg-gray-100 overflow-hidden">
                     <SearchProductImage 
-                      primaryImageUrl={p.primary_image_url} 
+                      primaryImageUrl={p.imageUrl} 
                       category={p.category} 
                       name={p.name} 
                     />
-                    {p.is_organic && (
+                    {p.isOrganic && (
                       <span className="absolute top-3 left-3 bg-primary-500/90 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium shadow-sm flex items-center gap-1">
                         <Leaf className="w-3 h-3" /> Organic
                       </span>
@@ -218,11 +218,11 @@ function SearchPageContent() {
                     </div>
                     
                     <div className="pt-3 border-t border-gray-50">
-                      <p className="text-sm text-gray-600 font-medium truncate">{p.farmer_name}</p>
+                      <p className="text-sm text-gray-600 font-medium truncate">{p.farmerName}</p>
                       
                       <div className="flex items-center justify-between mt-1">
                         <p className="text-xs text-gray-500 flex items-center gap-1 truncate">
-                          <MapPin className="w-3 h-3 flex-shrink-0" /> {p.farmer_city}
+                          <MapPin className="w-3 h-3 flex-shrink-0" /> {p.farmerCity}
                         </p>
                         {p.distance_km > 0 && (
                           <p className="text-xs text-primary-600 font-semibold bg-primary-50 px-2 py-0.5 rounded">
@@ -232,7 +232,7 @@ function SearchPageContent() {
                       </div>
                     </div>
                     
-                    {p.stock_available <= 0 && (
+                    {p.stockAvailable <= 0 && (
                       <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px] flex items-center justify-center">
                         <span className="bg-red-50 text-red-600 font-bold px-4 py-1.5 rounded-full text-sm border border-red-100 shadow-sm">
                           Out of Stock
