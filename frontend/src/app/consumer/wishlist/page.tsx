@@ -8,8 +8,31 @@ import Link from 'next/link';
 import { getButtonClasses } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import { getFallbackImageUrl } from '@/components/product/productcard';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+
+function WishlistImage({ item }: { item: any }) {
+  const [imgSrc, setImgSrc] = useState(item.imageUrl || item.image_url || getFallbackImageUrl(item.category || '', item.name || ''));
+  
+  return (
+    <Image 
+      src={imgSrc} 
+      alt={item.name || 'Product'} 
+      fill
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" 
+      onError={() => {
+        const fallback = getFallbackImageUrl(item.category || '', item.name || '');
+        if (imgSrc !== fallback) {
+          setImgSrc(fallback);
+        } else {
+          setImgSrc('/products/organic_vegetables_basket.jpg');
+        }
+      }}
+    />
+  );
+}
 
 function WishlistContent() {
   const [items, setItems] = useState<any[]>([]);
@@ -104,12 +127,7 @@ function WishlistContent() {
                   className="card overflow-hidden group flex flex-col h-full hover:border-primary-300"
                 >
                   <div className="relative aspect-square bg-earth-100 overflow-hidden">
-                    <Image 
-                      src={item.primary_image_url || '/placeholder-product.jpg'} 
-                      alt={item.name} 
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" 
-                    />
+                    <WishlistImage item={item} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     
                     <button onClick={() => handleRemove(item.id)}
@@ -119,7 +137,7 @@ function WishlistContent() {
                     
                     <div className="absolute bottom-3 left-3 right-3 flex items-center gap-1.5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0 text-xs font-bold z-10">
                       <Store className="w-3.5 h-3.5" />
-                      <span className="truncate">{item.farmer_name}</span>
+                      <span className="truncate">{item.farmerName || item.farmer_name}</span>
                     </div>
                   </div>
                   

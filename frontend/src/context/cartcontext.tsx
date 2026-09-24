@@ -59,28 +59,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = useCallback((product: Product, quantity: number) => {
     setItems(current => {
-      const idx = current.findIndex(i => i.product.id === product.id);
+      const idx = current.findIndex(i => String(i.product.id) === String(product.id));
       if (idx >= 0) {
         const updated = [...current];
         const newQ = updated[idx].quantity + quantity;
         const finalQ = Math.min(newQ, product.stockAvailable);
         updated[idx] = { ...updated[idx], quantity: finalQ };
-        
-        if (newQ > product.stockAvailable) {
-          error(`Only ${product.stockAvailable} ${product.unit} available`);
-        } else {
-          success(`Updated ${product.name} in cart`);
-        }
         return updated;
       }
-      
-      success(`Added ${product.name} to cart`);
       return [...current, { product, quantity }];
     });
-  }, [success, error]);
+    
+    // Side effects should not be inside the state updater function
+    // In React 18 Strict Mode, the updater runs twice, causing double toasts.
+    // Since page.tsx also fires a toast, we don't strictly need them here, 
+    // but we can fire a generic one if we wanted to. We'll leave it to the caller.
+  }, []);
 
   const removeFromCart = useCallback((productId: number, productName?: string) => {
-    setItems(current => current.filter(i => i.product.id !== productId));
+    setItems(current => current.filter(i => String(i.product.id) !== String(productId)));
     if (productName) {
       success(`Removed ${productName} from cart`);
     }
@@ -93,7 +90,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
     setItems(current =>
       current.map(item =>
-        item.product.id === productId
+        String(item.product.id) === String(productId)
           ? { ...item, quantity: Math.min(quantity, item.product.stockAvailable) }
           : item
       )

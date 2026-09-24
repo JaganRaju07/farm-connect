@@ -72,18 +72,17 @@ function MarketplaceContent() {
       
       setLoading(true);
       try {
-        let url = `${API}/products?`;
-        if (latitude && longitude) {
-          url += `lat=${latitude}&lon=${longitude}&radius=${appliedFilters.radius}`;
-        }
-        
-        if (appliedFilters.category) url += `&category=${appliedFilters.category}`;
-        if (appliedFilters.minPrice) url += `&minPrice=${appliedFilters.minPrice}`;
-        if (appliedFilters.maxPrice) url += `&maxPrice=${appliedFilters.maxPrice}`;
-        if (appliedFilters.isOrganic) url += `&isOrganic=true`;
-        if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
-        
-        const res = await axios.get(url, { signal: controller.signal });
+        const res = await axios.get(`${API}/products`, {
+          signal: controller.signal,
+          params: {
+            ...(latitude && longitude ? { lat: latitude, lon: longitude, radius: appliedFilters.radius } : {}),
+            ...(appliedFilters.category ? { category: appliedFilters.category } : {}),
+            ...(appliedFilters.minPrice ? { minPrice: appliedFilters.minPrice } : {}),
+            ...(appliedFilters.maxPrice ? { maxPrice: appliedFilters.maxPrice } : {}),
+            ...(appliedFilters.isOrganic ? { isOrganic: true } : {}),
+            ...(searchQuery ? { search: searchQuery } : {})
+          }
+        });
         setProducts(res.data.data || []);
       } catch (error) {
         if (axios.isCancel(error)) {

@@ -1,6 +1,7 @@
 // frontend/src/app/cart/page.tsx
 'use client';
 
+import { useState } from 'react';
 import { useCart } from '@/context/cartcontext';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -9,8 +10,32 @@ import Link from 'next/link';
 import { getButtonClasses } from '@/components/ui/button';
 import { EmptyState } from '@/components/common/EmptyState';
 import { GradientDivider } from '@/components/common/GradientDivider';
+import { getFallbackImageUrl } from '@/components/product/productcard';
 
 const DELIVERY_FEE = 30;
+
+function CartItemImage({ product }: { product: any }) {
+  const [imgSrc, setImgSrc] = useState(product.imageUrl || getFallbackImageUrl(product.category || '', product.name));
+  return (
+    <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-surface-muted rounded-xl overflow-hidden border border-border-default">
+      <Image
+        src={imgSrc}
+        alt={product.name}
+        fill
+        sizes="(max-width: 768px) 100px, 128px"
+        className="object-cover"
+        onError={() => {
+          const fallback = getFallbackImageUrl(product.category || '', product.name);
+          if (imgSrc !== fallback) {
+            setImgSrc(fallback);
+          } else {
+            setImgSrc('/products/organic_vegetables_basket.jpg');
+          }
+        }}
+      />
+    </div>
+  );
+}
 
 export default function CartPage() {
   const { items, removeFromCart, updateQuantity, getSubtotal } = useCart();
@@ -19,9 +44,9 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-earth-50 flex items-center justify-center font-sans px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center font-sans px-4 transition-colors duration-200">
         <EmptyState
-          icon={<ShoppingBag className="w-10 h-10 text-earth-400" />}
+          icon={<ShoppingBag className="w-10 h-10 text-foreground-muted" />}
           title="Your cart is empty"
           description="Add fresh products from nearby farmers."
           actionText="Browse Products"
@@ -41,12 +66,12 @@ export default function CartPage() {
   };
 
   return (
-    <div className="min-h-screen bg-earth-50 font-sans pb-24">
+    <div className="min-h-screen bg-background font-sans pb-24 transition-colors duration-200">
       
       {/* ── Top Nav ── */}
-      <div className="bg-white border-b border-earth-200 sticky top-0 z-40">
+      <div className="bg-surface border-b border-border-default sticky top-0 z-40 transition-colors">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center">
-          <Link href="/marketplace" className="inline-flex items-center gap-2 text-earth-600 hover:text-earth-900 font-medium transition-colors">
+          <Link href="/marketplace" className="inline-flex items-center gap-2 text-foreground-secondary hover:text-foreground font-medium transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Continue Shopping
           </Link>
@@ -54,7 +79,7 @@ export default function CartPage() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 py-8 md:py-12 animate-enter">
-        <h1 className="text-3xl font-extrabold font-display text-earth-900 mb-8 tracking-tight">Shopping Cart</h1>
+        <h1 className="text-3xl font-extrabold font-display text-foreground mb-8 tracking-tight">Shopping Cart</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* ── Cart Items ── */}
@@ -62,27 +87,20 @@ export default function CartPage() {
             {items.map(({ product, quantity }) => (
               <div
                 key={product.id}
-                className="card p-4 flex gap-4"
+                className="card p-4 flex gap-4 bg-surface border-border-default transition-colors"
               >
-                <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-earth-100 rounded-xl overflow-hidden border border-earth-100">
-                  <Image
-                    src={product.imageUrl || '/placeholder-product.jpg'}
-                    alt={product.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+                <CartItemImage product={product} />
 
                 <div className="flex-1 flex flex-col min-w-0 py-1">
                   <div className="flex justify-between items-start gap-4">
                     <div>
-                      <h3 className="font-bold text-lg text-earth-900 truncate">{product.name}</h3>
-                      <div className="flex items-center gap-1.5 text-xs font-medium text-earth-500 mt-1">
+                      <h3 className="font-bold text-lg text-foreground truncate">{product.name}</h3>
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-foreground-muted mt-1">
                         <span>{product.farmerName}</span>
                         {product.distance_km && (
                           <>
-                            <span className="w-1 h-1 rounded-full bg-earth-300" />
-                            <MapPin className="w-3 h-3 text-earth-400" />
+                            <span className="w-1 h-1 rounded-full bg-border-default" />
+                            <MapPin className="w-3 h-3 text-foreground-muted" />
                             <span>{product.distance_km.toFixed(1)} km</span>
                           </>
                         )}
@@ -96,18 +114,18 @@ export default function CartPage() {
                   </div>
 
                   <div className="flex items-end justify-between mt-auto pt-4">
-                    <div className="flex items-center bg-earth-50 border border-earth-200 rounded-xl p-1 shrink-0 h-10">
+                    <div className="flex items-center bg-surface-muted border border-border-default rounded-xl p-1 shrink-0 h-10 transition-colors">
                       <button
                         onClick={() => updateQuantity(product.id, quantity - 1)}
-                        className="w-8 h-8 flex items-center justify-center text-earth-600 hover:bg-white hover:text-earth-900 rounded-lg transition-colors"
+                        className="w-8 h-8 flex items-center justify-center text-foreground-secondary hover:bg-surface hover:text-foreground rounded-lg transition-colors"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="w-10 text-center font-bold text-sm text-earth-900">{quantity}</span>
+                      <span className="w-10 text-center font-bold text-sm text-foreground">{quantity}</span>
                       <button
                         onClick={() => updateQuantity(product.id, quantity + 1)}
                         disabled={quantity >= product.stockAvailable}
-                        className="w-8 h-8 flex items-center justify-center text-earth-600 hover:bg-white hover:text-earth-900 rounded-lg transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
+                        className="w-8 h-8 flex items-center justify-center text-foreground-secondary hover:bg-surface hover:text-foreground rounded-lg transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -115,7 +133,7 @@ export default function CartPage() {
 
                     <button
                       onClick={() => removeFromCart(product.id)}
-                      className="text-earth-400 hover:text-red-600 p-2 rounded-lg hover:bg-red-50 transition-colors flex items-center gap-1.5 text-sm font-medium"
+                      className="text-foreground-muted hover:text-red-600 dark:hover:text-red-400 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors flex items-center gap-1.5 text-sm font-medium"
                     >
                       <Trash2 className="w-4 h-4" />
                       <span className="hidden sm:inline">Remove</span>
@@ -134,25 +152,25 @@ export default function CartPage() {
 
           {/* ── Order Summary ── */}
           <div className="lg:col-span-1">
-            <div className="card p-6 sticky top-24">
-              <h2 className="text-lg font-bold font-display text-earth-900 mb-6">Order Summary</h2>
+            <div className="card p-6 sticky top-24 bg-surface border-border-default transition-colors">
+              <h2 className="text-lg font-bold font-display text-foreground mb-6">Order Summary</h2>
 
               <div className="space-y-4 mb-6 text-sm">
-                <div className="flex justify-between text-earth-600 font-medium">
+                <div className="flex justify-between text-foreground-secondary font-medium">
                   <span>Subtotal ({items.length} items)</span>
-                  <span className="text-earth-900 font-semibold">{formatPrice(subtotal)}</span>
+                  <span className="text-foreground font-semibold">{formatPrice(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-earth-600 font-medium">
+                <div className="flex justify-between text-foreground-secondary font-medium">
                   <span>Platform & Delivery Fee</span>
-                  <span className="text-earth-900 font-semibold">{formatPrice(DELIVERY_FEE)}</span>
+                  <span className="text-foreground font-semibold">{formatPrice(DELIVERY_FEE)}</span>
                 </div>
               </div>
               
               <GradientDivider intensity="light" className="mb-4" />
               
               <div className="flex justify-between items-center mb-8">
-                <span className="text-base font-bold text-earth-900">Total</span>
-                <span className="text-2xl font-black text-primary-700">{formatPrice(subtotal + DELIVERY_FEE)}</span>
+                <span className="text-base font-bold text-foreground">Total</span>
+                <span className="text-2xl font-black text-primary-700 dark:text-primary-400">{formatPrice(subtotal + DELIVERY_FEE)}</span>
               </div>
 
               <div className="space-y-3">
