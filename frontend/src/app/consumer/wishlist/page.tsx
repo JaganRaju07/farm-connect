@@ -13,17 +13,26 @@ import { getFallbackImageUrl } from '@/components/product/productcard';
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 function WishlistImage({ item }: { item: any }) {
-  const [imgSrc, setImgSrc] = useState(item.imageUrl || item.image_url || getFallbackImageUrl(item.category || '', item.name || ''));
+  const pName = item.name || item.product?.name || '';
+  const pCat = item.category || item.product?.category || '';
+  const initialImg = item.primary_image_url || item.imageUrl || item.image_url || item.product?.imageUrl || item.product?.image_url || item.product?.primary_image_url || item.image_urls?.[0] || getFallbackImageUrl(pCat, pName);
+
+  const [imgSrc, setImgSrc] = useState(initialImg);
+
+  useEffect(() => {
+    setImgSrc(initialImg);
+  }, [initialImg]);
   
   return (
     <Image 
       src={imgSrc} 
-      alt={item.name || 'Product'} 
+      alt={pName || 'Product'}
       fill
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       className="object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" 
       onError={() => {
-        const fallback = getFallbackImageUrl(item.category || '', item.name || '');
+        if (imgSrc === '/products/organic_vegetables_basket.jpg') return;
+        const fallback = getFallbackImageUrl(pCat, pName);
         if (imgSrc !== fallback) {
           setImgSrc(fallback);
         } else {

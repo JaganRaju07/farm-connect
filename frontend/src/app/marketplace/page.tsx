@@ -77,9 +77,9 @@ function MarketplaceContent() {
           params: {
             ...(latitude && longitude ? { lat: latitude, lon: longitude, radius: appliedFilters.radius } : {}),
             ...(appliedFilters.category ? { category: appliedFilters.category } : {}),
-            ...(appliedFilters.minPrice ? { minPrice: appliedFilters.minPrice } : {}),
-            ...(appliedFilters.maxPrice ? { maxPrice: appliedFilters.maxPrice } : {}),
-            ...(appliedFilters.isOrganic ? { isOrganic: true } : {}),
+            ...(appliedFilters.minPrice ? { min_price: appliedFilters.minPrice } : {}),
+            ...(appliedFilters.maxPrice ? { max_price: appliedFilters.maxPrice } : {}),
+            ...(appliedFilters.isOrganic ? { is_organic: true } : {}),
             ...(searchQuery ? { search: searchQuery } : {})
           }
         });

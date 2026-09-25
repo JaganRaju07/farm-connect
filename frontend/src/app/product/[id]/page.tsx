@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 import Image from 'next/image';
@@ -21,11 +21,11 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 export default function ProductDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
+  const router = useRouter();
 
   const { isAuthenticated } = useAuth();
-  const { addToCart } = useCart();
+  const { addToCart, items } = useCart();
   const { success, error: showError } = useToast();
   
   const [product, setProduct] = useState<any>(null);
@@ -34,6 +34,8 @@ export default function ProductDetailPage() {
   const [qty, setQty] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
   const [recentlyViewed, setRecentlyViewed] = useState<any[]>([]);
+  const [isAdding, setIsAdding] = useState(false);
+  const isAddingRef = useRef(false);
 
   useEffect(() => {
     Promise.all([
@@ -95,11 +97,26 @@ export default function ProductDetailPage() {
     ? product.image_urls 
     : product.imageUrl ? [product.imageUrl] : [getFallbackImageUrl(product.category, product.name)];
 
+  // When the cart state updates, unlock the button safely
+  useEffect(() => {
+    if (isAddingRef.current) {
+      isAddingRef.current = false;
+      setIsAdding(false);
+    }
+  }, [items]);
+
   const handleAddToCart = () => {
     if (!isAuthenticated) {
       router.push('/login?redirect=' + window.location.pathname); 
       return;
     }
+
+    // Prevent double clicks synchronously
+    if (isAddingRef.current || isAdding) return;
+
+    isAddingRef.current = true;
+    setIsAdding(true);
+
     addToCart(product, qty);
     success(`${product.name} added to cart!`);
   };
@@ -293,10 +310,10 @@ export default function ProductDetailPage() {
                   </div>
                   
                   {/* CTA */}
-                  <Button onClick={handleAddToCart} variant="primary" className="flex-1 h-14 text-base shadow-[0_4px_20px_rgba(21,128,61,0.2)]">
+                  <Button onClick={handleAddToCart} disabled={isAdding} variant="primary" className="flex-1 h-14 text-base shadow-[0_4px_20px_rgba(21,128,61,0.2)]">
                     <ShoppingCart className="w-5 h-5 hidden sm:block" />
-                    <span className="hidden sm:inline">Add to Cart — {totalPrice}</span>
-                    <span className="sm:hidden">Add — {totalPrice}</span>
+                    <span className="hidden sm:inline">{isAdding ? 'Adding...' : `Add to Cart — ${totalPrice}`}</span>
+                    <span className="sm:hidden">{isAdding ? 'Adding...' : `Add — ${totalPrice}`}</span>
                   </Button>
                 </div>
               </div>
