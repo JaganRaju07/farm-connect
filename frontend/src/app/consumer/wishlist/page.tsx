@@ -15,7 +15,8 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 function WishlistImage({ item }: { item: any }) {
   const pName = item.name || item.product?.name || '';
   const pCat = item.category || item.product?.category || '';
-  const initialImg = item.primary_image_url || item.imageUrl || item.image_url || item.product?.imageUrl || item.product?.image_url || item.product?.primary_image_url || item.image_urls?.[0] || getFallbackImageUrl(pCat, pName);
+  const imgUrl = item.primary_image_url || item.imageUrl || item.image_url || item.image_urls?.[0] || item.product?.primary_image_url || item.product?.imageUrl || item.product?.image_url || item.product?.image_urls?.[0];
+  const initialImg = (imgUrl && typeof imgUrl === 'string' && imgUrl.trim() !== '') ? imgUrl : getFallbackImageUrl(pCat, pName);
 
   const [imgSrc, setImgSrc] = useState(initialImg);
 
