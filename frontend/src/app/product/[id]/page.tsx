@@ -21,7 +21,7 @@ const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
 export default function ProductDetailPage() {
   const params = useParams();
-  const id = params.id as string;
+  const id = params?.id as string;
   const router = useRouter();
 
   const { isAuthenticated } = useAuth();
@@ -38,6 +38,8 @@ export default function ProductDetailPage() {
   const isAddingRef = useRef(false);
 
   useEffect(() => {
+    if (!id) return;
+    
     Promise.all([
       axios.get(`${API}/products/${id}`),
       axios.get(`${API}/reviews/product/${id}`)

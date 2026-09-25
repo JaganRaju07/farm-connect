@@ -106,12 +106,12 @@ function CheckoutContent() {
   }
 
   return (
-    <div className="min-h-screen bg-earth-50 font-sans pb-24">
+    <div className="min-h-screen bg-background font-sans pb-24 transition-colors duration-200">
       
       {/* ── Top Nav ── */}
-      <div className="bg-white border-b border-earth-200 sticky top-0 z-40">
+      <div className="bg-surface border-b border-border-default sticky top-0 z-40 transition-colors">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center">
-          <Link href="/cart" className="inline-flex items-center gap-2 text-earth-600 hover:text-earth-900 font-medium transition-colors">
+          <Link href="/cart" className="inline-flex items-center gap-2 text-foreground-secondary hover:text-foreground font-medium transition-colors">
             <ArrowLeft className="w-4 h-4" />
             Back to Cart
           </Link>
@@ -120,8 +120,8 @@ function CheckoutContent() {
 
       <div className="max-w-6xl mx-auto px-4 py-8 md:py-12 animate-enter">
         <div className="mb-10">
-          <h1 className="text-3xl font-extrabold font-display text-earth-900 tracking-tight">Checkout</h1>
-          <p className="text-earth-500 mt-2">Complete your order with farm-fresh products.</p>
+          <h1 className="text-3xl font-extrabold font-display text-foreground tracking-tight">Checkout</h1>
+          <p className="text-foreground-secondary mt-2">Complete your order with farm-fresh products.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
@@ -130,20 +130,20 @@ function CheckoutContent() {
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="card space-y-8 p-6 md:p-8">
               
-              <div className="border-b border-earth-100 pb-6">
-                <h2 className="text-lg font-bold font-display text-earth-900 mb-6 flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-sm">1</span>
+              <div className="border-b border-border-default pb-6 transition-colors">
+                <h2 className="text-lg font-bold font-display text-foreground mb-6 flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 flex items-center justify-center text-sm border border-primary-200 dark:border-primary-800">1</span>
                   Delivery Details
                 </h2>
                 
                 {/* Location indicator */}
-                <div className="bg-primary-50/50 border border-primary-100 rounded-xl p-4 flex items-start gap-4 mb-6">
-                  <div className="bg-white p-2 rounded-lg shadow-sm border border-primary-100">
-                    <MapPin className="w-5 h-5 text-primary-600" />
+                <div className="bg-primary-50/50 dark:bg-primary-900/10 border border-primary-100 dark:border-primary-900/50 rounded-xl p-4 flex items-start gap-4 mb-6">
+                  <div className="bg-surface p-2 rounded-lg shadow-sm border border-border-default">
+                    <MapPin className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   </div>
                   <div>
-                    <p className="font-semibold text-primary-900">GPS Location Active</p>
-                    <p className="text-sm text-primary-700 mt-0.5">
+                    <p className="font-semibold text-foreground">GPS Location Active</p>
+                    <p className="text-sm text-foreground-secondary mt-0.5">
                       {latitude?.toFixed(4)}°N, {longitude?.toFixed(4)}°E
                     </p>
                   </div>
@@ -151,20 +151,20 @@ function CheckoutContent() {
 
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-semibold text-earth-700 mb-1.5">Delivery Address *</label>
+                    <label className="block text-sm font-semibold text-foreground-secondary mb-1.5">Delivery Address *</label>
                     <textarea
                       required
                       value={address}
                       onChange={e => setAddress(e.target.value)}
                       rows={2}
-                      className="w-full px-4 py-2 border rounded-lg text-earth-900 placeholder:text-earth-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-earth-300 focus:border-primary-500 focus:ring-primary-500 disabled:bg-earth-100 disabled:cursor-not-allowed resize-none"
+                      className="w-full px-4 py-2 bg-surface border rounded-lg text-foreground placeholder:text-foreground-muted transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-border-default focus:border-primary-500 focus:ring-primary-500 disabled:bg-surface-muted disabled:cursor-not-allowed resize-none"
                       placeholder="House/Flat, Street, Landmark..."
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-sm font-semibold text-earth-700 mb-1.5">City *</label>
+                      <label className="block text-sm font-semibold text-foreground-secondary mb-1.5">City *</label>
                       <Input
                         type="text"
                         required
@@ -174,7 +174,7 @@ function CheckoutContent() {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-earth-700 mb-1.5">Pincode *</label>
+                      <label className="block text-sm font-semibold text-foreground-secondary mb-1.5">Pincode *</label>
                       <Input
                         type="text"
                         required
@@ -189,14 +189,14 @@ function CheckoutContent() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-earth-700 mb-1.5">
+                    <label className="block text-sm font-semibold text-foreground-secondary mb-1.5">
                       Special Instructions (Optional)
                     </label>
                     <textarea
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
                       rows={2}
-                      className="w-full px-4 py-2 border rounded-lg text-earth-900 placeholder:text-earth-400 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-earth-300 focus:border-primary-500 focus:ring-primary-500 disabled:bg-earth-100 disabled:cursor-not-allowed resize-none"
+                      className="w-full px-4 py-2 bg-surface border rounded-lg text-foreground placeholder:text-foreground-muted transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-border-default focus:border-primary-500 focus:ring-primary-500 disabled:bg-surface-muted disabled:cursor-not-allowed resize-none"
                       placeholder="Any requests for the farmer (e.g. ring bell upon arrival)..."
                     />
                   </div>
@@ -204,9 +204,9 @@ function CheckoutContent() {
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
-                  <p className="text-sm text-red-800 font-medium">{error}</p>
+                <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 rounded-xl p-4 flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5" />
+                  <p className="text-sm text-red-800 dark:text-red-300 font-medium">{error}</p>
                 </div>
               )}
 
@@ -228,9 +228,9 @@ function CheckoutContent() {
 
           {/* ── Order Summary Section ── */}
           <div className="lg:col-span-1">
-            <div className="card p-6 sticky top-24">
-              <h2 className="text-lg font-bold font-display text-earth-900 mb-6 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-earth-100 text-earth-700 flex items-center justify-center text-sm">2</span>
+            <div className="card p-6 sticky top-24 bg-surface border-border-default transition-colors">
+              <h2 className="text-lg font-bold font-display text-foreground mb-6 flex items-center gap-2">
+                <span className="w-6 h-6 rounded-full bg-surface-muted border border-border-default text-foreground-secondary flex items-center justify-center text-sm">2</span>
                 Order Summary
               </h2>
 
@@ -238,37 +238,37 @@ function CheckoutContent() {
                 {items.map(({ product, quantity }) => (
                   <div key={product.id} className="flex justify-between items-start text-sm group">
                     <div className="pr-4">
-                      <p className="font-semibold text-earth-900">{product.name}</p>
-                      <p className="text-earth-500 text-xs mt-0.5">Qty: {quantity}</p>
+                      <p className="font-semibold text-foreground">{product.name}</p>
+                      <p className="text-foreground-muted text-xs mt-0.5">Qty: {quantity}</p>
                     </div>
-                    <span className="font-bold text-earth-900">
+                    <span className="font-bold text-foreground">
                       {formatPrice(product.price * quantity)}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t border-earth-100 pt-6 space-y-4">
-                <div className="flex justify-between text-sm text-earth-600 font-medium">
+              <div className="border-t border-border-default pt-6 space-y-4 transition-colors">
+                <div className="flex justify-between text-sm text-foreground-secondary font-medium">
                   <span>Subtotal</span>
-                  <span className="text-earth-900 font-semibold">{formatPrice(subtotal)}</span>
+                  <span className="text-foreground font-semibold">{formatPrice(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-sm text-earth-600 font-medium">
+                <div className="flex justify-between text-sm text-foreground-secondary font-medium">
                   <span>Platform & Delivery</span>
-                  <span className="text-earth-900 font-semibold">{formatPrice(DELIVERY_FEE)}</span>
+                  <span className="text-foreground font-semibold">{formatPrice(DELIVERY_FEE)}</span>
                 </div>
                 
-                <div className="flex justify-between items-center pt-4 border-t border-earth-100">
-                  <span className="text-base font-bold text-earth-900">Total to pay</span>
-                  <span className="text-2xl font-black text-primary-700">{formatPrice(subtotal + DELIVERY_FEE)}</span>
+                <div className="flex justify-between items-center pt-4 border-t border-border-default transition-colors">
+                  <span className="text-base font-bold text-foreground">Total to pay</span>
+                  <span className="text-2xl font-black text-primary-700 dark:text-primary-400">{formatPrice(subtotal + DELIVERY_FEE)}</span>
                 </div>
               </div>
 
-              <div className="mt-8 bg-amber-50 border border-amber-200/50 rounded-xl p-4 flex items-start gap-3">
+              <div className="mt-8 bg-amber-50 dark:bg-amber-900/10 border border-amber-200/50 dark:border-amber-900/50 rounded-xl p-4 flex items-start gap-3">
                 <div className="text-lg">💰</div>
                 <div>
-                  <p className="text-sm font-bold text-amber-900">Cash on Delivery</p>
-                  <p className="text-xs text-amber-700 mt-0.5 leading-relaxed">
+                  <p className="text-sm font-bold text-amber-900 dark:text-amber-500">Cash on Delivery</p>
+                  <p className="text-xs text-amber-700 dark:text-amber-600/90 mt-0.5 leading-relaxed">
                     You only pay when your order arrives. No online payment required today.
                   </p>
                 </div>
