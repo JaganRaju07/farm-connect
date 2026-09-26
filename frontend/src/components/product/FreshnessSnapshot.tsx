@@ -1,80 +1,173 @@
 // frontend/src/components/product/FreshnessSnapshot.tsx
 'use client';
 
-import { Calendar, Clock, Leaf } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React from 'react';
+import { Calendar, Clock, Leaf, MapPin, Sprout, Truck, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { getRelativeHarvestDate } from '@/lib/utils';
 
 interface FreshnessSnapshotProps {
   harvestDate?: string;
   distanceKm?: number;
+  farmerName?: string;
+  farmerCity?: string;
+  isOrganic?: boolean;
 }
 
-export default function FreshnessSnapshot({ harvestDate, distanceKm }: FreshnessSnapshotProps) {
-  if (!harvestDate) return null;
-
-  const harvest = new Date(harvestDate);
+export default function FreshnessSnapshot({ 
+  harvestDate, 
+  distanceKm,
+  farmerName,
+  farmerCity,
+  isOrganic = false
+}: FreshnessSnapshotProps) {
+  const harvest = harvestDate ? new Date(harvestDate) : null;
   const now = new Date();
-  const diffDays = Math.floor((now.getTime() - harvest.getTime()) / (1000 * 3600 * 24));
+  const diffDays = harvest ? Math.floor((now.getTime() - harvest.getTime()) / (1000 * 3600 * 24)) : null;
 
-  let label = "Harvest Date Available";
-  let color = "text-earth-600";
-  let bg = "bg-earth-50";
-  let dots = 1;
+  let freshnessLevel = 'Standard Farm Harvest';
+  let badgeColor = 'text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/40 border-primary-200 dark:border-primary-800';
+  let dotCount = 2;
 
-  if (diffDays >= 0 && diffDays <= 1) {
-    label = "Very Fresh";
-    color = "text-success-700";
-    bg = "bg-success-50";
-    dots = 4;
-  } else if (diffDays <= 3) {
-    label = "Recently Harvested";
-    color = "text-primary-700";
-    bg = "bg-primary-50";
-    dots = 3;
-  } else if (diffDays <= 7) {
-    label = "Harvested This Week";
-    color = "text-amber-700";
-    bg = "bg-amber-50";
-    dots = 2;
+  if (diffDays !== null) {
+    if (diffDays <= 1) {
+      freshnessLevel = 'Peak Morning Dew (< 24h)';
+      badgeColor = 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800';
+      dotCount = 4;
+    } else if (diffDays <= 3) {
+      freshnessLevel = 'Fresh Field Harvest (2–3 days)';
+      badgeColor = 'text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/40 border-primary-200 dark:border-primary-800';
+      dotCount = 3;
+    } else if (diffDays <= 7) {
+      freshnessLevel = 'Harvested This Week';
+      badgeColor = 'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800';
+      dotCount = 2;
+    }
   }
 
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="mt-6 border border-earth-200 rounded-xl bg-white overflow-hidden shadow-sm"
-    >
-      <div className="bg-earth-50 border-b border-earth-100 px-4 py-2.5 flex items-center justify-between">
-        <h3 className="text-[10px] font-bold text-earth-600 uppercase tracking-widest flex items-center gap-1.5">
-          <Leaf className="w-3.5 h-3.5" /> Freshness Snapshot
-        </h3>
-        <div className="flex gap-1">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className={`w-2 h-2 rounded-full ${i <= dots ? (dots >= 3 ? 'bg-success-500' : dots === 2 ? 'bg-amber-500' : 'bg-earth-400') : 'bg-earth-200'}`} />
-          ))}
-        </div>
-      </div>
-      
-      <div className="p-4 flex flex-wrap sm:flex-nowrap gap-4 items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className={`p-2.5 rounded-lg ${bg} ${color}`}>
-            <Clock className="w-5 h-5" />
-          </div>
-          <div>
-            <p className={`font-bold text-sm ${color}`}>{label}</p>
-            <p className="text-xs text-earth-500 flex items-center gap-1.5 mt-1">
-              <Calendar className="w-3 h-3" /> {harvest.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}
-            </p>
-          </div>
-        </div>
+    <div className="mt-8 space-y-4">
+      {/* ── Provenance & Freshness Card ── */}
+      <div className="bg-surface rounded-2xl border border-border-default overflow-hidden shadow-sm transition-colors">
         
-        {distanceKm !== undefined && distanceKm !== null && (
-          <div className="text-right sm:border-l border-earth-100 sm:pl-5">
-            <p className="text-base font-bold text-earth-900">{distanceKm < 1 ? '< 1 km' : `${distanceKm.toFixed(1)} km`}</p>
-            <p className="text-[11px] font-semibold text-earth-500 uppercase tracking-widest mt-0.5">Away from you</p>
+        {/* Header */}
+        <div className="bg-surface-muted border-b border-border-subtle px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sprout className="w-4 h-4 text-primary-600 dark:text-primary-400" />
+            <h3 className="text-xs font-mono font-bold text-foreground uppercase tracking-wider">
+              Product Origin & Traceability
+            </h3>
           </div>
-        )}
+          
+          <div className="flex items-center gap-1.5" title={`Freshness Rating: ${dotCount}/4`}>
+            {[1, 2, 3, 4].map(i => (
+              <span 
+                key={i} 
+                className={`w-2 h-2 rounded-full ${i <= dotCount ? 'bg-primary-600 dark:bg-primary-400' : 'bg-surface border border-border-default'}`} 
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Origin & Freshness Grid */}
+        <div className="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          {/* Harvest Timestamp */}
+          {harvest ? (
+            <div className="flex items-start gap-3">
+              <div className="p-2.5 rounded-xl bg-surface-muted text-primary-600 dark:text-primary-400 shrink-0 border border-border-subtle">
+                <Clock className="w-4 h-4" />
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-mono text-foreground-muted uppercase block">Harvest Timing</span>
+                <p className="text-xs font-bold text-foreground">
+                  {harvest.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                </p>
+                <p className="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                  {getRelativeHarvestDate(harvestDate)}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-start gap-3">
+              <div className="p-2.5 rounded-xl bg-surface-muted text-foreground-muted shrink-0 border border-border-subtle">
+                <Clock className="w-4 h-4" />
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-mono text-foreground-muted uppercase block">Harvest Protocol</span>
+                <p className="text-xs font-bold text-foreground">Harvested on Order Confirmation</p>
+                <p className="text-[11px] text-foreground-secondary">Direct farmgate dispatch</p>
+              </div>
+            </div>
+          )}
+
+          {/* Distance & Proximity */}
+          {distanceKm !== undefined && distanceKm !== null && (
+            <div className="flex items-start gap-3 sm:border-l border-border-subtle sm:pl-4">
+              <div className="p-2.5 rounded-xl bg-surface-muted text-cyan-600 dark:text-cyan-400 shrink-0 border border-border-subtle">
+                <MapPin className="w-4 h-4" />
+              </div>
+              <div className="space-y-0.5">
+                <span className="text-[10px] font-mono text-foreground-muted uppercase block">Direct Transit Distance</span>
+                <p className="text-xs font-bold text-foreground">
+                  {distanceKm < 1 ? '< 1 km away' : `${distanceKm.toFixed(1)} km away`}
+                </p>
+                <p className="text-[11px] text-foreground-secondary">
+                  {farmerCity ? `From ${farmerCity}` : 'Hyperlocal Taluk'}
+                </p>
+              </div>
+            </div>
+          )}
+
+        </div>
+
+        {/* ── Section F: Subtle Harvest Timeline (Verified Milestones) ── */}
+        <div className="border-t border-border-subtle bg-surface-muted/40 p-4">
+          <span className="text-[10px] font-mono text-foreground-muted uppercase tracking-wider block mb-3">
+            Freshness Timeline
+          </span>
+
+          <div className="grid grid-cols-4 gap-2 text-center">
+            {/* Step 1: Harvested */}
+            <div className="space-y-1">
+              <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold text-[10px] flex items-center justify-center mx-auto">
+                ✓
+              </div>
+              <span className="text-[11px] font-bold text-foreground block">Harvested</span>
+              <span className="text-[9px] text-foreground-muted block font-mono">
+                {harvest ? harvest.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) : 'Dawn'}
+              </span>
+            </div>
+
+            {/* Step 2: Listed */}
+            <div className="space-y-1">
+              <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-bold text-[10px] flex items-center justify-center mx-auto">
+                ✓
+              </div>
+              <span className="text-[11px] font-bold text-foreground block">Listed</span>
+              <span className="text-[9px] text-foreground-muted block font-mono">Direct Price</span>
+            </div>
+
+            {/* Step 3: Ordered */}
+            <div className="space-y-1">
+              <div className="w-6 h-6 rounded-full bg-primary-100 text-primary-800 dark:bg-primary-950 dark:text-primary-300 font-bold text-[10px] flex items-center justify-center mx-auto">
+                3
+              </div>
+              <span className="text-[11px] font-bold text-foreground block">Ordered</span>
+              <span className="text-[9px] text-foreground-muted block font-mono">Next Dispatch</span>
+            </div>
+
+            {/* Step 4: Delivered */}
+            <div className="space-y-1">
+              <div className="w-6 h-6 rounded-full bg-surface-muted text-foreground-muted font-bold text-[10px] flex items-center justify-center mx-auto border border-border-default">
+                4
+              </div>
+              <span className="text-[11px] font-bold text-foreground block">Delivered</span>
+              <span className="text-[9px] text-foreground-muted block font-mono">At Doorstep</span>
+            </div>
+          </div>
+        </div>
+
       </div>
-    </motion.div>
+    </div>
   );
 }

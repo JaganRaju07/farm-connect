@@ -147,18 +147,20 @@ function MarketplaceContent() {
 
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             {/* View Toggle */}
-            <div className="flex bg-surface rounded-xl p-1 border border-border-default shadow-sm shrink-0 transition-colors">
+            <div className="flex bg-surface rounded-xl p-1 border border-border-default shadow-sm shrink-0 transition-colors" role="group" aria-label="Product display mode">
               <button 
                 onClick={() => setViewMode('grid')}
-                className={`px-3 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${viewMode === 'grid' ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 shadow-sm' : 'text-foreground-muted hover:text-foreground'}`}
+                aria-pressed={viewMode === 'grid'}
+                className={`px-3 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 ${viewMode === 'grid' ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 shadow-sm' : 'text-foreground-muted hover:text-foreground'}`}
               >
-                <Grid className="w-4 h-4" /> Grid
+                <Grid className="w-4 h-4" aria-hidden="true" /> Grid
               </button>
               <button 
                 onClick={() => setViewMode('map')}
-                className={`px-3 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all ${viewMode === 'map' ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 shadow-sm' : 'text-foreground-muted hover:text-foreground'}`}
+                aria-pressed={viewMode === 'map'}
+                className={`px-3 py-2 rounded-lg text-sm font-bold flex items-center gap-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 ${viewMode === 'map' ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 shadow-sm' : 'text-foreground-muted hover:text-foreground'}`}
               >
-                <Map className="w-4 h-4" /> Map
+                <Map className="w-4 h-4" aria-hidden="true" /> Map
               </button>
             </div>
             
@@ -218,12 +220,14 @@ function MarketplaceContent() {
             <Button 
               variant="secondary"
               onClick={() => setIsFilterOpen(true)}
+              aria-expanded={isFilterOpen}
+              aria-label="Open product filters panel"
               className="px-4 py-2.5 shrink-0 relative"
             >
-              <SlidersHorizontal className="w-4 h-4" />
+              <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
               <span className="hidden sm:inline">Filters</span>
               {(appliedFilters.category || appliedFilters.isOrganic || appliedFilters.minPrice || appliedFilters.maxPrice) && (
-                <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-600 rounded-full border-2 border-white" />
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary-600 rounded-full border-2 border-white" aria-hidden="true" />
               )}
             </Button>
           </div>
@@ -233,28 +237,32 @@ function MarketplaceContent() {
         <LocalFarmPulse products={products} isLoading={loading} />
 
         {/* ── Discovery Quick Filters ── */}
-        <div className="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide">
+        <div className="flex gap-2 overflow-x-auto pb-4 mb-2 scrollbar-hide" role="group" aria-label="Quick filters">
           <button
             onClick={() => setQuickFilter('all')}
-            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors border ${quickFilter === 'all' ? 'bg-foreground text-background border-foreground' : 'bg-surface text-foreground-secondary border-border-default hover:bg-surface-muted'}`}
+            aria-pressed={quickFilter === 'all'}
+            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 ${quickFilter === 'all' ? 'bg-foreground text-background border-foreground' : 'bg-surface text-foreground-secondary border-border-default hover:bg-surface-muted'}`}
           >
             All Products
           </button>
           <button
             onClick={() => setQuickFilter('nearby')}
-            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors border ${quickFilter === 'nearby' ? 'bg-primary-600 text-white border-primary-600' : 'bg-surface text-foreground-secondary border-border-default hover:bg-surface-muted'}`}
+            aria-pressed={quickFilter === 'nearby'}
+            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 ${quickFilter === 'nearby' ? 'bg-primary-600 text-white border-primary-600' : 'bg-surface text-foreground-secondary border-border-default hover:bg-surface-muted'}`}
           >
             Nearby (5km)
           </button>
           <button
             onClick={() => setQuickFilter('harvested')}
-            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors border ${quickFilter === 'harvested' ? 'bg-amber-500 text-white border-amber-500' : 'bg-surface text-foreground-secondary border-border-default hover:bg-surface-muted'}`}
+            aria-pressed={quickFilter === 'harvested'}
+            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 ${quickFilter === 'harvested' ? 'bg-amber-500 text-white border-amber-500' : 'bg-surface text-foreground-secondary border-border-default hover:bg-surface-muted'}`}
           >
             Recently Harvested
           </button>
           <button
             onClick={() => setQuickFilter('available')}
-            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors border ${quickFilter === 'available' ? 'bg-blue-500 text-white border-blue-500' : 'bg-surface text-foreground-secondary border-border-default hover:bg-surface-muted'}`}
+            aria-pressed={quickFilter === 'available'}
+            className={`whitespace-nowrap px-4 py-1.5 rounded-full text-sm font-semibold transition-colors border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600 ${quickFilter === 'available' ? 'bg-blue-500 text-white border-blue-500' : 'bg-surface text-foreground-secondary border-border-default hover:bg-surface-muted'}`}
           >
             Available Now
           </button>

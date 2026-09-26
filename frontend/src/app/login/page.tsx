@@ -8,7 +8,6 @@ import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { Sprout, ArrowRight, Loader2, Leaf, ShieldCheck, MapPin, Tractor } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AuroraBackground } from '@/components/reactbits/AuroraBackground';
 import Button from '@/components/common/button';
 
 type Step = 'phone' | 'otp';
@@ -184,7 +183,7 @@ function ConsumerLoginContent() {
   }, [step]);
 
   return (
-    <AuroraBackground className="min-h-screen w-full flex-row items-stretch bg-background p-0">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row items-stretch bg-background p-0 font-sans transition-colors duration-200">
       
       {/* ── Left Side: Beautiful Visual ── */}
       <div className="hidden lg:flex w-[45%] bg-earth-900 relative overflow-hidden flex-col justify-between p-16 shadow-2xl z-10">
@@ -436,7 +435,7 @@ function ConsumerLoginContent() {
         </div>
       </div>
       </div>
-    </AuroraBackground>
+    </div>
   );
 }
 

@@ -246,8 +246,14 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* Freshness Snapshot */}
-            <FreshnessSnapshot harvestDate={product.harvestDate} distanceKm={product.distance_km} />
+            {/* Freshness Snapshot & Product Origin Story */}
+            <FreshnessSnapshot 
+              harvestDate={product.harvestDate} 
+              distanceKm={product.distance_km}
+              farmerName={product.farmerName}
+              farmerCity={product.farmerCity}
+              isOrganic={product.isOrganic}
+            />
 
             {/* Farmer Trust Card */}
             <div className="card p-5 mt-8 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface border-border-default transition-colors">
@@ -305,12 +311,20 @@ export default function ProductDetailPage() {
                 <div className="max-w-6xl mx-auto flex items-center gap-3 sm:gap-4">
                   {/* Qty Selector */}
                   <div className="flex items-center justify-between bg-surface-muted border border-border-default rounded-xl p-1 h-14 shrink-0 w-28 sm:w-32 transition-colors">
-                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 sm:w-10 h-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-surface rounded-lg transition-colors">
-                      <Minus className="w-4 h-4" />
+                    <button 
+                      onClick={() => setQty(q => Math.max(1, q - 1))} 
+                      className="w-8 sm:w-10 h-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-surface rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600"
+                      aria-label="Decrease quantity"
+                    >
+                      <Minus className="w-4 h-4" aria-hidden="true" />
                     </button>
-                    <span className="text-center font-bold text-lg text-foreground flex-1">{qty}</span>
-                    <button onClick={() => setQty(q => Math.min(product.stockAvailable, q + 1))} className="w-8 sm:w-10 h-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-surface rounded-lg transition-colors">
-                      <Plus className="w-4 h-4" />
+                    <span className="text-center font-bold text-lg text-foreground flex-1" aria-live="polite">{qty}</span>
+                    <button 
+                      onClick={() => setQty(q => Math.min(product.stockAvailable, q + 1))} 
+                      className="w-8 sm:w-10 h-full flex items-center justify-center text-foreground-muted hover:text-foreground hover:bg-surface rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600"
+                      aria-label="Increase quantity"
+                    >
+                      <Plus className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                   

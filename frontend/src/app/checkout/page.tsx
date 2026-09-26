@@ -1,7 +1,7 @@
 // frontend/src/app/checkout/page.tsx
 'use client';
 
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent, useEffect, useRef } from 'react';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
 import { useCart } from '@/context/cartcontext';
 import { useGeolocation } from '@/hooks/useGeolocation';
@@ -48,8 +48,12 @@ function CheckoutContent() {
     }).format(amount);
   };
 
+  const isSubmittingRef = useRef(false);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (loading || isSubmittingRef.current) return;
 
     if (!latitude || !longitude) {
       setError('Location required. Please enable location access.');
@@ -61,6 +65,7 @@ function CheckoutContent() {
       return;
     }
 
+    isSubmittingRef.current = true;
     setLoading(true);
     setError('');
 
@@ -90,6 +95,7 @@ function CheckoutContent() {
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Failed to place order.');
     } finally {
+      isSubmittingRef.current = false;
       setLoading(false);
     }
   };

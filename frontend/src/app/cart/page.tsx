@@ -117,25 +117,28 @@ export default function CartPage() {
                     <div className="flex items-center bg-surface-muted border border-border-default rounded-xl p-1 shrink-0 h-10 transition-colors">
                       <button
                         onClick={() => updateQuantity(product.id, quantity - 1)}
-                        className="w-8 h-8 flex items-center justify-center text-foreground-secondary hover:bg-surface hover:text-foreground rounded-lg transition-colors"
+                        className="w-8 h-8 flex items-center justify-center text-foreground-secondary hover:bg-surface hover:text-foreground rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600"
+                        aria-label={`Decrease quantity of ${product.name}`}
                       >
-                        <Minus className="w-3.5 h-3.5" />
+                        <Minus className="w-3.5 h-3.5" aria-hidden="true" />
                       </button>
-                      <span className="w-10 text-center font-bold text-sm text-foreground">{quantity}</span>
+                      <span className="w-10 text-center font-bold text-sm text-foreground" aria-live="polite">{quantity}</span>
                       <button
                         onClick={() => updateQuantity(product.id, quantity + 1)}
                         disabled={quantity >= product.stockAvailable}
-                        className="w-8 h-8 flex items-center justify-center text-foreground-secondary hover:bg-surface hover:text-foreground rounded-lg transition-colors disabled:opacity-50 disabled:hover:bg-transparent"
+                        className="w-8 h-8 flex items-center justify-center text-foreground-secondary hover:bg-surface hover:text-foreground rounded-lg transition-colors disabled:opacity-50 disabled:hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-600"
+                        aria-label={`Increase quantity of ${product.name}`}
                       >
-                        <Plus className="w-3.5 h-3.5" />
+                        <Plus className="w-3.5 h-3.5" aria-hidden="true" />
                       </button>
                     </div>
 
                     <button
                       onClick={() => removeFromCart(product.id)}
-                      className="text-foreground-muted hover:text-red-600 dark:hover:text-red-400 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors flex items-center gap-1.5 text-sm font-medium"
+                      className="text-foreground-muted hover:text-red-600 dark:hover:text-red-400 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors flex items-center gap-1.5 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600"
+                      aria-label={`Remove ${product.name} from cart`}
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
                       <span className="hidden sm:inline">Remove</span>
                     </button>
                   </div>

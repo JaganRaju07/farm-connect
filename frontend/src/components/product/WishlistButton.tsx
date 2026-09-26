@@ -73,7 +73,9 @@ export default function WishlistButton({ productId, size = 'md' }: WishlistButto
       className={`${btnSize} rounded-full bg-white/90 hover:bg-white shadow-sm hover:shadow-md transition-all active:scale-90 z-10 ${
         loading ? 'opacity-50' : ''
       }`}
-      title={saved ? 'Remove from wishlist' : 'Save to wishlist'}>
+      title={saved ? 'Remove from wishlist' : 'Save to wishlist'}
+      aria-label={saved ? 'Remove from wishlist' : 'Save to wishlist'}
+    >
       <Heart className={`${iconSize} transition-colors duration-300 ${
         saved ? 'fill-red-500 text-red-500' : 'text-gray-400 hover:text-red-400'
       }`} />

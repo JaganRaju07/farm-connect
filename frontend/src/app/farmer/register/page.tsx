@@ -6,7 +6,6 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useAuth } from '@/context/AuthContext';
 import { Sprout, ArrowRight, Loader2, Tractor, TrendingUp, ShieldCheck, Store, Users, Package } from 'lucide-react';
-import { AuroraBackground } from '@/components/reactbits/AuroraBackground';
 import Button from '@/components/ui/button';
 import Input from '@/components/ui/Input';
 
@@ -161,7 +160,7 @@ export default function FarmerRegisterPage() {
   };
 
   return (
-    <AuroraBackground className="min-h-screen w-full flex-row items-stretch bg-earth-50 p-0">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row items-stretch bg-background p-0 font-sans transition-colors duration-200">
       
       {/* ── Left Side: Beautiful Visual ── */}
       <div className="hidden lg:flex w-1/2 bg-earth-900 relative overflow-hidden flex-col justify-between p-12">
@@ -394,6 +393,6 @@ export default function FarmerRegisterPage() {
         </div>
       </div>
       </div>
-    </AuroraBackground>
+    </div>
   );
 }

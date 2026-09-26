@@ -40,8 +40,22 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Farm Connect - Hyperlocal Agricultural Marketplace",
-  description: "Eliminating middlemen by connecting farmers directly with consumers.",
+  title: {
+    default: "Farm Connect — Hyperlocal Agricultural Marketplace",
+    template: "%s | Farm Connect",
+  },
+  description: "Connecting local farmers directly with consumers across Karnataka. Fresh produce harvested at dawn, zero middlemen, and fair pricing.",
+  openGraph: {
+    title: "Farm Connect — Hyperlocal Agricultural Marketplace",
+    description: "From the field to your table. Fresh produce. Real farmers. A shorter journey.",
+    siteName: "Farm Connect",
+    locale: "en_IN",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
