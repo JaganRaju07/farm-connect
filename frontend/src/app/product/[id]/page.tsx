@@ -16,6 +16,7 @@ import { getRelativeHarvestDate } from '@/lib/utils';
 import { getFallbackImageUrl } from '@/components/product/productcard';
 import Input from '@/components/ui/Input';
 import FreshnessSnapshot from '@/components/product/FreshnessSnapshot';
+import Badge from '@/components/ui/Badge';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
@@ -180,9 +181,11 @@ export default function ProductDetailPage() {
                 className="object-cover transition-transform duration-500 group-hover:scale-105" 
               />
               {product.isOrganic && (
-                <span className="absolute top-4 left-4 bg-surface/90 backdrop-blur-md text-primary-700 dark:text-primary-400 text-sm px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm font-bold border border-border-default">
-                  <ShieldCheck className="w-4 h-4" /> Organic Certified
-                </span>
+                <div className="absolute top-4 left-4 z-10">
+                  <Badge variant="primary" className="bg-surface/90 backdrop-blur-md shadow-sm border border-border-default">
+                    <ShieldCheck className="w-4 h-4" /> Organic Certified
+                  </Badge>
+                </div>
               )}
             </div>
             
@@ -273,24 +276,24 @@ export default function ProductDetailPage() {
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-foreground">Availability</span>
                   {product.stockAvailable > 0 ? (
-                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-primary-700 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2.5 py-1 rounded-md border border-primary-100 dark:border-primary-800">
+                    <Badge variant="primary" className="py-1">
                       <Package className="w-4 h-4" />
                       {product.stockAvailable} {product.unit} in stock
-                    </span>
+                    </Badge>
                   ) : (
-                    <span className="text-sm font-bold text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 px-2.5 py-1 rounded-md border border-red-100 dark:border-red-800">
+                    <Badge variant="danger" className="py-1">
                       Out of stock
-                    </span>
+                    </Badge>
                   )}
                 </div>
 
                 {product.harvestDate && getRelativeHarvestDate(product.harvestDate) && (
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-foreground">Freshness</span>
-                    <span className="inline-flex items-center gap-1.5 text-sm font-bold text-success-700 dark:text-success-400 bg-success-50 dark:bg-success-900/30 px-2.5 py-1 rounded-md border border-success-100 dark:border-success-800">
+                    <Badge variant="success" className="py-1">
                       <Leaf className="w-4 h-4" />
                       {getRelativeHarvestDate(product.harvestDate)}
-                    </span>
+                    </Badge>
                   </div>
                 )}
               </div>
@@ -353,9 +356,9 @@ export default function ProductDetailPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
             {reviews?.reviews?.map((review: any) => (
-              <div key={review.id} className="bg-surface-muted p-6 rounded-2xl border border-border-default transition-colors">
+              <div key={review.id} className="card p-6 transition-colors">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-surface border border-border-default flex items-center justify-center text-base font-bold text-foreground-secondary shrink-0 transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-primary-50 dark:bg-primary-900/30 border border-primary-100 dark:border-primary-800 flex items-center justify-center text-base font-bold text-primary-700 dark:text-primary-400 shrink-0 transition-colors">
                     {review.consumer_name[0]}
                   </div>
                   <div>
@@ -368,7 +371,7 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
                 {review.review_text && (
-                  <p className="text-foreground leading-relaxed text-sm">"{review.review_text}"</p>
+                  <p className="text-foreground-secondary leading-relaxed text-sm italic">"{review.review_text}"</p>
                 )}
               </div>
             ))}

@@ -149,54 +149,50 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                <div className="space-y-5">
+                <div className="space-y-6">
                   <div>
-                    <label className="block text-sm font-semibold text-foreground-secondary mb-1.5">Delivery Address *</label>
+                    <label className="block text-sm font-medium text-foreground-secondary mb-1">Delivery Address *</label>
                     <textarea
                       required
                       value={address}
                       onChange={e => setAddress(e.target.value)}
-                      rows={2}
-                      className="w-full px-4 py-2 bg-surface border rounded-lg text-foreground placeholder:text-foreground-muted transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-border-default focus:border-primary-500 focus:ring-primary-500 disabled:bg-surface-muted disabled:cursor-not-allowed resize-none"
+                      rows={3}
+                      className="w-full px-4 py-2 bg-surface border rounded-lg text-foreground placeholder:text-foreground-muted transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 dark:focus:ring-offset-surface border-border-default focus:border-primary-500 focus:ring-primary-500 disabled:bg-surface-muted disabled:cursor-not-allowed resize-none"
                       placeholder="House/Flat, Street, Landmark..."
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-5">
-                    <div>
-                      <label className="block text-sm font-semibold text-foreground-secondary mb-1.5">City *</label>
-                      <Input
-                        type="text"
-                        required
-                        value={city}
-                        onChange={e => setCity(e.target.value)}
-                        placeholder="Bengaluru"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-foreground-secondary mb-1.5">Pincode *</label>
-                      <Input
-                        type="text"
-                        required
-                        value={pincode}
-                        onChange={e => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                        placeholder="560001"
-                        maxLength={6}
-                        pattern="[0-9]{6}"
-                        inputMode="numeric"
-                      />
-                    </div>
+                    <Input
+                      label="City *"
+                      type="text"
+                      required
+                      value={city}
+                      onChange={e => setCity(e.target.value)}
+                      placeholder="Bengaluru"
+                    />
+                    <Input
+                      label="Pincode *"
+                      type="text"
+                      required
+                      value={pincode}
+                      onChange={e => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      placeholder="560001"
+                      maxLength={6}
+                      pattern="[0-9]{6}"
+                      inputMode="numeric"
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-foreground-secondary mb-1.5">
+                    <label className="block text-sm font-medium text-foreground-secondary mb-1">
                       Special Instructions (Optional)
                     </label>
                     <textarea
                       value={notes}
                       onChange={e => setNotes(e.target.value)}
                       rows={2}
-                      className="w-full px-4 py-2 bg-surface border rounded-lg text-foreground placeholder:text-foreground-muted transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 border-border-default focus:border-primary-500 focus:ring-primary-500 disabled:bg-surface-muted disabled:cursor-not-allowed resize-none"
+                      className="w-full px-4 py-2 bg-surface border rounded-lg text-foreground placeholder:text-foreground-muted transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-0 dark:focus:ring-offset-surface border-border-default focus:border-primary-500 focus:ring-primary-500 disabled:bg-surface-muted disabled:cursor-not-allowed resize-none"
                       placeholder="Any requests for the farmer (e.g. ring bell upon arrival)..."
                     />
                   </div>

@@ -83,9 +83,9 @@
 
   /* Polished Card */
   .card {
-    background: #ffffff;
+    background: var(--surface);
     border-radius: 1.5rem; /* 3xl */
-    border: 1px solid #e7e3dc; /* earth-200 */
+    border: 1px solid var(--border-default);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05); /* stronger shadow for elevation */
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -95,27 +95,25 @@
     transform: translateY(-2px);
   }
 
-
-
   .btn-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background: #ffffff;
-    color: #1c1917; /* earth-900 */
+    background: var(--surface);
+    color: var(--foreground);
     padding: 0.75rem 1.5rem;
     border-radius: 0.75rem;
     font-weight: 600;
     font-size: 0.9375rem;
-    border: 1px solid #d5cec4; /* earth-300 */
+    border: 1px solid var(--border-default);
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
   }
 
   .btn-secondary:hover {
-    background: #f4f2ee; /* earth-100 */
-    border-color: #b8afa1; /* earth-400 */
+    background: var(--surface-muted);
+    border-color: var(--foreground-muted);
   }
 
   .btn-accent {
@@ -123,7 +121,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    background: #e76f51; /* accent-400 */
+    background: theme('colors.accent.500');
     color: #ffffff;
     padding: 0.75rem 1.5rem;
     border-radius: 0.75rem;
@@ -134,7 +132,7 @@
   }
 
   .btn-accent:hover {
-    background: #e05837; /* accent-500 */
+    background: theme('colors.accent.600');
     transform: translateY(-1px);
     box-shadow: 0 6px 20px rgba(231, 111, 81, 0.23);
   }

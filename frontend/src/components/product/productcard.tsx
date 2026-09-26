@@ -7,6 +7,7 @@ import { Product } from '@/types';
 import { getRelativeHarvestDate } from '@/lib/utils';
 import WishlistButton from '@/components/product/WishlistButton';
 import { ShineBorder } from '@/components/magicui/ShineBorder';
+import Badge from '@/components/ui/Badge';
 
 interface ProductCardProps {
   product: Product & {
@@ -125,26 +126,22 @@ export default function ProductCard({ product }: ProductCardProps) {
           {/* Top Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
             {distance_km !== undefined && distance_km !== null && (
-              <span className={`inline-flex items-center gap-1 backdrop-blur-sm px-2.5 py-1 rounded-md text-xs font-bold shadow-sm ${
-                distance_km < 2 ? 'bg-primary-500/90 text-white' : 
-                distance_km < 5 ? 'bg-primary-100/90 dark:bg-primary-900/80 text-primary-700 dark:text-primary-300' : 
-                'bg-surface/90 text-foreground-secondary border border-border-default'
-              }`}>
+              <Badge variant={distance_km < 2 ? 'primary' : distance_km < 5 ? 'secondary' : 'default'} className="shadow-sm backdrop-blur-sm">
                 <MapPin className="w-3 h-3" />
                 {distance_km < 2 ? 'Super Local' : distance_km < 5 ? 'Local' : 'Regional'}
-              </span>
+              </Badge>
             )}
             {isOrganic && (
-              <span className="inline-flex items-center gap-1 bg-surface/90 backdrop-blur-sm text-primary-700 dark:text-primary-400 border border-border-default px-2.5 py-1 rounded-md text-xs font-bold shadow-sm">
+              <Badge variant="success" className="shadow-sm backdrop-blur-sm">
                 <ShieldCheck className="w-3 h-3" />
                 Organic
-              </span>
+              </Badge>
             )}
             {isLowStock && (
-              <span className="inline-flex items-center gap-1 bg-amber-500/90 backdrop-blur-sm text-white px-2.5 py-1 rounded-md text-xs font-bold shadow-sm">
+              <Badge variant="warning" className="shadow-sm backdrop-blur-sm">
                 <Clock className="w-3 h-3" />
                 Low Stock
-              </span>
+              </Badge>
             )}
           </div>
 
@@ -214,10 +211,10 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
 
             {harvestDate && getRelativeHarvestDate(harvestDate) && (
-              <div className="flex items-center text-xs font-medium text-success-700 dark:text-success-400 bg-success-50 dark:bg-success-900/30 mt-2 px-2 py-1 rounded">
+              <Badge variant="success" className="mt-2 w-fit">
                 <Leaf className="w-3 h-3 mr-1.5" />
                 {getRelativeHarvestDate(harvestDate)}
-              </div>
+              </Badge>
             )}
           </div>
 

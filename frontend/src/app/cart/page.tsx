@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, ArrowLeft, MapPin } from 'lucide-react';
 import Link from 'next/link';
-import { getButtonClasses } from '@/components/ui/button';
+import Button, { getButtonClasses } from '@/components/ui/button';
 import { EmptyState } from '@/components/common/EmptyState';
 import { GradientDivider } from '@/components/common/GradientDivider';
 import { getFallbackImageUrl } from '@/components/product/productcard';
@@ -182,12 +182,13 @@ export default function CartPage() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
 
-                <button
+                <Button
+                  variant="secondary"
                   onClick={() => router.push('/marketplace')}
-                  className="btn-secondary w-full h-12"
+                  className="w-full h-12"
                 >
                   Continue Shopping
-                </button>
+                </Button>
               </div>
             </div>
           </div>

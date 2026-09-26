@@ -7,15 +7,26 @@ import Link from 'next/link';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { AnimatedBeam } from '@/components/magicui/AnimatedBeam';
+import Skeleton from '@/components/ui/Skeleton';
+import Badge from '@/components/ui/Badge';
+import { EmptyState } from '@/components/common/EmptyState';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+
+interface RecentOrder {
+  id: string | number;
+  order_number: string;
+  consumer_name: string;
+  total_amount: number;
+  order_status: string;
+}
 
 interface DashboardStats {
   activeProducts: number;
   pendingOrders: number;
   totalEarnings: number;
   lowStockCount: number;
-  recentOrders: any[];
+  recentOrders: RecentOrder[];
 }
 
 function FarmerDashboardContent() {
@@ -73,15 +84,15 @@ function FarmerDashboardContent() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <div className="h-8 w-48 bg-border-strong rounded animate-pulse" />
+        <Skeleton className="h-8 w-48" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map(i => (
-            <div key={i} className="card h-32 animate-pulse flex flex-col justify-between p-6">
+            <div key={i} className="card h-32 flex flex-col justify-between p-6">
               <div className="flex justify-between items-start">
-                <div className="w-10 h-10 bg-border-strong rounded-lg" />
-                <div className="h-6 w-16 bg-border-strong rounded" />
+                <Skeleton className="w-10 h-10 rounded-lg" />
+                <Skeleton className="h-6 w-16" />
               </div>
-              <div className="h-4 w-24 bg-border-strong rounded mt-4" />
+              <Skeleton className="h-4 w-24 mt-4" />
             </div>
           ))}
         </div>
@@ -99,11 +110,11 @@ function FarmerDashboardContent() {
 
   const getStatusConfig = (status: string) => {
     switch(status?.toLowerCase()) {
-      case 'pending': return { icon: Clock, color: 'text-amber-700 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/30', border: 'border-amber-200 dark:border-amber-800' };
-      case 'confirmed': return { icon: CheckCircle, color: 'text-blue-700 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/30', border: 'border-blue-200 dark:border-blue-800' };
+      case 'pending': return { icon: Clock, variant: 'warning' as const };
+      case 'confirmed': return { icon: CheckCircle, variant: 'info' as const };
       case 'delivered': 
-      case 'completed': return { icon: PackageCheck, color: 'text-primary-700 dark:text-primary-400', bg: 'bg-primary-50 dark:bg-primary-900/30', border: 'border-primary-200 dark:border-primary-800' };
-      default: return { icon: Clock, color: 'text-foreground-secondary', bg: 'bg-surface-muted', border: 'border-border-default' };
+      case 'completed': return { icon: PackageCheck, variant: 'success' as const };
+      default: return { icon: Clock, variant: 'default' as const };
     }
   };
 
@@ -141,7 +152,7 @@ function FarmerDashboardContent() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold font-display text-foreground tracking-tight">Overview</h1>
-        <p className="text-foreground-secondary text-sm mt-1">Here's what's happening with your farm today.</p>
+        <p className="text-foreground-secondary text-sm mt-1">Here&apos;s what&apos;s happening with your farm today.</p>
       </div>
       
       {/* Low Stock Warning */}
@@ -153,7 +164,7 @@ function FarmerDashboardContent() {
             <p className="text-sm text-red-700 dark:text-red-400 mt-1 leading-relaxed">
               You have {stats.lowStockCount} products running dangerously low on stock.
             </p>
-            <Link href="/farmer/products" className="inline-flex items-center gap-1 text-sm font-semibold text-red-700 dark:text-red-400 mt-2 hover:text-red-900 dark:hover:text-red-300 transition-colors">
+            <Link href="/farmer/products" className="inline-flex items-center gap-1 text-sm font-semibold text-red-700 dark:text-red-400 mt-2 hover:text-red-900 dark:hover:text-red-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 -ml-1">
               Update inventory <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -167,39 +178,39 @@ function FarmerDashboardContent() {
             <div className="p-3 bg-primary-50 dark:bg-primary-900/30 rounded-xl border border-primary-100 dark:border-primary-800 transition-colors">
               <Package className="w-6 h-6 text-primary-700 dark:text-primary-400" />
             </div>
-            <span className="text-xs font-semibold text-foreground-secondary bg-surface-elevated px-2 py-1 rounded-md border border-border-default">Live</span>
+            <Badge variant="secondary" className="uppercase tracking-wider text-[10px]">Live</Badge>
           </div>
           <div className="mt-6">
             <p className="text-sm font-medium text-foreground-secondary mb-1">Active Products</p>
-            <p className="text-3xl font-bold text-foreground tracking-tight">{stats?.activeProducts || 0}</p>
+            <p className="text-3xl font-bold text-foreground tracking-tight tabular-nums">{stats?.activeProducts || 0}</p>
           </div>
         </div>
 
-        <div className="card p-6 flex flex-col justify-between">
+        <div className="card p-6 flex flex-col justify-between ring-1 ring-amber-500/50 bg-amber-50/30 dark:bg-amber-900/10 dark:ring-amber-500/30">
           <div className="flex items-start justify-between">
-            <div className="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-xl border border-amber-100 dark:border-amber-800 transition-colors">
+            <div className="p-3 bg-amber-100 dark:bg-amber-900/50 rounded-xl border border-amber-200 dark:border-amber-800 transition-colors">
               <ShoppingBag className="w-6 h-6 text-amber-700 dark:text-amber-400" />
             </div>
-            <span className="text-xs font-semibold text-foreground-secondary bg-surface-elevated px-2 py-1 rounded-md border border-border-default">Action Required</span>
+            <Badge variant="warning" className="uppercase tracking-wider text-[10px]">Action Required</Badge>
           </div>
           <div className="mt-6">
-            <p className="text-sm font-medium text-foreground-secondary mb-1">Pending Orders</p>
-            <p className="text-3xl font-bold text-foreground tracking-tight">{stats?.pendingOrders || 0}</p>
+            <p className="text-sm font-medium text-amber-900/80 dark:text-amber-200/80 mb-1">Pending Orders</p>
+            <p className="text-3xl font-bold text-amber-900 dark:text-amber-100 tracking-tight tabular-nums">{stats?.pendingOrders || 0}</p>
           </div>
         </div>
 
-        <div className="card p-6 flex flex-col justify-between">
+        <div className="card p-6 flex flex-col justify-between bg-primary-900 dark:bg-primary-950 text-white border-primary-800 dark:border-primary-900">
           <div className="flex items-start justify-between">
-            <div className="p-3 bg-primary-50 dark:bg-primary-900/30 rounded-xl border border-primary-100 dark:border-primary-800 transition-colors">
-              <TrendingUp className="w-6 h-6 text-primary-700 dark:text-primary-400" />
+            <div className="p-3 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 transition-colors">
+              <TrendingUp className="w-6 h-6 text-primary-400" />
             </div>
-            <Link href="/farmer/earnings" className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300">
+            <Link href="/farmer/earnings" className="text-xs font-semibold text-primary-200 hover:text-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-md px-2 py-1">
               View Analytics →
             </Link>
           </div>
           <div className="mt-6">
-            <p className="text-sm font-medium text-foreground-secondary mb-1">Total Earnings</p>
-            <p className="text-3xl font-bold text-primary-700 dark:text-primary-400 tracking-tight">{formatCurrency(stats?.totalEarnings || 0)}</p>
+            <p className="text-sm font-medium text-primary-200 mb-1">Total Earnings</p>
+            <p className="text-3xl font-bold text-white tracking-tight tabular-nums">{formatCurrency(stats?.totalEarnings || 0)}</p>
           </div>
         </div>
       </div>
@@ -208,19 +219,19 @@ function FarmerDashboardContent() {
       <div>
         <h2 className="text-xl font-bold font-display text-foreground tracking-tight mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <Link href="/farmer/products/new" className="flex items-center gap-3 p-4 bg-surface rounded-xl border border-border-default hover:border-primary-500 hover:shadow-sm transition-all group">
+          <Link href="/farmer/products/new" className="flex items-center gap-3 p-4 bg-surface rounded-xl border border-border-default hover:border-primary-500 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all group">
             <div className="p-2.5 bg-primary-50 dark:bg-primary-900/30 rounded-lg text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-all"><Plus className="w-5 h-5" /></div>
             <span className="font-semibold text-foreground">Add Product</span>
           </Link>
-          <Link href="/farmer/products" className="flex items-center gap-3 p-4 bg-surface rounded-xl border border-border-default hover:border-primary-500 hover:shadow-sm transition-all group">
+          <Link href="/farmer/products" className="flex items-center gap-3 p-4 bg-surface rounded-xl border border-border-default hover:border-primary-500 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all group">
             <div className="p-2.5 bg-surface-elevated border border-border-default rounded-lg text-foreground-secondary group-hover:scale-110 transition-all"><Package className="w-5 h-5" /></div>
             <span className="font-semibold text-foreground">Inventory</span>
           </Link>
-          <Link href="/farmer/orders" className="flex items-center gap-3 p-4 bg-surface rounded-xl border border-border-default hover:border-primary-500 hover:shadow-sm transition-all group">
+          <Link href="/farmer/orders" className="flex items-center gap-3 p-4 bg-surface rounded-xl border border-border-default hover:border-primary-500 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all group">
             <div className="p-2.5 bg-surface-elevated border border-border-default rounded-lg text-foreground-secondary group-hover:scale-110 transition-all"><ListOrdered className="w-5 h-5" /></div>
             <span className="font-semibold text-foreground">Manage Orders</span>
           </Link>
-          <Link href="/farmer/earnings" className="flex items-center gap-3 p-4 bg-surface rounded-xl border border-border-default hover:border-primary-500 hover:shadow-sm transition-all group">
+          <Link href="/farmer/earnings" className="flex items-center gap-3 p-4 bg-surface rounded-xl border border-border-default hover:border-primary-500 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all group">
             <div className="p-2.5 bg-surface-elevated border border-border-default rounded-lg text-foreground-secondary group-hover:scale-110 transition-all"><TrendingUp className="w-5 h-5" /></div>
             <span className="font-semibold text-foreground">Analytics</span>
           </Link>
@@ -231,20 +242,19 @@ function FarmerDashboardContent() {
       <div className="card overflow-hidden">
         <div className="p-6 border-b border-border-default flex items-center justify-between bg-surface transition-colors">
           <h2 className="text-lg font-semibold font-display text-foreground">Recent Orders</h2>
-          <Link href="/farmer/orders" className="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 flex items-center gap-1 transition-colors">
+          <Link href="/farmer/orders" className="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 flex items-center gap-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded px-1">
             View all <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
 
         <div className="overflow-x-auto">
           {!stats?.recentOrders || stats.recentOrders.length === 0 ? (
-            <div className="p-12 text-center bg-surface transition-colors">
-              <div className="w-12 h-12 bg-surface-muted rounded-full flex items-center justify-center mx-auto mb-4 border border-border-default">
-                <ShoppingBag className="w-6 h-6 text-foreground-muted" />
-              </div>
-              <h3 className="text-sm font-medium text-foreground mb-1">No orders yet</h3>
-              <p className="text-sm text-foreground-secondary">When customers buy your produce, they will appear here.</p>
-            </div>
+            <EmptyState 
+              className="border-0 shadow-none rounded-none py-12"
+              icon={<ShoppingBag className="w-12 h-12 text-foreground-muted" />}
+              title="No orders yet"
+              description="When customers buy your produce, they will appear here."
+            />
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
@@ -267,14 +277,14 @@ function FarmerDashboardContent() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className="text-sm text-foreground-secondary">{order.consumer_name}</span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right">
+                      <td className="px-6 py-4 whitespace-nowrap text-right tabular-nums">
                         <span className="text-sm font-bold text-foreground">{formatCurrency(order.total_amount)}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border ${statusConf.bg} ${statusConf.color} ${statusConf.border}`}>
+                        <Badge variant={statusConf.variant} className="capitalize gap-1.5 ml-auto">
                           <StatusIcon className="w-3.5 h-3.5" />
-                          <span className="capitalize">{order.order_status}</span>
-                        </span>
+                          {order.order_status}
+                        </Badge>
                       </td>
                     </tr>
                   );

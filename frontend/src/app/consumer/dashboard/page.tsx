@@ -7,11 +7,26 @@ import { useAuth } from '@/context/AuthContext';
 import ProtectedRoute from '@/components/common/ProtectedRoute';
 import { ShoppingBag, Clock, CheckCircle, MapPin, Package, ArrowRight, Store, Star, User } from 'lucide-react';
 
+import Badge from '@/components/ui/Badge';
+import { EmptyState } from '@/components/common/EmptyState';
+import Skeleton from '@/components/ui/Skeleton';
+
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+
+interface ConsumerDashboardData {
+  stats?: {
+    total_orders?: number;
+    active_orders?: number;
+    completed_orders?: number;
+    total_spent?: number;
+  };
+  recentOrders?: any[];
+  favouriteFarmers?: any[];
+}
 
 function ConsumerDashboardContent() {
   const { user } = useAuth();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ConsumerDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,24 +46,26 @@ function ConsumerDashboardContent() {
 
   const getStatusConfig = (status: string) => {
     switch(status?.toLowerCase()) {
-      case 'pending': return { icon: Clock, color: 'text-amber-700 dark:text-amber-400', bg: 'bg-amber-50 dark:bg-amber-900/30', border: 'border-amber-200 dark:border-amber-800' };
-      case 'confirmed': return { icon: CheckCircle, color: 'text-blue-700 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-900/30', border: 'border-blue-200 dark:border-blue-800' };
+      case 'pending': return { icon: Clock, variant: 'warning' as const };
+      case 'confirmed': return { icon: CheckCircle, variant: 'info' as const };
       case 'delivered': 
-      case 'completed': return { icon: CheckCircle, color: 'text-success-700 dark:text-success-400', bg: 'bg-success-50 dark:bg-success-900/30', border: 'border-success-200 dark:border-success-800' };
-      case 'out_for_delivery': return { icon: MapPin, color: 'text-orange-700 dark:text-orange-400', bg: 'bg-orange-50 dark:bg-orange-900/30', border: 'border-orange-200 dark:border-orange-800' };
-      default: return { icon: Package, color: 'text-foreground-secondary', bg: 'bg-surface-muted', border: 'border-border-default' };
+      case 'completed': return { icon: CheckCircle, variant: 'success' as const };
+      case 'out_for_delivery': return { icon: MapPin, variant: 'warning' as const };
+      default: return { icon: Package, variant: 'default' as const };
     }
   };
 
   if (loading) {
     return (
       <div className="max-w-6xl mx-auto space-y-8 py-10 px-4">
-        <div className="h-8 w-48 bg-border-strong rounded animate-pulse" />
+        <Skeleton className="h-8 w-48" />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="card h-32 animate-pulse p-6">
-              <div className="w-10 h-10 bg-border-strong rounded-lg mb-4" />
-              <div className="h-6 w-16 bg-border-strong rounded mb-2" />
+            <div key={i} className="card h-32 flex flex-col justify-between p-6">
+              <div className="flex justify-between items-start">
+                <Skeleton className="w-10 h-10 rounded-lg" />
+              </div>
+              <Skeleton className="h-6 w-16 mt-4" />
             </div>
           ))}
         </div>
@@ -143,18 +160,19 @@ function ConsumerDashboardContent() {
             <div className="card overflow-hidden h-full flex flex-col">
               <div className="p-6 border-b border-border-default flex items-center justify-between bg-surface transition-colors">
                 <h2 className="text-lg font-bold text-foreground tracking-tight">Recent Orders</h2>
-                <Link href="/consumer/orders" className="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 flex items-center gap-1 transition-colors">
+                <Link href="/consumer/orders" className="text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 flex items-center gap-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 rounded px-1 -mr-1">
                   View all <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 
               <div className="p-6 flex-1 bg-surface-muted/30 transition-colors">
                 {!data?.recentOrders?.length ? (
-                  <div className="text-center py-12">
-                    <ShoppingBag className="w-12 h-12 text-foreground-muted mx-auto mb-4" />
-                    <p className="text-sm font-semibold text-foreground mb-1">No orders yet</p>
-                    <p className="text-sm text-foreground-secondary">Your recent purchases will appear here.</p>
-                  </div>
+                  <EmptyState 
+                    title="No orders yet" 
+                    description="Your recent purchases will appear here." 
+                    icon={<ShoppingBag className="w-12 h-12 text-foreground-muted" />} 
+                    className="shadow-none border-0 py-12 bg-transparent" 
+                  />
                 ) : (
                   <div className="space-y-4">
                     {data.recentOrders.map((order: any) => {
@@ -162,16 +180,16 @@ function ConsumerDashboardContent() {
                       const StatusIcon = statusConf.icon;
                       return (
                         <Link key={order.id} href={`/orders/${order.id}`}
-                          className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-surface border border-border-default rounded-xl hover:border-primary-500 hover:shadow-md transition-all group">
+                          className="flex flex-col sm:flex-row sm:items-center justify-between p-5 bg-surface border border-border-default rounded-xl hover:border-primary-500 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 transition-all group">
                           <div>
                             <div className="flex items-center gap-3 mb-1">
                               <p className="font-bold text-foreground text-lg group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                                 {order.order_number}
                               </p>
-                              <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-xs font-bold border ${statusConf.bg} ${statusConf.color} ${statusConf.border}`}>
+                              <Badge variant={statusConf.variant} className="capitalize gap-1">
                                 <StatusIcon className="w-3.5 h-3.5" />
-                                <span className="capitalize">{order.order_status.replace('_', ' ')}</span>
-                              </span>
+                                {order.order_status.replace('_', ' ')}
+                              </Badge>
                             </div>
                             <p className="text-sm font-medium text-foreground-secondary flex items-center gap-1.5 mt-1.5">
                               <Store className="w-4 h-4 text-foreground-muted" />
@@ -211,7 +229,7 @@ function ConsumerDashboardContent() {
                   <div className="space-y-4">
                     {data.favouriteFarmers.map((farmer: any) => (
                       <Link key={farmer.id} href={`/farmers/${farmer.id}`}
-                        className="flex items-center gap-4 p-4 bg-surface border border-border-default rounded-xl hover:border-primary-500 transition-all group">
+                        className="flex items-center gap-4 p-4 bg-surface border border-border-default rounded-xl hover:border-primary-500 transition-all group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500">
                         <div className="w-12 h-12 rounded-full bg-primary-50 dark:bg-primary-900/30 border border-primary-100 dark:border-primary-800 flex items-center justify-center font-bold text-primary-700 dark:text-primary-400 shrink-0 transition-colors">
                           {farmer.name[0]}
                         </div>
@@ -239,15 +257,15 @@ function ConsumerDashboardContent() {
                 <h2 className="text-lg font-bold text-foreground tracking-tight">Quick Actions</h2>
               </div>
               <div className="p-4 flex-1 bg-surface-muted/30 space-y-2 transition-colors">
-                <Link href="/marketplace" className="flex items-center gap-3 p-3 bg-surface rounded-lg border border-border-default hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                <Link href="/marketplace" className="flex items-center gap-3 p-3 bg-surface rounded-lg border border-border-default hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500">
                   <div className="p-2 bg-primary-50 dark:bg-primary-900/30 rounded-md text-primary-600 dark:text-primary-400"><ShoppingBag className="w-5 h-5" /></div>
                   <span className="font-semibold text-foreground">Browse Marketplace</span>
                 </Link>
-                <Link href="/consumer/orders" className="flex items-center gap-3 p-3 bg-surface rounded-lg border border-border-default hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                <Link href="/consumer/orders" className="flex items-center gap-3 p-3 bg-surface rounded-lg border border-border-default hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500">
                   <div className="p-2 bg-surface-elevated rounded-md text-foreground-secondary border border-border-default"><Package className="w-5 h-5" /></div>
                   <span className="font-semibold text-foreground">View All Orders</span>
                 </Link>
-                <Link href="/profile" className="flex items-center gap-3 p-3 bg-surface rounded-lg border border-border-default hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                <Link href="/profile" className="flex items-center gap-3 p-3 bg-surface rounded-lg border border-border-default hover:border-primary-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500">
                   <div className="p-2 bg-surface-elevated rounded-md text-foreground-secondary border border-border-default"><User className="w-5 h-5" /></div>
                   <span className="font-semibold text-foreground">Manage Profile</span>
                 </Link>

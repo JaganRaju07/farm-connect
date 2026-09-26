@@ -177,15 +177,16 @@ export function ProductFilter({ isOpen, onClose, filters, setFilters, onApply, o
 
             {/* Footer */}
             <div className="p-6 border-t border-border-default bg-surface-muted/50 flex gap-3 transition-colors">
-              <button 
+              <Button 
+                variant="secondary"
                 onClick={() => {
                   onReset();
                   onClose();
                 }} 
-                className="btn-secondary flex-1"
+                className="flex-1"
               >
                 Clear All
-              </button>
+              </Button>
               <Button onClick={handleApply} variant="primary" className="flex-1">
                 Apply Filters
               </Button>
