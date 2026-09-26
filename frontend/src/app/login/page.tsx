@@ -118,7 +118,6 @@ function ConsumerLoginContent() {
       setError(err.response?.data?.error?.message || 'Invalid OTP. Try again.');
       setOtp(['', '', '', '', '', '']);
       otpRefs.current[0]?.focus();
-    } finally {
       setLoading(false);
     }
   };

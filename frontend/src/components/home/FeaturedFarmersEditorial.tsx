@@ -93,7 +93,7 @@ export default function FeaturedFarmersEditorial({ farmers, isLoading }: Feature
                         <span className="truncate">{farmer.city}</span>
                       </div>
 
-                      {farmer.distance_km !== undefined && (
+                      {typeof farmer.distance_km === 'number' && (
                         <span className="inline-block text-[11px] font-mono font-semibold text-primary-700 dark:text-primary-400 mt-1">
                           {farmer.distance_km.toFixed(1)} km away
                         </span>

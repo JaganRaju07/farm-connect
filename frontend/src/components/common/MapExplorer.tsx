@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
-import { Loader2, Leaf, ExternalLink } from 'lucide-react';
+import { Loader2, Leaf, ExternalLink, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { getRelativeHarvestDate } from '@/lib/utils';
 
@@ -122,7 +122,7 @@ export default function MapExplorer({ products, consumerLocation }: MapExplorerP
               <div className="min-w-[200px]">
                 <h3 className="font-bold text-lg text-earth-900 mb-1">{farmer.name}</h3>
                 <p className="text-sm text-earth-600 mb-3 flex items-center gap-1">
-                  📍 {farmer.city} • <span className="font-semibold text-primary-600">{farmer.distance} km away</span>
+                  <MapPin className="w-4 h-4 text-earth-500 shrink-0" /> {farmer.city} {typeof farmer.distance === 'number' && !isNaN(farmer.distance) && <span className="font-semibold text-primary-600">&bull; {Number(farmer.distance).toFixed(1)} km away</span>}
                 </p>
                 
                 <div className="space-y-2">

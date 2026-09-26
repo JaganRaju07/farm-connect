@@ -111,7 +111,6 @@ export default function ConsumerRegisterPage() {
       setError(err.response?.data?.error?.message || err.response?.data?.message || 'Invalid OTP. Try again.');
       setOtp(['', '', '', '', '', '']);
       otpRefs.current[0]?.focus();
-    } finally {
       setLoading(false);
     }
   };

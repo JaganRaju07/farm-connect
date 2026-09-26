@@ -103,7 +103,6 @@ export default function FarmerRegisterPage() {
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Invalid OTP. Try again.');
       setOtp(['', '', '', '', '', '']);
-    } finally {
       setLoading(false);
     }
   };

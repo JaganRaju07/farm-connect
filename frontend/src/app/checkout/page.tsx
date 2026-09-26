@@ -92,9 +92,10 @@ function CheckoutContent() {
       clearCart();
       success('Order placed successfully!');
       router.push(`/orders/${order.id}?placed=true`);
+      // Intentionally NOT resetting loading/isSubmittingRef here.
+      // We want the button to remain disabled and spinning while Next.js transitions routes.
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Failed to place order.');
-    } finally {
       isSubmittingRef.current = false;
       setLoading(false);
     }

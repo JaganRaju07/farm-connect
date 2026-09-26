@@ -49,22 +49,50 @@ export default function HeroNarrative({ userTaluk, nearbyCount = 0 }: HeroNarrat
             </p>
 
             {/* Core Action CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 w-full sm:w-auto pt-2">
-              <Link 
-                href="/marketplace" 
-                className={getButtonClasses('primary', 'md', false, 'px-8 h-12 shadow-sm font-semibold text-base')}
-              >
-                <ShoppingCart className="w-5 h-5 mr-2 shrink-0" aria-hidden="true" />
-                Explore Local Harvest
-              </Link>
-              
-              <Link 
-                href="/farmer/register" 
-                className={`${getButtonClasses('secondary', 'md', false, 'px-7 h-12 font-semibold text-base')} !text-foreground-secondary !border-border-default hover:!text-foreground`}
-              >
-                <Tractor className="w-5 h-5 mr-2 shrink-0" aria-hidden="true" />
-                Sell Your Harvest
-              </Link>
+            <div className="pt-2 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+              {/* Consumer Journey */}
+              <div className="bg-surface-muted p-5 rounded-2xl border border-border-default space-y-4">
+                <h3 className="font-bold text-sm text-foreground flex items-center gap-2">
+                  <ShoppingCart className="w-4 h-4 text-primary-600" /> For Buyers
+                </h3>
+                <div className="flex flex-col gap-2">
+                  <Link 
+                    href="/marketplace" 
+                    className={getButtonClasses('primary', 'sm', false, 'w-full justify-center')}
+                  >
+                    Explore Local Produce
+                  </Link>
+                  <div className="flex gap-2">
+                    <Link href="/login" className="flex-1 text-center py-2 text-xs font-semibold text-foreground-secondary hover:text-foreground bg-surface border border-border-default rounded-lg hover:bg-surface-hover transition-colors">
+                      Login
+                    </Link>
+                    <Link href="/register" className="flex-1 text-center py-2 text-xs font-semibold text-foreground-secondary hover:text-foreground bg-surface border border-border-default rounded-lg hover:bg-surface-hover transition-colors">
+                      Create Account
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Farmer Journey */}
+              <div className="bg-surface-muted p-5 rounded-2xl border border-border-default space-y-4">
+                <h3 className="font-bold text-sm text-foreground flex items-center gap-2">
+                  <Tractor className="w-4 h-4 text-primary-600" /> For Cultivators
+                </h3>
+                <div className="flex flex-col gap-2">
+                  <Link 
+                    href="/farmer/register" 
+                    className={getButtonClasses('secondary', 'sm', false, 'w-full justify-center')}
+                  >
+                    Register Your Farm
+                  </Link>
+                  <Link 
+                    href="/farmer/login" 
+                    className="w-full text-center py-2 text-xs font-semibold text-foreground-secondary hover:text-foreground bg-surface border border-border-default rounded-lg hover:bg-surface-hover transition-colors"
+                  >
+                    Farmer Login
+                  </Link>
+                </div>
+              </div>
             </div>
 
             {/* 4 Practical Trust Anchors */}

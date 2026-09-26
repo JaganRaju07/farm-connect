@@ -68,7 +68,7 @@ export default function WhatsGrowingAroundYou({
             <div className="flex items-center gap-2 text-foreground-secondary text-sm pt-1">
               <MapPin className="w-4 h-4 text-primary-600 shrink-0" />
               <span>Current orbit: <strong className="text-foreground font-semibold">{locationName || 'Your Region'}</strong></span>
-              {closestKm !== null && closestKm !== undefined && (
+              {typeof closestKm === 'number' && (
                 <span className="font-mono text-xs bg-surface px-2 py-0.5 rounded border border-border-subtle">
                   Closest farm ~{closestKm.toFixed(1)} km
                 </span>

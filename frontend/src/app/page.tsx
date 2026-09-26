@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { useLocation } from '@/context/LocationContext';
+
 import { Sprout, Loader2, ArrowRight, ShieldCheck, Users, Coins } from 'lucide-react';
 import ThemeToggle from '@/components/layout/ThemeToggle';
 import { getButtonClasses } from '@/components/ui/button';
@@ -18,48 +20,47 @@ import FeaturedFarmersEditorial from '@/components/home/FeaturedFarmersEditorial
 export default function HomePage() {
   const { isAuthenticated, role, isLoading } = useAuth();
 
+  const { latitude, longitude, loading: locLoading, error: locError } = useLocation();
+
   const [featuredFarmers, setFeaturedFarmers] = useState<any[]>([]);
   const [isLoadingFarmers, setIsLoadingFarmers] = useState(true);
   const [userTaluk, setUserTaluk] = useState('');
   const [closestDistance, setClosestDistance] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!navigator.geolocation) {
-      setIsLoadingFarmers(false);
-      return;
-    }
+    if (locLoading) return;
 
-    const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
-
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        try {
-          const { latitude, longitude } = position.coords;
-          const res = await axios.get(`${API}/farmers/nearby?latitude=${latitude}&longitude=${longitude}`);
-          
-          if (res.data?.success && res.data?.data?.farmers && res.data.data.farmers.length > 0) {
-            const farmers = res.data.data.farmers;
-            setFeaturedFarmers(farmers);
-            if (farmers[0]?.city) {
-              setUserTaluk(farmers[0].city);
-            }
-            if (farmers[0]?.distance_km !== undefined) {
-              setClosestDistance(farmers[0].distance_km);
-            }
-          }
-        } catch (err) {
-          console.warn('Using default local farmers:', err);
-        } finally {
-          setIsLoadingFarmers(false);
-        }
-      },
-      (error) => {
-        console.warn('Geolocation unavailable:', error.message);
+    const fetchFarmers = async () => {
+      if (!latitude || !longitude) {
         setIsLoadingFarmers(false);
-      },
-      { timeout: 10000, maximumAge: 300000 }
-    );
-  }, []);
+        return;
+      }
+
+      const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+      try {
+        const queryParams = `?latitude=${latitude}&longitude=${longitude}`;
+        const res = await axios.get(`${API}/farmers/nearby${queryParams}`);
+        
+        if (res.data?.success && res.data?.data?.farmers && res.data.data.farmers.length > 0) {
+          const farmers = res.data.data.farmers;
+          setFeaturedFarmers(farmers);
+          if (farmers[0]?.city) {
+            setUserTaluk(farmers[0].city);
+          }
+          if (typeof farmers[0]?.distance_km === 'number') {
+            setClosestDistance(farmers[0].distance_km);
+          }
+        }
+      } catch (err) {
+        console.warn('Using default local farmers:', err);
+      } finally {
+        setIsLoadingFarmers(false);
+      }
+    };
+
+    fetchFarmers();
+  }, [latitude, longitude, locLoading]);
+
 
   if (isLoading) {
     return (
@@ -259,6 +260,8 @@ export default function HomePage() {
                 <li><Link href="/marketplace" className="hover:text-foreground transition-colors">Fresh Harvests</Link></li>
                 <li><Link href="/farmers" className="hover:text-foreground transition-colors">Verified Cultivators</Link></li>
                 <li><Link href="/cart" className="hover:text-foreground transition-colors">Cart</Link></li>
+                <li className="pt-2"><Link href="/login" className="hover:text-foreground transition-colors font-semibold">Consumer Login</Link></li>
+                <li><Link href="/register" className="hover:text-foreground transition-colors font-semibold">Create Account</Link></li>
               </ul>
             </div>
 

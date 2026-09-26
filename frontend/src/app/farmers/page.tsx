@@ -18,6 +18,8 @@ export default function FarmersDirectoryPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
+    if (locLoading) return;
+
     const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
 
     const fetchFarmers = async () => {
@@ -41,7 +43,7 @@ export default function FarmersDirectoryPage() {
     };
 
     fetchFarmers();
-  }, [latitude, longitude]);
+  }, [latitude, longitude, locLoading]);
 
   const filteredFarmers = farmers.filter(f => 
     f.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
