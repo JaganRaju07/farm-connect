@@ -1,349 +1,588 @@
-# 🌾 Farm Connect
+# Farm Connect
 
-**A Direct Farmer-to-Consumer Agricultural Marketplace**
+**Direct Farmer-to-Consumer Agricultural Marketplace**
 
-Farm Connect is a full-stack web application designed to bridge the gap between local farmers and consumers. By bypassing traditional supply-chain intermediaries, the platform empowers farmers to list their agricultural products directly to nearby buyers, while enabling consumers to discover fresh, locally-sourced produce using proximity-based search and interactive mapping.
+A full-stack software engineering project that connects local farmers directly with nearby consumers through geographic proximity discovery, secure authentication, and real-time inventory management.
 
----
+<div align="center">
 
-## 📖 Table of Contents
+[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?style=flat-square&logo=next.js)](https://nextjs.org)
+[![React](https://img.shields.io/badge/React-19.2-61dafb?style=flat-square&logo=react)](https://react.dev)
+[![Express.js](https://img.shields.io/badge/Express-4.19-000000?style=flat-square&logo=express)](https://expressjs.com)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-14+-336791?style=flat-square&logo=postgresql)](https://www.postgresql.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
 
-- [Project Overview](#project-overview)
-- [Problem Statement & Objectives](#problem-statement--objectives)
-- [Key Features](#key-features)
-- [Complete System Workflow](#complete-system-workflow)
-- [Product Discovery & Search](#product-discovery--search)
-- [Location, Proximity & Map Functionality](#location-proximity--map-functionality)
-- [System Architecture](#system-architecture)
-- [Technology Stack](#technology-stack)
-- [Database Architecture](#database-architecture)
-- [API Architecture](#api-architecture)
-- [Authentication & Security](#authentication--security)
-- [Repository Structure](#repository-structure)
-- [Git & GitHub Development Workflow](#git--github-development-workflow)
-- [Local Development Setup](#local-development-setup)
-- [Production Deployment Architecture](#production-deployment-architecture)
-- [Production Verification Status](#production-verification-status)
-- [Production Hardening & Engineering Improvements](#production-hardening--engineering-improvements)
-- [Project Scope (Current vs Future)](#project-scope-current-vs-future)
-- [Project Information & Contributing](#project-information--contributing)
+[Live Demo](#-live-demo) • [Quick Start](#-getting-started) • [Architecture](#-architecture) • [API](#-api-overview)
+
+</div>
 
 ---
 
-## 🎯 Project Overview
+## 🎯 Live Demo
 
-Developed as a comprehensive 6-month internship project in collaboration with the **IEEE Computer Society** and **IamPro**, Farm Connect serves as a secure digital storefront for farmers to manage their inventory and orders natively.
+**Frontend:** [https://farm-connect-eta-ten.vercel.app](https://farm-connect-eta-ten.vercel.app)
 
-## 💡 Problem Statement & Objectives
-
-### Problem Statement
-Traditional agricultural supply chains rely heavily on intermediaries, inflating prices for consumers while minimizing profit margins for the farmers who cultivate the produce. Additionally, consumers lack a direct, reliable way to discover and purchase fresh produce from local growers in their immediate vicinity.
-
-### Project Objectives
-1. Facilitate **direct interaction** and commerce between agricultural producers and consumers.
-2. Utilize **geographic proximity** to highlight local produce.
-3. Provide a secure, easy-to-use digital storefront for farmers to manage inventory and fulfill orders.
+> **Note:** The backend is hosted on Render's free tier and may take 45–60 seconds to respond after inactivity (cold start). Please allow extra time for the initial API call.
 
 ---
 
-## 🚀 Key Features
+## 📝 Overview
 
-- **OTP-Based Authentication**: Passwordless SMS login via Supabase.
-- **Role-Based Access Control**: Interfaces for Consumers, Farmers, and Administrators.
-- **Proximity Discovery**: Geographic matching using Haversine distance calculations.
-- **Interactive Mapping**: Visual geographic representation of nearby farmers/products.
-- **Real-time Inventory Management**: Stock validation preventing overselling.
-- **Dynamic Marketplace**: Backend-driven search and filtering.
-- **Secure Checkout**: Cart aggregation and robust order placement API.
-- **Cloud Image Storage**: Direct integration with Cloudinary for product image uploads.
+Farm Connect is a marketplace that eliminates supply-chain intermediaries by enabling farmers to list produce directly to nearby consumers. Consumers discover products based on **actual geographic proximity** using the Haversine distance formula computed in PostgreSQL.
 
----
+### The Problem
 
-## 🔄 Complete System Workflow
+Traditional agricultural supply chains introduce intermediary costs and delays:
+- Farmers receive minimal profit from their produce
+- Consumers pay inflated prices
+- Fresh produce loses freshness over long distances
+- Delivery requires complex logistics coordination
 
-### Consumer Workflow
-1. **Authentication**: Consumer logs in securely via SMS OTP.
-2. **Discovery**: Lands on the Marketplace, where products are dynamically fetched and sorted by distance.
-3. **Product Details**: Views comprehensive product details, stock availability, and farmer locality.
-4. **Cart Operations**: Adds items to the cart; the system validates available stock dynamically.
-5. **Checkout & Ordering**: Consumer reviews the cart, verifies delivery details, and submits the order directly to the specific farmer.
+### The Solution
 
-### Farmer Workflow
-1. **Authentication**: Farmer logs in via SMS OTP.
-2. **Dashboard**: Views a high-level overview of sales, active orders, and low-stock alerts.
-3. **Product Management**: Adds new agricultural products, sets pricing, defines stock levels, and uploads real product images (via Cloudinary).
-4. **Order Processing**: Receives incoming orders from local consumers and updates statuses (Pending → Accepted → Delivered).
-
-### Admin Workflow
-1. **Dashboard**: Admin accesses a protected platform analytics dashboard.
-2. **Analytics**: Reviews platform-wide metrics, user growth, and overarching transaction volumes.
+**Hyperlocal marketplace design:**
+- Farmers digitize inventory with real-time stock validation
+- Consumers discover products and nearby farms within a configurable radius
+- Orders go directly from consumer to farmer
+- Delivery is coordinated locally
+- Payment is collected on delivery (COD)
 
 ---
 
-## 🔍 Product Discovery & Search
+## ✨ Key Features
 
-Farm Connect implements a centralized, backend-driven search architecture. 
-Consumers can discover products via the `/marketplace` UI, which communicates with the backend `GET /api/v1/products` endpoint. 
-This endpoint natively supports unified query parameters (e.g., `?search=tomato&category=vegetables`), ensuring robust filtering by keywords, categories, and organic status without relying on obsolete or duplicated API routes.
+### For Consumers
+- ✅ **Passwordless Login** — OTP-based phone authentication
+- ✅ **Marketplace Discovery** — Browse nearby products and farms
+- ✅ **Proximity Search** — Filter by distance using Haversine algorithm
+- ✅ **Product Details** — View farmer info, organic status, harvest date, and stock
+- ✅ **Interactive Map** — Visualize farm locations and product distance
+- ✅ **Shopping Cart** — Add items with real-time stock validation
+- ✅ **Order Placement** — Secure checkout with automatic delivery fee calculation
+- ✅ **Order Tracking** — Track order status from pending through delivery
+- ✅ **Wishlist** — Save products for later
+- ✅ **Reviews & Ratings** — Rate products and provide feedback
+- ✅ **Notifications** — Receive updates on order status
+
+### For Farmers
+- ✅ **Farmer Dashboard** — Overview of sales, orders, and analytics
+- ✅ **Product Management** — Create, update, and manage inventory
+- ✅ **Image Uploads** — Upload product photos to Cloudinary
+- ✅ **Stock Management** — Real-time inventory tracking with low-stock alerts
+- ✅ **Order Management** — Receive and process consumer orders
+- ✅ **Order Lifecycle** — Update order status through delivery pipeline
+- ✅ **Location Profile** — GPS coordinates for proximity discovery
+
+### For Administrators
+- ✅ **Admin Dashboard** — Platform analytics and management console
+- ✅ **Farmer Verification** — Review and approve/reject farmer applications
+- ✅ **Platform Analytics** — Monitor user growth, transactions, and metrics
+- ⚠️ **User Moderation** — Administrative controls (partial implementation)
 
 ---
 
-## 📍 Location, Proximity & Map Functionality
+## 🌍 Hyper-Local Discovery Technology
 
-Farm Connect relies heavily on hyper-local discovery utilizing **geographic coordinates (latitude/longitude)**.
+Farm Connect uses the **Haversine distance formula** to calculate straight-line geographic distance on Earth's surface:
 
-- **Haversine Distance Calculation**: When a consumer accesses the marketplace, their local coordinates are passed to the backend. The PostgreSQL database utilizes the Haversine formula to calculate the direct "as-the-crow-flies" distance between the consumer and registered farmers.
-- **Interactive Map**: The frontend leverages map components to visually plot nearby farmers, dynamically labeling products with precise distance indicators (e.g., "4.2 km away") to encourage local purchasing.
+```sql
+SELECT calculate_distance_km(
+  consumer_latitude,   -- 12.9716 (Jayanagar, Bengaluru)
+  consumer_longitude,  -- 77.5946
+  farm_latitude,       -- 12.7900 (Kanakapura Road)
+  farm_longitude       -- 77.4700
+) AS distance_km
+-- Result: ≈24.78 km
+```
+
+**Important:** This is **straight-line distance**, not road-based routing. It represents the direct geographic distance between consumer and farmer. Future enhancements may include road-distance calculations and ETA prediction.
 
 ---
 
-## 🏗️ System Architecture
+## 🏗️ Architecture
 
 ```mermaid
-flowchart LR
-    Consumer[Consumer Browser] <-->|HTTPS / REST| NextJS[Next.js Frontend]
-    Farmer[Farmer Browser] <-->|HTTPS / REST| NextJS
+flowchart TB
+    subgraph Frontend
+        Client["Browser / App"]
+        NextJS["Next.js 16 Frontend"]
+    end
     
-    NextJS <-->|Axios API Calls| Express[Node/Express Backend]
+    subgraph Backend
+        API["Express.js API"]
+        Auth["JWT / RBAC Middleware"]
+        Validation["Input Validation & Sanitization"]
+    end
     
-    Express <-->|SQL Queries| Supabase[(Supabase PostgreSQL)]
-    Express <-->|Image Uploads| Cloudinary[Cloudinary CDN]
-    Express <-->|OTP Auth| SupabaseAuth[Supabase Auth Service]
+    subgraph Data
+        PG["PostgreSQL"]
+        Cache["Haversine Function"]
+    end
+    
+    subgraph Services
+        Cloudinary["Cloudinary CDN"]
+    end
+    
+    subgraph Deployment
+        Vercel["Vercel"]
+        Render["Render"]
+        Supabase["Supabase"]
+    end
+    
+    Client <--> NextJS
+    NextJS <--> API
+    API <--> Auth
+    API <--> Validation
+    Auth --> API
+    API <--> PG
+    PG <--> Cache
+    API <--> Cloudinary
+    NextJS --> Vercel
+    API --> Render
+    PG --> Supabase
 ```
 
 ---
 
 ## 💻 Technology Stack
 
-### Frontend
-- **Framework**: Next.js (React)
-- **Styling**: Tailwind CSS
-- **State Management**: React Context API
-- **HTTP Client**: Axios
-- **Icons**: Lucide React
-
-### Backend
-- **Runtime**: Node.js
-- **Framework**: Express.js
-- **Middleware**: Helmet (Security), CORS, Express Rate Limit
-- **File Parsing**: Multer
-
-### Database & Auth
-- **Database**: PostgreSQL (Hosted on Supabase)
-- **Authentication**: Supabase Auth (OTP)
-- **Database Driver**: `pg`
-
-### Storage
-- **Image Hosting**: Cloudinary
-
-### Deployment
-- **Frontend Hosting**: Vercel
-- **Backend Hosting**: Render
+| Layer | Technology | Version | Purpose |
+|---|---|---|---|
+| **Frontend Framework** | Next.js | 16.2.4 | App shell, routing, SSR |
+| **UI Library** | React | 19.2.4 | Component-based UI |
+| **Language** | TypeScript | 5.x | Type safety |
+| **Styling** | Tailwind CSS | 3.4.4 | Utility-first CSS |
+| **Mapping** | React Leaflet | 5.0 | Interactive maps |
+| **HTTP Client** | Axios | 1.15 | API requests with interceptors |
+| **Backend Runtime** | Node.js | 18+ | Server runtime |
+| **Web Framework** | Express.js | 4.19 | REST API server |
+| **Database** | PostgreSQL | 14+ | Relational data + Haversine |
+| **Database Driver** | pg | 8.11 | Node.js PostgreSQL client |
+| **Authentication** | JWT | — | Stateless session tokens |
+| **File Upload** | Multer | 1.4.5 | File parsing middleware |
+| **Image Storage** | Cloudinary | — | CDN for product images |
+| **Security** | Helmet | 7.1 | HTTP security headers |
+| **Rate Limiting** | express-rate-limit | 7.2 | API abuse prevention |
+| **Input Validation** | express-validator | 7.3.2 | Request validation |
+| **Deployment** | Vercel | — | Frontend hosting |
+| **Deployment** | Render | — | Backend hosting |
+| **Database Host** | Supabase | — | PostgreSQL as a service |
 
 ---
 
-## 🗄️ Database Architecture
+## 📦 Repository Structure
 
-The core relational entities hosted on PostgreSQL include:
-
-- **Users**: Identity table linking to Supabase Auth. Stores roles (consumer, farmer, admin).
-- **Farmers**: Extended profile including exact latitude/longitude.
-- **Consumers**: Extended profile including delivery preferences.
-- **Products**: Marketplace inventory linked to a `farmer_id`. Tracks price, category, `stock_available`, and image URLs.
-- **Orders**: Transactional records bridging a Consumer and a Farmer.
-- **Order Items**: Line items inside an order, locking historical price/quantity.
-
-**Core Relationships:**
-- `Farmer (1) → (N) Products`
-- `Consumer (1) → (N) Orders`
-- `Farmer (1) → (N) Orders`
-- `Order (1) → (N) Order Items`
-
----
-
-## 🔌 API Architecture
-
-Below are the primary functional groupings for the Express REST API:
-
-### Authentication (`/api/v1/auth`)
-- `POST /send-otp` - Triggers SMS OTP via Supabase.
-- `POST /verify-otp` - Validates OTP and returns JWT sessions.
-
-### Products (`/api/v1/products`)
-- `GET /` - Retrieves the marketplace feed (supports query parameters).
-- `GET /:id` - Retrieves detailed information for a specific product.
-
-### Farmers (`/api/v1/farmers`)
-- `GET /nearby` - Returns farmers within a calculated Haversine radius.
-- `GET /products` - Retrieves all products owned by the authenticated farmer.
-- `POST /products` - Creates a new product listing (Cloudinary integration).
-- `GET /dashboard` - Aggregates active sales and stock alerts.
-- `GET /orders` - Retrieves incoming consumer orders.
-
-### Cart & Checkout (`/api/v1/orders`)
-- `POST /place` - Validates stock, calculates totals, and generates a new order record.
-
----
-
-## 🛡️ Authentication & Security
-
-Farm Connect implements robust, production-ready security layers:
-
-- **OTP Authentication**: Bypasses traditional passwords to prevent credential stuffing.
-- **Role-Based Access Control (RBAC)**: Backend middleware strictly enforces roles (`requireRole('farmer')`).
-- **Security Headers**: Implemented via `Helmet.js`, strictly defining cross-origin resource policies.
-- **CORS**: Explicitly configured to accept requests only from the verified Vercel frontend.
-- **Rate Limiting**: `express-rate-limit` prevents API abuse (e.g., OTP spam).
-- **Proxy Trust**: Configured `trust proxy = 1` for Render compatibility to ensure rate limiters accurately identify client IPs behind load balancers.
-- **Stock Validation**: Transactional backend verification ensures a product cannot be oversold.
-
----
-
-## 📁 Repository Structure
-
-```text
+```
 farm-connect/
-├── frontend/
+├── frontend/                           # Next.js 16 Frontend
 │   ├── src/
-│   │   ├── app/            # Next.js App Router (Pages & Layouts)
-│   │   ├── components/     # Reusable UI components (Product Cards, Modals)
-│   │   ├── context/        # React Context (Cart state)
-│   │   ├── hooks/          # Custom hooks (Geolocation)
-│   │   └── lib/            # Axios interceptors & API wrappers
-│   ├── public/             # Static fallback images & icons
-│   └── next.config.ts      # Remote image patterns & build config
-├── backend/
+│   │   ├── app/                        # App Router pages & layouts
+│   │   ├── components/                 # Reusable React components
+│   │   ├── context/                    # Context API (cart, auth)
+│   │   ├── hooks/                      # Custom hooks (geolocation)
+│   │   ├── lib/                        # Utilities, Axios config
+│   │   └── types/                      # TypeScript interfaces
+│   ├── package.json
+│   ├── next.config.ts
+│   ├── tailwind.config.ts
+│   └── tsconfig.json
+│
+├── backend/                            # Express.js Backend
 │   ├── src/
-│   │   ├── controllers/    # Request handling logic
-│   │   ├── middleware/     # Auth, Roles, CORS, Helmet
-│   │   ├── routes/         # Express API route definitions
-│   │   ├── services/       # Core business logic & DB queries
-│   │   └── app.js          # Express application entry point
-│   └── package.json        # Node.js dependencies
-└── README.md
+│   │   ├── app.js                      # Express entry point
+│   │   ├── config/                     # Database config
+│   │   ├── controllers/                # Request handlers
+│   │   ├── middleware/                 # Auth, RBAC, sanitization
+│   │   ├── routes/                     # API route definitions
+│   │   └── services/                   # Business logic & queries
+│   ├── package.json
+│   ├── Procfile                        # Render deployment config
+│   └── .env.example
+│
+├── database/                           # PostgreSQL Schema
+│   ├── schema.sql                      # Core tables & functions
+│   ├── seed.sql                        # Sample data
+│   └── production_migration.sql        # Production updates
+│
+├── package.json                        # Root monorepo config
+├── README.md                           # This file
+└── .env.example                        # Environment template
 ```
 
 ---
 
-## 🌿 Git & GitHub Development Workflow
+## 🔐 Authentication & Security
 
-Development follows a structured approach ensuring production stability:
+### Authentication Flow
 
-1. **Feature Development**: Enhancements and fixes are developed locally on feature branches.
-2. **Main Branch**: The `main` branch serves as the source of truth for production. Code is merged into `main` only after local verification.
-3. **Continuous Deployment**: Pushes to `main` automatically trigger CI/CD pipelines for frontend (Vercel) and backend (Render).
+1. **OTP Login** (Consumers & Farmers)
+   - User enters phone number
+   - SMS OTP is sent and stored with 5-minute expiry
+   - User enters OTP
+   - Backend verifies and issues JWT token
+   - Frontend stores JWT in `localStorage`
+
+2. **Token Management**
+   - JWT is attached to all authenticated requests via Axios interceptor
+   - Token expires according to `JWT_EXPIRES_IN` environment variable
+   - Expired/invalid tokens trigger automatic logout
+
+3. **Admin Authentication**
+   - Email + password login (bcrypt password hashing)
+   - Separate JWT issuance for admin sessions
+   - [Status: TO BE CONFIRMED in active code]
+
+### RBAC (Role-Based Access Control)
+
+Middleware enforces roles on protected routes:
+
+```javascript
+// Example: Only farmers can access this route
+router.use(authenticateToken);    // Must be logged in
+router.use(requireRole('farmer')); // Must be a farmer
+```
+
+Valid roles:
+- `consumer` — end-user marketplace access
+- `farmer` — farm management access
+- `admin` — platform administration
+
+### Security Mechanisms
+
+| Feature | Implementation |
+|---------|---|
+| **HTTP Headers** | Helmet.js |
+| **CORS** | Explicit origin whitelist from env var |
+| **Rate Limiting** | 300 req/15min per IP via express-rate-limit |
+| **Input Sanitization** | XSS prevention via custom sanitizer middleware |
+| **Input Validation** | express-validator on all endpoints |
+| **SQL Injection** | Parameterized queries via pg driver |
+| **Stock Validation** | Database transaction with SELECT...FOR UPDATE |
+| **Proxy Trust** | trust proxy = 1 for Render load balancer |
+| **File Uploads** | File type & size restrictions via Multer |
+
+### Known Security Considerations
+
+- **JWT in localStorage:** Vulnerable to XSS. Production deployments should migrate to HTTP-only secure cookies.
+- **Demo OTP Routes:** Development-only OTP retrieval endpoints should not exist in production.
+- **Schema Merge Markers:** The `database/schema.sql` file contains unresolved Git merge markers and must be resolved before deployment.
 
 ---
 
-## ⚙️ Local Development Setup
+## 📡 API Overview
 
-### 1. Environment Variables
-Create a `.env` file in the **backend** directory:
+### Authentication
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| POST | `/api/v1/auth/send-otp` | No | Send OTP via SMS |
+| POST | `/api/v1/auth/verify-otp` | No | Verify OTP, return JWT |
+| POST | `/api/v1/auth/complete-registration` | Yes | Complete user profile after OTP signup |
+| GET | `/api/v1/auth/me` | Yes | Fetch authenticated user info |
+
+### Products
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/api/v1/products` | No | List products (supports filtering, search, location) |
+| GET | `/api/v1/products/:id` | No | Get product details |
+| POST | `/api/v1/products` | Yes (Farmer) | Create product |
+| PUT | `/api/v1/products/:id` | Yes (Farmer) | Update product |
+| DELETE | `/api/v1/products/:id` | Yes (Farmer) | Delete product |
+
+### Farmers
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/api/v1/farmers/nearby` | Yes (Consumer) | Find farmers within radius |
+| GET | `/api/v1/farmers/dashboard` | Yes (Farmer) | Farmer dashboard metrics |
+| GET | `/api/v1/farmers/orders` | Yes (Farmer) | List incoming orders |
+| PUT | `/api/v1/farmers/orders/:id/status` | Yes (Farmer) | Update order status |
+
+### Orders
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| POST | `/api/v1/orders/place` | Yes (Consumer) | Place order with validation |
+| GET | `/api/v1/orders` | Yes | List user's orders |
+| GET | `/api/v1/orders/:id` | Yes | Get order details |
+
+### Additional Endpoints
+| Method | Endpoint | Auth | Purpose |
+|--------|----------|------|---------|
+| GET | `/api/v1/reviews` | No | List reviews (by product/farmer) |
+| POST | `/api/v1/reviews` | Yes (Consumer) | Create product review |
+| GET | `/api/v1/wishlist` | Yes (Consumer) | Get consumer's wishlist |
+| POST | `/api/v1/wishlist` | Yes (Consumer) | Add product to wishlist |
+| DELETE | `/api/v1/wishlist/:id` | Yes (Consumer) | Remove from wishlist |
+| GET | `/api/v1/notifications` | Yes | Get user notifications |
+| POST | `/api/v1/upload` | Yes (Farmer) | Upload image to Cloudinary |
+| GET | `/api/v1/admin/analytics` | Yes (Admin) | Platform analytics |
+| GET | `/api/v1/admin/verifications/pending` | Yes (Admin) | Pending farmer approvals |
+| POST | `/api/v1/admin/verifications/:farmerId/approve` | Yes (Admin) | Approve farmer |
+| POST | `/api/v1/admin/verifications/:farmerId/reject` | Yes (Admin) | Reject farmer application |
+| GET | `/health` | No | Server health check |
+| GET | `/api/health` | No | API health check |
+
+---
+
+## 🗄️ Database Schema
+
+### Core Tables
+
+| Table | Purpose | Key Columns |
+|---|---|---|
+| **farmers** | Farm profiles | id, name, phone, email, latitude, longitude, address, city, verification_status, is_active |
+| **consumers** | Consumer profiles | id, name, phone, email, latitude, longitude, delivery_address, city, is_active |
+| **products** | Product listings | id, farmer_id, name, category, price, stock_available, image_url, is_organic, harvest_date |
+| **orders** | Order records | id, order_number, consumer_id, farmer_id, items (JSONB), order_status, payment_status, delivery_distance_km |
+| **admins** | Admin accounts | id, name, email, password_hash, role, is_active |
+| **otp_store** | Temporary OTP codes | phone (PK), otp_code, expires_at, user_type, action |
+
+### Key Functions & Triggers
+
+```sql
+-- Haversine distance calculation
+calculate_distance_km(lat1, lon1, lat2, lon2) → DECIMAL
+
+-- Auto-update timestamps
+update_updated_at_column() → used by farmers, consumers, products tables
+```
+
+### ER Diagram
+
+```mermaid
+erDiagram
+    FARMERS ||--o{ PRODUCTS : owns
+    FARMERS ||--o{ ORDERS : fulfills
+    CONSUMERS ||--o{ ORDERS : places
+    ORDERS ||--|| OTP_STORE : verified_via
+    ADMINS ||--o{ FARMERS : verifies
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Node.js** 18+ and npm
+- **PostgreSQL** 14+ or Supabase account
+- **Git**
+- Cloudinary account (for image uploads)
+
+### Clone Repository
+
+```bash
+git clone https://github.com/JaganRaju07/farm-connect.git
+cd farm-connect
+```
+
+### Environment Variables
+
+#### Backend (`backend/.env`)
 ```env
 PORT=5000
-DATABASE_URL=your_supabase_postgresql_connection_string
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_ANON_KEY=your_supabase_anon_key
-JWT_SECRET=your_jwt_secret
-CLOUDINARY_URL=your_cloudinary_url
+NODE_ENV=development
+DATABASE_URL=postgresql://user:password@localhost:5432/farm_connect
+JWT_SECRET=your-secret-key-min-32-chars
+JWT_EXPIRES_IN=30d
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+ALLOWED_ORIGINS=http://localhost:3000,https://farm-connect-eta-ten.vercel.app
 ```
 
-Create a `.env.local` file in the **frontend** directory:
+#### Frontend (`frontend/.env.local`)
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
 ```
 
-### 2. Backend Setup
+### Database Setup
+
+1. **Create database:**
+   ```bash
+   createdb farm_connect
+   ```
+
+2. **Initialize schema:**
+   ```bash
+   psql farm_connect < database/schema.sql
+   ```
+
+3. **Seed sample data (optional):**
+   ```bash
+   psql farm_connect < database/seed.sql
+   ```
+
+> **Note:** `database/schema.sql` contains unresolved Git merge markers. Resolve these before running in production.
+
+### Start Backend
+
 ```bash
 cd backend
 npm install
 npm run dev
+# Runs on http://localhost:5000
 ```
 
-### 3. Frontend Setup
+### Start Frontend
+
 ```bash
 cd frontend
 npm install
 npm run dev
+# Runs on http://localhost:3000
 ```
 
 ---
 
-## ☁️ Production Deployment Architecture
+## ☁️ Deployment
 
-```text
-       [ End User ]
-            |
-            v
-  (Vercel Edge Network)
-    Frontend UI (Next.js)
-            |
-            v
-    (Render Hosting)
-   Backend API (Node.js)
-     /             \
-    v               v
-(Supabase)     (Cloudinary)
-PostgreSQL      Image CDN
-   & Auth
+### Frontend → Vercel
+
+```bash
+cd frontend
+vercel deploy --prod
 ```
 
----
+Vercel automatically:
+- Builds Next.js app
+- Optimizes images via Image Optimization API
+- Deploys to global edge network
 
-## 🛠️ Production Hardening & Engineering Improvements
+### Backend → Render
 
-Farm Connect recently underwent a comprehensive stabilization pass focusing on production reliability:
+```bash
+# Connect Render to GitHub repo
+# Render automatically detects backend/Procfile
+# Deploys on git push
+```
 
-- **API Contract Synchronization**: Unified data contracts across the stack to strictly enforce `camelCase` in the frontend API wrappers, decoupling it from the database's internal `snake_case` architecture.
-- **Proxy Rate Limiter Configuration**: Corrected Express `trust proxy` settings to accurately evaluate client IPs behind Render's load balancers, fixing false-positive CORS/Rate-Limit loops during OTP authentication.
-- **Next.js Image Whitelisting**: Hardened the `next.config.ts` remote patterns to explicitly permit trusted image sources (Cloudinary, Unsplash).
-- **Bulletproof Image Fallbacks**: Implemented deterministic hashing for local fallback images and resolved infinite `onError` loops to ensure broken API links never result in a broken UI experience.
-- **Search API Optimization**: Deprecated legacy standalone search endpoints in favor of unified query-parameter architectures (`/products?search=...`).
+Set environment variables in Render dashboard.
 
----
+### Database → Supabase
 
-## ✅ Production Verification Status
+1. Create Supabase project
+2. Run `database/schema.sql` in SQL Editor
+3. Copy `DATABASE_URL` and `SUPABASE_*` credentials
+4. Set in Render environment variables
 
-The current `main` branch has successfully passed end-to-end production smoke testing.
+### Images → Cloudinary
 
-| Functional Area      | Status |
-| -------------------- | ------ |
-| **Authentication**   | Verified |
-| **Marketplace**      | Verified |
-| **Product Details**  | Verified |
-| **Images & Fallbacks**| Verified |
-| **Cart Operations**  | Verified |
-| **Stock Validation** | Verified |
-| **Secure Checkout**  | Verified |
-| **Order Processing** | Verified |
-| **Proximity Search** | Verified |
-| **Location / Map**   | Verified |
-| **Admin Analytics**  | Verified |
-| **Frontend Deploy**  | Verified (Vercel) |
-| **Backend Deploy**   | Verified (Render) |
+1. Create Cloudinary account
+2. Get credentials from Dashboard
+3. Set `CLOUDINARY_*` env vars in Render
 
 ---
 
-## 🔮 Project Scope (Current vs Future)
+## 📊 Production Status
 
-### Currently Implemented Functionality
-Farm Connect successfully acts as an end-to-end minimum viable marketplace. It securely authenticates users, allows farmers to digitize their inventory via cloud uploads, enables consumers to locate hyper-local produce using Haversine mapping, and securely manages the transaction workflow.
+The current main branch includes end-to-end functionality across the full user journey:
 
-### Future Enhancements (Out of Scope for V1)
-- **Payment Gateway Integration**: Transitioning from conceptual orders to digital payments (e.g., Stripe/Razorpay).
-- **Advanced Logistics**: Real-time delivery tracking and driver roles.
-- **Native Mobile Application**: Migrating the web experience to React Native for field-use by farmers.
-- **Advanced Recommendation AI**: Suggesting seasonal produce based on consumer purchase history.
+| Component | Status |
+|---|---|
+| Consumer OTP Authentication | ✅ Verified |
+| Farmer OTP Authentication | ✅ Verified |
+| Marketplace with Filtering | ✅ Verified |
+| Product Search & Discovery | ✅ Verified |
+| Nearby Farmer/Product Discovery (Haversine) | ✅ Verified |
+| Interactive Map | ✅ Verified |
+| Product Details | ✅ Verified |
+| Image Uploads to Cloudinary | ✅ Verified |
+| Shopping Cart | ✅ Verified |
+| Stock Validation & Atomic Orders | ✅ Verified |
+| Order Placement (COD) | ✅ Verified |
+| Order Status Tracking | ✅ Verified |
+| Farmer Dashboard | ✅ Verified |
+| Order Management | ✅ Verified |
+| Admin Dashboard Shell | ✅ Verified |
+| Farmer Verification Workflow | ✅ Verified |
+| Platform Analytics | ✅ Verified |
+| Reviews & Ratings | ✅ Verified |
+| Wishlist | ✅ Verified |
+| Notifications System | ✅ Verified |
+| Frontend Deployment (Vercel) | ✅ Verified |
+| Backend Deployment (Render) | ✅ Verified |
 
 ---
 
-## 🎓 Project Information & Contributing
+## 🎯 Known Limitations
 
-**Farm Connect**  
-- **Domain**: Agricultural Technology (AgriTech) / E-Commerce  
-- **Project Type**: 6-Month Internship Capstone Project  
-- **Affiliation**: IEEE Computer Society & IamPro  
+- **Payment:** Only Cash-on-Delivery (COD) is implemented. Digital payment gateways (Stripe, Razorpay, UPI) are not yet integrated.
+- **Distance Calculation:** Haversine computes straight-line distance, not road-based routing. Future enhancements may include actual navigation distance and ETA prediction.
+- **Notifications:** HTTP polling every 30 seconds. WebSocket or Server-Sent Events (SSE) not implemented.
+- **Admin Authentication:** Email/password login flow is [TO BE CONFIRMED] in active backend code.
+- **Accessibility:** Partial accessibility implementation. aria-live regions and keyboard navigation need enhancement.
+- **Mobile:** Responsive design present, but no native mobile app (React Native).
 
+---
 
-### License
-This project is developed for academic/internship purposes. See repository metadata for licensing details if applicable.
+## 🔮 Roadmap
+
+- **Payment Gateway Integration** — Stripe/Razorpay/UPI support for digital payments
+- **Real-Time Notifications** — WebSocket-based push instead of polling
+- **Road-Based Routing** — Actual delivery distance using Google Maps API
+- **Delivery Tracking** — Real-time GPS tracking for in-transit orders
+- **Driver Management** — Support for dedicated delivery partners
+- **PWA & Offline Support** — Progressive Web App capabilities
+- **Multi-Language Support** — Regional language interfaces (Kannada, Tamil, Telugu, etc.)
+- **Advanced Analytics** — Farmer revenue insights, seasonal trends
+- **AI-Powered Recommendations** — Suggest products based on purchase history
+- **Native Mobile Apps** — React Native for iOS/Android
+
+---
+
+## 👥 Team
+
+| Member | Role | Responsibility |
+|--------|------|---|
+| **Jagan Raju B** | Full Stack + Database Lead | Architecture, database design, backend services, deployment |
+| **Deekshitha P** | Backend Developer | API routes, controllers, integrations |
+| **Ishani Srinivas** | Frontend Developer | UI/UX, Next.js pages, components, state management |
+
+**Mentor:** Dr. Narender M.
+
+**Acknowledgements:** IEEE Computer Society Bangalore Chapter, IAMPro Internship 2026, Team P116
+
+---
+
+## 📝 Contributing
+
+Farm Connect is an academic/internship capstone project. Contributions welcome for bug fixes and improvements.
+
+### Guidelines
+1. Create a feature branch: `git checkout -b feature/your-feature`
+2. Commit changes: `git commit -m "feat: description"`
+3. Push to branch: `git push origin feature/your-feature`
+4. Open a Pull Request with clear description
+
+### Development Standards
+- Use meaningful commit messages
+- Follow existing code style
+- Test changes locally before pushing
+- Do not commit secrets or credentials
+- Update documentation as needed
+
+---
+
+## 📄 License
+
+**Status:** [TO BE CONFIRMED]
+
+This project was developed as an academic capstone. See LICENSE file (if present) for details.
+
+---
+
+## 🤝 Support
+
+For issues, questions, or feedback:
+- Open an issue on GitHub
+- Check existing documentation in `/docs` (if present)
+- Review API examples in repository
+
+---
+
+<div align="center">
+
+**Farm Connect** — Bridging the gap between farms and tables.
+
+Built with ❤️ by Team P116 | IEEE Computer Society & IAMPro 2026
+
+</div>
