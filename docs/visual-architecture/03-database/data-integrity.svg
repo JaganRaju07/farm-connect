@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .card-wrap { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .card-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #10b981; letter-spacing: 0.05em; }
+      .box { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .box-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .box-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #34d399; }
+      .arr-green { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+      .arr-amber { stroke: #f59e0b; stroke-width: 2; stroke-dasharray: 4,4; fill: none; marker-end: url(#arrow-amber); }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrow-amber" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Data Integrity &amp; Transaction Safety Architecture</text>
+  <text x="45" y="68" class="subtitle">Mechanisms preventing stock overselling, orphaned records, stale prices, and race conditions across the stack</text>
+
+  <!-- ================= LEFT: ATOMIC TRANSACTIONS ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="660" class="card-wrap" />
+    <text x="25" y="32" class="card-title">1. ACID TRANSACTIONS (EXECUTETRANSACTION)</text>
+
+    <!-- Block 1: The Classic Problem -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">The Multi-Step Checkout Hazard</text>
+      <text x="16" y="44" class="box-desc">Placing an order requires multiple sequential operations:</text>
+      <text x="26" y="64" class="box-desc">1. Decrementing stock_available in products</text>
+      <text x="26" y="80" class="box-desc">2. Inserting new row in orders table</text>
+      <text x="16" y="100" class="box-desc">Without a transaction: If Step 2 fails, stock drops but no order is created!</text>
+      <text x="350" y="24" class="box-code" style="fill: #ef4444;">Data Hazard</text>
+    </g>
+    <path d="M 265, 170 L 265, 195" class="arr-green" />
+
+    <!-- Block 2: The Solution -->
+    <g transform="translate(25, 195)">
+      <rect width="480" height="185" class="box" style="stroke: #10b981;" />
+      <text x="16" y="24" class="box-title">executeTransaction() (backend/src/config/database.js)</text>
+      <text x="16" y="44" class="box-desc">Modular backend (order.service.js) guarantees atomic boundary:</text>
+      <text x="26" y="66" font-family="monospace" font-size="9.5" fill="#f8fafc">const client = await pool.connect();</text>
+      <text x="26" y="82" font-family="monospace" font-size="9.5" fill="#38bdf8">await client.query('BEGIN'); // Step 1: Start Transaction</text>
+      <text x="26" y="98" font-family="monospace" font-size="9.5" fill="#f8fafc">const result = await callback(client); // Run all queries</text>
+      <text x="26" y="114" font-family="monospace" font-size="9.5" fill="#10b981">await client.query('COMMIT'); // Step 2: Persist all changes</text>
+      <text x="26" y="130" font-family="monospace" font-size="9.5" fill="#f59e0b">catch (err) { await client.query('ROLLBACK'); throw err; }</text>
+      <text x="26" y="146" font-family="monospace" font-size="9.5" fill="#34d399">finally { client.release(); } // Guaranteed connection return</text>
+      <text x="16" y="170" class="box-desc">Either ALL queries succeed, or ALL queries are completely undone.</text>
+      <text x="360" y="24" class="box-code">ACID Guarantee</text>
+    </g>
+    <path d="M 265, 380 L 265, 405" class="arr-green" />
+
+    <!-- Block 3: Verification -->
+    <g transform="translate(25, 405)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">Concurrency &amp; Row-Level Locking</text>
+      <text x="16" y="44" class="box-desc">• SELECT stock_available FROM products WHERE id=$1 FOR UPDATE;</text>
+      <text x="16" y="62" class="box-desc">• FOR UPDATE locks the specific crop row during checkout</text>
+      <text x="16" y="80" class="box-desc">• Prevents race condition where two simultaneous buyers grab the last item</text>
+      <text x="16" y="98" class="box-desc">• Database check constraint CHECK (stock_available &gt;= 0) acts as final defense</text>
+      <text x="350" y="24" class="box-code">Row-Level Lock</text>
+    </g>
+
+    <!-- Block 4: Connection Pool Isolation -->
+    <g transform="translate(25, 525)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">Connection Pool Isolation</text>
+      <text x="16" y="44" class="box-desc">• Each transaction uses exactly ONE dedicated client from the pool</text>
+      <text x="16" y="62" class="box-desc">• Separate transactions run on independent client connections in parallel</text>
+      <text x="16" y="80" class="box-desc">• READ COMMITTED isolation level default prevents dirty reads</text>
+      <text x="16" y="98" class="box-desc">• Zero cross-contamination between concurrent users</text>
+      <text x="350" y="24" class="box-code">Isolated Sessions</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: APPLICATION-WIDE INTEGRITY RULES ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="660" class="card-wrap" />
+    <text x="25" y="32" class="card-title">2. MULTI-LAYER INTEGRITY SAFEGUARDS</text>
+
+    <!-- Guard 1: Client Stock Clamping -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="135" class="box" />
+      <text x="16" y="24" class="box-title">Guard 1: Client-Side Stock Clamping (CartProvider)</text>
+      <text x="16" y="44" class="box-desc">When a user repeatedly clicks the '+' button in the UI:</text>
+      <text x="26" y="66" font-family="monospace" font-size="10" fill="#34d399">const finalQ = Math.min(newQ, product.stockAvailable);</text>
+      <text x="16" y="86" class="box-desc">• Prohibits user from staging 10 units in cart when farmer only has 4</text>
+      <text x="16" y="104" class="box-desc">• Disables checkout button if inventory drops to zero while browsing</text>
+      <text x="16" y="122" class="box-desc">• Cart immediately syncs to localStorage.farmconnect_cart</text>
+      <text x="350" y="24" class="box-code">src/context/cartcontext.tsx</text>
+    </g>
+
+    <!-- Guard 2: JSONB Pricing Freeze -->
+    <g transform="translate(25, 195)">
+      <rect width="480" height="135" class="box" />
+      <text x="16" y="24" class="box-title">Guard 2: JSONB Historical Pricing Freeze (orders.items)</text>
+      <text x="16" y="44" class="box-desc">Product prices naturally fluctuate according to seasonal harvest supply:</text>
+      <text x="16" y="62" class="box-desc">• If farmer raises Tomato price from ₹40 to ₹60 next week,</text>
+      <text x="26" y="80" class="box-desc">historical orders must retain the original ₹40 price paid</text>
+      <text x="16" y="98" class="box-desc">• Freezing items in JSONB snapshot guarantees immutable ledger</text>
+      <text x="16" y="116" class="box-desc">• Historical invoices, tax records, and receipts remain 100% accurate</text>
+      <text x="350" y="24" class="box-code">Immutable Invoice</text>
+    </g>
+
+    <!-- Guard 3: Phone Idempotency -->
+    <g transform="translate(25, 340)">
+      <rect width="480" height="135" class="box" />
+      <text x="16" y="24" class="box-title">Guard 3: Single-Use Phone &amp; OTP Idempotency</text>
+      <text x="16" y="44" class="box-desc">Authentication security guarantees:</text>
+      <text x="16" y="62" class="box-desc">• UNIQUE constraint on farmers.phone and consumers.phone</text>
+      <text x="16" y="80" class="box-desc">• otp_store primary key on phone prevents duplicate active OTPs</text>
+      <text x="16" y="98" class="box-desc">• Immediate DELETE on successful verification blocks token replay</text>
+      <text x="16" y="116" class="box-desc">• 5-minute TTL invalidates expired tokens automatically</text>
+      <text x="350" y="24" class="box-code">Zero Replay Attack</text>
+    </g>
+
+    <!-- Guard 4: Input Sanitization -->
+    <g transform="translate(25, 485)">
+      <rect width="480" height="150" class="box" />
+      <text x="16" y="24" class="box-title">Guard 4: Input Sanitization &amp; Parameterization</text>
+      <text x="16" y="44" class="box-desc">Defense against injection and XSS attacks:</text>
+      <text x="16" y="62" class="box-desc">• Express middleware sanitizeInputs cleans query &amp; body strings</text>
+      <text x="16" y="80" class="box-desc">• Parameterised queries ($1, $2, $3) separate SQL code from user data</text>
+      <text x="16" y="98" class="box-desc">• Zod form validation on frontend rejects malformed numbers/emails</text>
+      <text x="16" y="116" class="box-desc">• Cloudinary CDN rejects invalid image MIME types during upload</text>
+      <text x="350" y="24" class="box-code">Full-Stack Defense</text>
+    </g>
+  </g>
+
+</svg>

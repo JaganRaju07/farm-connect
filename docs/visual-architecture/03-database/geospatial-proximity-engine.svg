@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .geo-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .geo-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .card { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .card-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .card-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .card-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #10b981; }
+      .arrow { stroke: #0284c7; stroke-width: 2; fill: none; marker-end: url(#arrow-cyan); }
+    </style>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0284c7" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Geospatial Proximity Engine (Haversine Formula)</text>
+  <text x="45" y="68" class="subtitle">Mathematical formulation, PostgreSQL stored function, index optimization, and dynamic radius query mechanics</text>
+
+  <!-- ================= LEFT: HAVERSINE MATHEMATICAL CORE ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="660" class="geo-card" />
+    <text x="25" y="32" class="geo-title">1. HAVERSINE FORMULATION &amp; POSTGRESQL ENGINE</text>
+
+    <!-- Block 1: Formula -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="150" class="card" />
+      <text x="16" y="24" class="card-title">Mathematical Formula (Great-Circle Distance)</text>
+      <text x="16" y="44" class="card-desc">Calculates shortest distance between two points over Earth's spherical surface:</text>
+      <text x="26" y="66" font-family="monospace" font-size="10.5" fill="#38bdf8">Δlat = (lat2 - lat1) * π / 180,  Δlon = (lon2 - lon1) * π / 180</text>
+      <text x="26" y="86" font-family="monospace" font-size="10.5" fill="#38bdf8">a = sin²(Δlat/2) + cos(lat1 * π/180) * cos(lat2 * π/180) * sin²(Δlon/2)</text>
+      <text x="26" y="106" font-family="monospace" font-size="10.5" fill="#38bdf8">c = 2 * atan2(√a, √(1-a))</text>
+      <text x="26" y="126" font-family="monospace" font-size="10.5" fill="#10b981">distance_km = 6371.0 * c  (Earth Mean Radius R = 6,371 km)</text>
+      <text x="16" y="142" class="card-desc">Precision: Accurate within &lt; 0.5% over regional distances (&lt; 200km)</text>
+    </g>
+
+    <!-- Block 2: Stored Function -->
+    <g transform="translate(25, 215)">
+      <rect width="480" height="175" class="card" />
+      <text x="16" y="24" class="card-title">Stored Function: calculate_distance_km(lat1, lon1, lat2, lon2)</text>
+      <text x="16" y="44" class="card-desc">Compiled directly into PostgreSQL (Supabase instance) for high-performance vectorized execution:</text>
+      <text x="26" y="66" font-family="monospace" font-size="9.5" fill="#f8fafc">CREATE OR REPLACE FUNCTION calculate_distance_km(</text>
+      <text x="36" y="82" font-family="monospace" font-size="9.5" fill="#f8fafc">  lat1 DOUBLE PRECISION, lon1 DOUBLE PRECISION,</text>
+      <text x="36" y="98" font-family="monospace" font-size="9.5" fill="#f8fafc">  lat2 DOUBLE PRECISION, lon2 DOUBLE PRECISION</text>
+      <text x="26" y="114" font-family="monospace" font-size="9.5" fill="#f8fafc">) RETURNS DOUBLE PRECISION AS $$</text>
+      <text x="26" y="130" font-family="monospace" font-size="9.5" fill="#34d399">-- Returns spherical great circle distance in km</text>
+      <text x="26" y="146" font-family="monospace" font-size="9.5" fill="#f8fafc">$$ LANGUAGE plpgsql IMMUTABLE;</text>
+      <text x="16" y="166" class="card-desc">IMMUTABLE flag enables PostgreSQL query planner to cache function results</text>
+    </g>
+
+    <!-- Block 3: SQL Execution -->
+    <g transform="translate(25, 405)">
+      <rect width="480" height="150" class="card" />
+      <text x="16" y="24" class="card-title">Operational Query (src/controllers/productController.js)</text>
+      <text x="26" y="46" font-family="monospace" font-size="9.5" fill="#38bdf8">SELECT p.id, p.name, p.price, f.name AS farmer_name,</text>
+      <text x="26" y="62" font-family="monospace" font-size="9.5" fill="#10b981">  calculate_distance_km($1, $2, f.latitude, f.longitude) AS distance_km</text>
+      <text x="26" y="78" font-family="monospace" font-size="9.5" fill="#f8fafc">FROM products p JOIN farmers f ON p.farmer_id = f.id</text>
+      <text x="26" y="94" font-family="monospace" font-size="9.5" fill="#f8fafc">WHERE p.is_active = TRUE AND f.is_verified = TRUE</text>
+      <text x="26" y="110" font-family="monospace" font-size="9.5" fill="#fbbf24">  AND calculate_distance_km($1, $2, f.latitude, f.longitude) &lt;= $3</text>
+      <text x="26" y="126" font-family="monospace" font-size="9.5" fill="#f8fafc">ORDER BY distance_km ASC;</text>
+      <text x="16" y="144" class="card-desc">Parameters: $1 = consumer_lat, $2 = consumer_lon, $3 = radius_km (default 30)</text>
+    </g>
+
+    <!-- Block 4: Index Strategy -->
+    <g transform="translate(25, 570)">
+      <rect width="480" height="70" class="card" />
+      <text x="16" y="22" class="card-title">Index Optimization</text>
+      <text x="16" y="40" class="card-desc">• Composite B-tree Index: CREATE INDEX idx_farmers_lat_lon ON farmers(latitude, longitude);</text>
+      <text x="16" y="56" class="card-desc">• Partial Index: CREATE INDEX idx_products_active ON products(farmer_id) WHERE is_active = TRUE;</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: UI RADIUS VISUALIZATION ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="660" class="geo-card" />
+    <text x="25" y="32" class="geo-title">2. DYNAMIC RADIUS EXPANSION &amp; MAP EXPLORER</text>
+
+    <!-- Radius Rings Visual -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="260" class="card" />
+      <text x="16" y="24" class="card-title">Radial Distance Zones (Karnataka Proximity Map)</text>
+
+      <!-- Center Consumer -->
+      <circle cx="240" cy="140" r="100" fill="none" stroke="#334155" stroke-dasharray="4,4" />
+      <circle cx="240" cy="140" r="65" fill="none" stroke="#0ea5e9" stroke-width="1.2" stroke-dasharray="3,3" />
+      <circle cx="240" cy="140" r="35" fill="none" stroke="#10b981" stroke-width="1.5" />
+      
+      <!-- Consumer Pin -->
+      <circle cx="240" cy="140" r="8" fill="#3b82f6" />
+      <text x="252" y="144" font-family="sans-serif" font-size="11" font-weight="700" fill="#60a5fa">YOU (Consumer GPS)</text>
+
+      <!-- Zone Badges -->
+      <text x="240" y="98" font-family="sans-serif" font-size="9" fill="#10b981" text-anchor="middle">&lt; 5km: Super Local (Dawn Harvest)</text>
+      <text x="240" y="68" font-family="sans-serif" font-size="9" fill="#38bdf8" text-anchor="middle">&lt; 25km: Taluk Community Farms</text>
+      <text x="240" y="34" font-family="sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">&lt; 50km - 100km: Regional Agrarian Hubs</text>
+
+      <!-- Farm Pin 1 -->
+      <circle cx="220" cy="120" r="5" fill="#10b981" />
+      <text x="150" y="123" font-family="monospace" font-size="9" fill="#34d399">Farmer 1 (3.2 km)</text>
+
+      <!-- Farm Pin 2 -->
+      <circle cx="280" cy="165" r="5" fill="#10b981" />
+      <text x="290" y="168" font-family="monospace" font-size="9" fill="#34d399">Farmer 2 (4.8 km)</text>
+
+      <!-- Farm Pin 3 -->
+      <circle cx="195" cy="85" r="5" fill="#38bdf8" />
+      <text x="110" y="88" font-family="monospace" font-size="9" fill="#67e8f9">Farmer 3 (18.4 km)</text>
+
+      <!-- Farm Pin 4 -->
+      <circle cx="310" cy="205" r="5" fill="#94a3b8" />
+      <text x="320" y="208" font-family="monospace" font-size="9" fill="#cbd5e1">Farmer 4 (42.1 km)</text>
+
+      <text x="16" y="248" class="card-desc">UI automatically scales filter radius via ProductFilter slider or EmptyState button</text>
+    </g>
+
+    <!-- Block: Leaflet Map Integration -->
+    <g transform="translate(25, 325)">
+      <rect width="480" height="150" class="card" />
+      <text x="16" y="24" class="card-title">MapExplorer Component Integration (react-leaflet 5)</text>
+      <text x="16" y="44" class="card-desc">• Dynamically rendered on /marketplace via 'Map' view toggle</text>
+      <text x="16" y="62" class="card-desc">• OpenStreetMap raster tiles rendered in hardware-accelerated canvas</text>
+      <text x="16" y="80" class="card-desc">• Renders custom SVG Leaflet DivIcon with pulsed green farm markers</text>
+      <text x="16" y="98" class="card-desc">• Marker Popup shows: Farmer Name, Distance in km, active product badges</text>
+      <text x="16" y="116" class="card-desc">• Clicking product in popup immediately navigates to product details or cart</text>
+      <text x="16" y="136" class="card-code">src/components/common/MapExplorer.tsx</text>
+    </g>
+
+    <!-- Block: Order Geotagging -->
+    <g transform="translate(25, 490)">
+      <rect width="480" height="150" class="card" />
+      <text x="16" y="24" class="card-title">Checkout Order Geotagging (src/controllers/consumerController.js)</text>
+      <text x="16" y="44" class="card-desc">• Order submission verifies consumer GPS coordinates vs farmer GPS coordinates</text>
+      <text x="16" y="62" class="card-desc">• Invokes calculate_distance_km() to store delivery_distance_km in order row</text>
+      <text x="16" y="80" class="card-desc">• Dynamically calculates delivery fee based on true transit distance</text>
+      <text x="16" y="98" class="card-desc">• Locks delivery latitude, longitude, and taluk at time of order creation</text>
+      <text x="16" y="118" class="card-desc">• Guaranteed audit trail for local delivery logistics</text>
+      <text x="16" y="138" class="card-code">consumerController.js #L38-59</text>
+    </g>
+  </g>
+
+</svg>

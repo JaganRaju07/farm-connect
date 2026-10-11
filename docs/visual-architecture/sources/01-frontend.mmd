@@ -1,0 +1,163 @@
+%% ========================================================
+%% FARM CONNECT — FRONTEND ARCHITECTURE SOURCES (MERMAID)
+%% ========================================================
+
+%% --------------------------------------------------------
+%% 1. FRONTEND ARCHITECTURE & PROVIDER CASCADE
+%% --------------------------------------------------------
+flowchart TD
+    subgraph RootLayout ["layout.tsx (App Router Shell)"]
+        HTML["html lang='en'"]
+        Body["body className='min-h-screen bg-slate-900'"]
+    end
+
+    subgraph ProviderCascade ["5-Tier Context Provider Hierarchy"]
+        P1["ThemeProvider (Dark / Light Theme State)"]
+        P2["AuthProvider (JWT Storage, User Identity, Role Guard)"]
+        P3["LocationProvider (HTML5 Geolocation, Lat/Lng, Reverse City)"]
+        P4["ToastProvider (Global Alert Banners & Dismissal)"]
+        P5["CartProvider (Local Shopping Cart, Stock Clamping, LocalStorage)"]
+        P6["AxiosInterceptorWrapper (Bearer Token Injection)"]
+    end
+
+    subgraph PageOutlet ["Routed Page Component ({children})"]
+        ActivePage["Current Route: /marketplace | /cart | /farmer/dashboard | ..."]
+    end
+
+    HTML --> Body --> P1 --> P2 --> P3 --> P4 --> P5 --> P6 --> ActivePage
+
+%% --------------------------------------------------------
+%% 2. PAGES & COMPONENTS HIERARCHY
+%% --------------------------------------------------------
+flowchart LR
+    subgraph Pages ["Next.js App Router Pages"]
+        P_Home["page.tsx (Landing)"]
+        P_Market["marketplace/page.tsx"]
+        P_Product["product/[id]/page.tsx"]
+        P_Cart["cart/page.tsx"]
+        P_Checkout["checkout/page.tsx"]
+        P_Orders["orders/page.tsx"]
+        P_FarmerDash["farmer/dashboard/page.tsx"]
+        P_FarmerProd["farmer/products/page.tsx"]
+        P_FarmerOrd["farmer/orders/page.tsx"]
+    end
+
+    subgraph Components ["Reusable Component Library"]
+        C_Nav["Navbar.tsx (Role-Aware Top Nav)"]
+        C_Card["ProductCard.tsx (Pricing, Distance Tag, Add to Cart)"]
+        C_Filter["ProductFilter.tsx (Radius Slider, Category Pills)"]
+        C_Map["MapExplorer.tsx (Leaflet OpenStreetMap View)"]
+        C_CartItem["CartItem.tsx (Quantity Modifiers, Stock Guard)"]
+        C_Summary["OrderSummary.tsx (Subtotal, Transit Fee, Total)"]
+        C_Form["ProductForm.tsx (Image Drop & Crop Specs)"]
+        C_Status["OrderStatusDropdown.tsx (State Transitions)"]
+    end
+
+    P_Market --> C_Filter & C_Card & C_Map
+    P_Product --> C_Card
+    P_Cart --> C_CartItem & C_Summary
+    P_Checkout --> C_Summary
+    P_FarmerProd --> C_Form
+    P_FarmerOrd --> C_Status
+
+%% --------------------------------------------------------
+%% 3. ROUTING & ROLE-BASED NAVIGATION
+%% --------------------------------------------------------
+stateDiagram-v2
+    [*] --> GuestUnauthenticated
+
+    GuestUnauthenticated --> BrowsePublic: Visit / or /marketplace
+    GuestUnauthenticated --> LoginFlow: Visit /login or /register
+
+    state LoginFlow {
+        EnterPhone --> RequestOTP: POST /auth/send-otp
+        RequestOTP --> EnterCode: Fast2SMS Delivery
+        EnterCode --> VerifyCode: POST /auth/verify-otp
+    }
+
+    LoginFlow --> RoleEvaluation: JWT Issued (role: farmer | consumer | admin)
+
+    state RoleEvaluation {
+        IsConsumer --> ConsumerRoutes: Role == 'consumer'
+        IsFarmer --> FarmerRoutes: Role == 'farmer'
+        IsAdmin --> AdminRoutes: Role == 'admin'
+    }
+
+    state ConsumerRoutes {
+        /marketplace --> /product/:id
+        /product/:id --> /cart
+        /cart --> /checkout
+        /checkout --> /orders: Order Confirmed
+    }
+
+    state FarmerRoutes {
+        /farmer/dashboard --> /farmer/products: Manage Inventory
+        /farmer/dashboard --> /farmer/orders: Fulfill Orders
+    }
+
+    state AdminRoutes {
+        /admin --> VerificationTable: Approve Farmers
+        /admin --> TelemetryCharts: View GMV & Order Volume
+    }
+
+%% --------------------------------------------------------
+%% 4. AUTHENTICATION & STATE MANAGEMENT
+%% --------------------------------------------------------
+sequenceDiagram
+    autonumber
+    actor User as Client Browser
+    participant AC as AuthContext.tsx
+    participant LS as localStorage
+    participant API as api.ts (Axios)
+    participant Back as /api/v1/auth
+
+    User->>AC: login(token, user, role)
+    AC->>LS: setItem('auth_token', token)
+    AC->>LS: setItem('auth_user', JSON.stringify(user))
+    AC->>LS: setItem('auth_role', role)
+    AC->>API: axios.defaults.headers.common['Authorization'] = 'Bearer ' + token
+    AC-->>User: State updated: isAuthenticated = true
+
+    Note over User,Back: On Page Reload (Mount Phase)
+    AC->>LS: getItem('auth_token')
+    alt Token Found
+        AC->>Back: POST /refresh-token or GET /profile
+        Back-->>AC: HTTP 200 (Valid User)
+        AC-->>User: Rehydrate user state
+    else Token Missing or Expired
+        AC->>LS: clearAuth()
+        AC-->>User: Redirect to /login
+    end
+
+%% --------------------------------------------------------
+%% 5. API INTEGRATION & AXIOS INTERCEPTOR PIPELINE
+%% --------------------------------------------------------
+flowchart TD
+    ClientRequest["Component triggers API call (e.g. api.get('/products'))"]
+    
+    subgraph RequestInterceptor ["Axios Request Interceptor"]
+        CheckToken{"Is 'auth_token' present in localStorage?"}
+        AttachHeader["Attach Header:<br/>Authorization: Bearer <token>"]
+        PassClean["Pass request without auth header"]
+    end
+
+    subgraph NetworkWire ["HTTP Transmission"]
+        RenderServer["Render Backend Gateway (Node.js/Express)"]
+    end
+
+    subgraph ResponseInterceptor ["Axios Response Interceptor"]
+        CheckStatus{"Inspect HTTP Status Code"}
+        Status2xx["2xx OK: Return response.data to caller"]
+        Status401["401 Unauthorized: Clear token, redirect to /login"]
+        Status403["403 Forbidden: Toast error 'Permission Denied'"]
+        Status5xx["5xx Server Error: Toast error 'Service Unavailable'"]
+    end
+
+    ClientRequest --> CheckToken
+    CheckToken -- Yes --> AttachHeader --> RenderServer
+    CheckToken -- No --> PassClean --> RenderServer
+    RenderServer --> CheckStatus
+    CheckStatus --> Status2xx
+    CheckStatus --> Status401
+    CheckStatus --> Status403
+    CheckStatus --> Status5xx

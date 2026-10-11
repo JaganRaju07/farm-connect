@@ -1,0 +1,114 @@
+%% ========================================================
+%% FARM CONNECT — BACKEND ARCHITECTURE SOURCES (MERMAID)
+%% ========================================================
+
+%% --------------------------------------------------------
+%% 1. SERVER STARTUP & ROUTE REGISTRATION SEQUENCE
+%% --------------------------------------------------------
+sequenceDiagram
+    autonumber
+    participant Node as Node.js Runtime
+    participant Srv as server.js
+    participant App as src/app.js
+    participant DB as src/config/db.js
+    participant Routes as src/routes/*
+    participant HTTP as http.Server
+
+    Node->>Srv: Execute node server.js
+    Srv->>App: Require Express application instance
+    App->>App: app.set('trust proxy', 1)
+    App->>App: app.use(helmet())
+    App->>App: app.use(cors(corsOptions))
+    App->>App: app.use(express.json({ limit: '10mb' }))
+    App->>App: app.use(rateLimiter(300 req / 15m))
+
+    App->>DB: Initialize pg.Pool(poolConfig)
+    DB-->>App: Database pool ready (idle listener registered)
+
+    App->>Routes: Mount /api/v1/auth (authroutes.js)
+    App->>Routes: Mount /api/v1/farmers (farmerroutes.js)
+    App->>Routes: Mount /api/v1/products (productroutes.js)
+    App->>Routes: Mount /api/v1/consumers (consumerroutes.js)
+
+    App->>App: Register 404 Route Not Found middleware
+    App->>App: Register Global Error Handling middleware
+
+    Srv->>HTTP: app.listen(PORT || 5000)
+    HTTP-->>Node: "🌾 Farm Connect API listening on port 5000"
+
+%% --------------------------------------------------------
+%% 2. API REQUEST LIFECYCLE THROUGH MIDDLEWARE
+%% --------------------------------------------------------
+flowchart TD
+    Req["Incoming HTTP Request"] --> Proxy["trust proxy (Client IP Extraction)"]
+    Proxy --> Helmet["Helmet (Security Headers)"]
+    Helmet --> RateLimit{"Rate Limiter <= 300 req/15m?"}
+    RateLimit -- Exceeded --> 429["HTTP 429 Too Many Requests"]
+    RateLimit -- Allowed --> BodyParse["Body Parser: express.json()"]
+    BodyParse --> RouteMatch{"Does Route Require Auth?"}
+
+    RouteMatch -- Public --> Controller["Invoke Controller Handler"]
+    RouteMatch -- Protected --> AuthMid{"Verify Bearer JWT in Header"}
+    
+    AuthMid -- Invalid/Expired --> 401["HTTP 401 Unauthorized"]
+    AuthMid -- Valid Token --> RoleGuard{"Inspect req.user.role (farmer/consumer/admin)"}
+    RoleGuard -- Denied --> 403["HTTP 403 Forbidden"]
+    RoleGuard -- Allowed --> Controller
+
+    Controller --> DBQuery["Execute SQL via pg.Pool"]
+    DBQuery --> Response["Send JSON Response (200 / 201)"]
+
+    DBQuery -- Query Error --> ErrMid["Global Error Middleware (500 Internal Error)"]
+
+%% --------------------------------------------------------
+%% 3. AUTHENTICATION & AUTHORIZATION GUARD
+%% --------------------------------------------------------
+flowchart LR
+    subgraph ClientReq ["Client Header"]
+        H["Authorization: Bearer eyJhbGciOi..."]
+    end
+
+    subgraph AuthMiddleware ["authMiddleware.js"]
+        Extract["Extract token string from 'Bearer ' prefix"]
+        Verify["jwt.verify(token, process.env.JWT_SECRET)"]
+        Populate["req.user = { userId, phone, role }"]
+    end
+
+    subgraph RoleGuards ["Role Gatekeeper"]
+        IsFarmer{"requireRole('farmer')"}
+        IsConsumer{"requireRole('consumer')"}
+        IsAdmin{"requireRole('admin')"}
+    end
+
+    H --> Extract --> Verify --> Populate
+    Populate --> IsFarmer
+    Populate --> IsConsumer
+    Populate --> IsAdmin
+
+%% --------------------------------------------------------
+%% 4. GLOBAL ERROR HANDLING & CRASH SAFETY
+%% --------------------------------------------------------
+flowchart TD
+    subgraph ErrorSources ["Potential Exception Points"]
+        E1["Syntax / JSON Parse Error"]
+        E2["PostgreSQL Constraint Violation (e.g. 23505 Unique)"]
+        E3["Fast2SMS REST Timeout"]
+        E4["Cloudinary Upload Buffer Error"]
+        E5["404 Route Not Found"]
+    end
+
+    subgraph ErrorPipeline ["Centralized Error Handler (errorHandler.js)"]
+        Catch["catch (err) or next(err)"]
+        Log["Log error stack to stderr"]
+        Format["Build standardized JSON response:<br/>{ success: false, error: err.message, timestamp: ISO }"]
+    end
+
+    subgraph ClientResponse ["Status Code Dispatch"]
+        C400["400 Bad Request (Validation failure)"]
+        C404["404 Not Found (Missing resource)"]
+        C409["409 Conflict (Duplicate phone/email)"]
+        C500["500 Internal Server Error (Sanitized)"]
+    end
+
+    E1 & E2 & E3 & E4 & E5 --> Catch --> Log --> Format
+    Format --> C400 & C404 & C409 & C500

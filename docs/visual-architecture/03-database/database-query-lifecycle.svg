@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .lane { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .lane-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #8b5cf6; letter-spacing: 0.05em; }
+      .node { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .node-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .node-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #c084fc; }
+      .arrow { stroke: #8b5cf6; stroke-width: 2; fill: none; marker-end: url(#arrow-purple); }
+    </style>
+    <marker id="arrow-purple" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#8b5cf6" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Database Query Lifecycle &amp; Pool Mechanics</text>
+  <text x="45" y="68" class="subtitle">Complete trace of SQL query dispatch, client acquisition from pg.Pool, SSL execution, and connection return</text>
+
+  <!-- ================= LEFT: NODE.JS CLIENT & POOL ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="660" class="lane" />
+    <text x="25" y="32" class="lane-title">1. NODE-POSTGRES CLIENT POOL (SRC/CONFIG/DB.JS)</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="95" class="node" />
+      <text x="16" y="24" class="node-title">1. Application Query Dispatch</text>
+      <text x="16" y="44" class="node-desc">• Controller calls db.query(sql, [param1, param2])</text>
+      <text x="16" y="62" class="node-desc">• Parameterised inputs prevent SQL injection vulnerabilities</text>
+      <text x="16" y="80" class="node-desc">• Returns native JavaScript Promise to calling async controller</text>
+      <text x="350" y="24" class="node-code">productController.js</text>
+    </g>
+    <path d="M 265, 145 L 265, 175" class="arrow" />
+
+    <!-- Step 2 -->
+    <g transform="translate(25, 175)">
+      <rect width="480" height="110" class="node" />
+      <text x="16" y="24" class="node-title">2. Pool Client Acquisition (pg.Pool)</text>
+      <text x="16" y="44" class="node-desc">• Pool checks out an active connection (max: 10 prod / 5 dev)</text>
+      <text x="16" y="62" class="node-desc">• If all clients busy: Waits up to connectionTimeoutMillis: 2000ms</text>
+      <text x="16" y="80" class="node-desc">• Fails fast if DB unreachable rather than hanging HTTP requests</text>
+      <text x="16" y="98" class="node-desc">• Reuses warm sockets to eliminate 3-way TCP handshake overhead</text>
+      <text x="360" y="24" class="node-code">src/config/database.js</text>
+    </g>
+    <path d="M 265, 285 L 265, 315" class="arrow" />
+
+    <!-- Step 3 -->
+    <g transform="translate(25, 315)">
+      <rect width="480" height="110" class="node" />
+      <text x="16" y="24" class="node-title">3. SSL Encrypted Socket Transmission</text>
+      <text x="16" y="44" class="node-desc">• Establishes TLS encrypted session over TCP port 5432</text>
+      <text x="16" y="62" class="node-desc">• SSL config: rejectUnauthorized: false in production (Supabase requirement)</text>
+      <text x="16" y="80" class="node-desc">• Formats query into PostgreSQL frontend/backend protocol binary packet</text>
+      <text x="16" y="98" class="node-desc">• Socket keepalive enabled to detect dropped cloud connections</text>
+      <text x="360" y="24" class="node-code">TCP Wire Protocol</text>
+    </g>
+    <path d="M 265, 425 L 265, 455" class="arrow" />
+
+    <!-- Step 4 -->
+    <g transform="translate(25, 455)">
+      <rect width="480" height="110" class="node" />
+      <text x="16" y="24" class="node-title">4. Connection Return &amp; Leak Protection</text>
+      <text x="16" y="44" class="node-desc">• Pool automatically releases client when db.query() finishes</text>
+      <text x="16" y="62" class="node-desc">• In transactions: executeTransaction() uses finally { client.release(); }</text>
+      <text x="16" y="80" class="node-desc">• Guaranteed release prevents connection starvation under high load</text>
+      <text x="16" y="98" class="node-desc">• Idle timeout: Closes connections unused for &gt; 30,000ms</text>
+      <text x="360" y="24" class="node-code">client.release()</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: POSTGRESQL ENGINE ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="660" class="lane" />
+    <text x="25" y="32" class="lane-title">2. POSTGRESQL SERVER ENGINE (SUPABASE)</text>
+
+    <!-- Stage 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="node" />
+      <text x="16" y="24" class="node-title">1. Query Parser &amp; Syntax Verification</text>
+      <text x="16" y="44" class="node-desc">• Validates SQL grammar and parses parameter placeholders ($1, $2, $3)</text>
+      <text x="16" y="62" class="node-desc">• Verifies table permissions and column existence in catalog</text>
+      <text x="16" y="80" class="node-desc">• Binds passed parameters to strongly-typed internal variables</text>
+      <text x="16" y="98" class="node-desc">• Generates abstract parse tree for query planner</text>
+      <text x="360" y="24" class="node-code">SQL Parser</text>
+    </g>
+    <path d="M 265, 160 L 265, 190" class="arrow" />
+
+    <!-- Stage 2 -->
+    <g transform="translate(25, 190)">
+      <rect width="480" height="120" class="node" />
+      <text x="16" y="24" class="node-title">2. Query Planner &amp; Index Selection</text>
+      <text x="16" y="44" class="node-desc">• Evaluates scan strategies: Index Scan vs Bitmap Index Scan vs Seq Scan</text>
+      <text x="16" y="62" class="node-desc">• Utilizes composite index on farmers(latitude, longitude)</text>
+      <text x="16" y="80" class="node-desc">• Utilizes foreign key index on products(farmer_id)</text>
+      <text x="16" y="98" class="node-desc">• Determines join order (products JOIN farmers via Nested Loop / Hash Join)</text>
+      <text x="360" y="24" class="node-code">EXPLAIN ANALYZE</text>
+    </g>
+    <path d="M 265, 310 L 265, 340" class="arrow" />
+
+    <!-- Stage 3 -->
+    <g transform="translate(25, 340)">
+      <rect width="480" height="120" class="node" />
+      <text x="16" y="24" class="node-title">3. Spatial Execution: calculate_distance_km</text>
+      <text x="16" y="44" class="node-desc">• Calls stored PL/pgSQL function calculate_distance_km()</text>
+      <text x="16" y="62" class="node-desc">• Computes spherical Haversine formula for each candidate farm</text>
+      <text x="16" y="80" class="node-desc">• Filters rows where distance_km &lt;= radius (e.g. 25km)</text>
+      <text x="16" y="98" class="node-desc">• Sorts result rows: ORDER BY distance_km ASC</text>
+      <text x="360" y="24" class="node-code">Haversine Execution</text>
+    </g>
+    <path d="M 265, 460 L 265, 490" class="arrow" />
+
+    <!-- Stage 4 -->
+    <g transform="translate(25, 490)">
+      <rect width="480" height="110" class="node" />
+      <text x="16" y="24" class="node-title">4. Result Serialization &amp; Wire Dispatch</text>
+      <text x="16" y="44" class="node-desc">• Serializes row records into PostgreSQL data row packets</text>
+      <text x="16" y="62" class="node-desc">• Streams bytes over TLS TCP socket back to Node.js backend</text>
+      <text x="16" y="80" class="node-desc">• node-postgres converts records to JavaScript Array of Objects</text>
+      <text x="16" y="98" class="node-desc">• Resolves to { rows: [...] } object inside Express controller</text>
+      <text x="360" y="24" class="node-code">JSON Response Ready</text>
+    </g>
+  </g>
+
+</svg>

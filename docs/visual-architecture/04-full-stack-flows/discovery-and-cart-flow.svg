@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .actor-line { stroke: #334155; stroke-width: 1.5; stroke-dasharray: 4,4; }
+      .actor-box { fill: #1e293b; stroke: #38bdf8; stroke-width: 1.5; rx: 8px; }
+      .actor-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .actor-sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle; }
+      .msg-line { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+      .msg-ret { stroke: #38bdf8; stroke-width: 2; stroke-dasharray: 4,4; fill: none; marker-end: url(#arrow-cyan); }
+      .msg-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 600; fill: #f1f5f9; }
+      .msg-detail { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 9.5px; fill: #94a3b8; }
+      .num-circ { fill: #064e3b; }
+      .num-txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; font-weight: 800; fill: #34d399; text-anchor: middle; }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="850" class="bg" />
+
+  <!-- Title -->
+  <text x="45" y="45" class="title">Farm Connect — Product Discovery &amp; Cart State Full-Stack Flow</text>
+  <text x="45" y="68" class="subtitle">Complete trace of browser GPS capture, Haversine proximity query, Leaflet rendering, and persistent cart synchronization</text>
+
+  <!-- Actors Header -->
+  <!-- Actor 1: Browser Hardware -->
+  <g transform="translate(100, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">Browser GPS</text>
+    <text x="0" y="40" class="actor-sub">navigator.geolocation</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 2: Marketplace UI -->
+  <g transform="translate(360, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">Marketplace UI</text>
+    <text x="0" y="40" class="actor-sub">/marketplace</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 3: Cart Context -->
+  <g transform="translate(620, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">CartProvider</text>
+    <text x="0" y="40" class="actor-sub">localStorage Synced</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 4: Express API -->
+  <g transform="translate(870, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">Express API</text>
+    <text x="0" y="40" class="actor-sub">productController.js</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 5: PostgreSQL -->
+  <g transform="translate(1100, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">PostgreSQL DB</text>
+    <text x="0" y="40" class="actor-sub">calculate_distance_km</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Steps -->
+  <!-- Step 1 -->
+  <circle cx="90" cy="180" r="10" class="num-circ" />
+  <text x="90" y="184" class="num-txt">1</text>
+  <path d="M 100, 180 L 360, 180" class="msg-ret" />
+  <text x="120" y="172" class="msg-text">Browser resolves GPS coordinates</text>
+  <text x="120" y="190" class="msg-detail">latitude: 12.9716, longitude: 77.5946 (accuracy ~10m)</text>
+
+  <!-- Step 2 -->
+  <circle cx="350" cy="235" r="10" class="num-circ" />
+  <text x="350" y="239" class="num-txt">2</text>
+  <path d="M 360, 235 L 870, 235" class="msg-line" />
+  <text x="390" y="227" class="msg-text">GET /api/v1/products/search?lat=12.9716&amp;lon=77.5946&amp;radius=25</text>
+  <text x="390" y="245" class="msg-detail">Axios client includes AbortController signal for cancellation</text>
+
+  <!-- Step 3 -->
+  <circle cx="860" cy="290" r="10" class="num-circ" />
+  <text x="860" y="294" class="num-txt">3</text>
+  <path d="M 870, 290 L 1100, 290" class="msg-line" />
+  <text x="890" y="282" class="msg-text">Execute Haversine Spatial Query</text>
+  <text x="890" y="300" class="msg-detail">SELECT p.*, f.*, calculate_distance_km($1, $2, f.latitude, f.longitude) ...</text>
+
+  <!-- Step 4 -->
+  <circle cx="1090" cy="350" r="10" class="num-circ" />
+  <text x="1090" y="354" class="num-txt">4</text>
+  <path d="M 1100, 350 L 870, 350" class="msg-ret" />
+  <text x="900" y="342" class="msg-text">Returns Sorted Result Rows (distance ASC)</text>
+
+  <!-- Step 5 -->
+  <circle cx="860" cy="405" r="10" class="num-circ" />
+  <text x="860" y="409" class="num-txt">5</text>
+  <path d="M 870, 405 L 360, 405" class="msg-ret" />
+  <text x="420" y="397" class="msg-text">JSON Payload: { success: true, count: 24, data: [...] }</text>
+
+  <!-- Step 6 -->
+  <circle cx="350" cy="460" r="10" class="num-circ" />
+  <text x="350" y="464" class="num-txt">6</text>
+  <path d="M 360, 460 L 360, 510" class="msg-line" />
+  <text x="375" y="480" class="msg-text">Renders Product Cards &amp; Map Explorer</text>
+  <text x="375" y="498" class="msg-detail">Shows distance badges ("3.2 km away"); Leaflet plots markers</text>
+
+  <!-- Step 7 -->
+  <circle cx="350" cy="550" r="10" class="num-circ" />
+  <text x="350" y="554" class="num-txt">7</text>
+  <path d="M 360, 550 L 620, 550" class="msg-line" />
+  <text x="390" y="542" class="msg-text">User clicks "Add to Cart" on ProductCard</text>
+  <text x="390" y="560" class="msg-detail">CartProvider.addToCart(product, quantity)</text>
+
+  <!-- Step 8 -->
+  <circle cx="610" cy="610" r="10" class="num-circ" />
+  <text x="610" y="614" class="num-txt">8</text>
+  <path d="M 620, 610 L 620, 660" class="msg-line" />
+  <text x="635" y="630" class="msg-text">Enforces Stock Bound &amp; Persists State</text>
+  <text x="635" y="648" class="msg-detail">Math.min(newQ, product.stockAvailable); localStorage.setItem('farmconnect_cart')</text>
+
+  <!-- Step 9 -->
+  <circle cx="610" cy="700" r="10" class="num-circ" />
+  <text x="610" y="704" class="num-txt">9</text>
+  <path d="M 620, 700 L 360, 700" class="msg-ret" />
+  <text x="400" y="692" class="msg-text">Header badge updates counter: (3 items) &amp; Toast triggers</text>
+
+</svg>

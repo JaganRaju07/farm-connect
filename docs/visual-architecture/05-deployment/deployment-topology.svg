@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .zone-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .zone-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .host-box { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .host-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .host-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .host-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #10b981; }
+      .net-arrow { stroke: #0284c7; stroke-width: 2.2; fill: none; marker-end: url(#arrow-cyan); }
+      .db-arrow { stroke: #10b981; stroke-width: 2.2; fill: none; marker-end: url(#arrow-green); }
+      .ext-arrow { stroke: #f59e0b; stroke-width: 2; stroke-dasharray: 4,4; fill: none; marker-end: url(#arrow-amber); }
+    </style>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0284c7" />
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrow-amber" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Production Deployment &amp; Cloud Network Topology</text>
+  <text x="45" y="68" class="subtitle">Multi-cloud deployment architecture spanning Vercel Edge, Render Containers, Supabase PostgreSQL, and CDNs</text>
+
+  <!-- ================= TIER 1: CLIENT ACCESS & CDN ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="350" height="660" class="zone-card" />
+    <text x="20" y="32" class="zone-title">TIER 1: EDGE &amp; CLIENT NETWORK</text>
+
+    <!-- Client Endpoints -->
+    <g transform="translate(18, 50)">
+      <rect width="314" height="120" class="host-box" />
+      <text x="14" y="24" class="host-title">End-User Client Devices</text>
+      <text x="14" y="44" class="host-desc">• Karnataka Consumers (Mobile / Desktop)</text>
+      <text x="14" y="62" class="host-desc">• Local Cultivators (Mobile PWA / Storefront)</text>
+      <text x="14" y="80" class="host-desc">• Platform Administrators</text>
+      <text x="14" y="102" class="host-code">Protocol: HTTPS / TLS 1.3</text>
+    </g>
+
+    <!-- Vercel Hosting -->
+    <g transform="translate(18, 190)">
+      <rect width="314" height="220" class="host-box" style="stroke: #0284c7;" />
+      <text x="14" y="24" class="host-title">Vercel Edge Global Network</text>
+      <text x="14" y="44" class="host-desc">Frontend Production Host: Next.js 16 App Router</text>
+      <text x="14" y="64" class="host-desc">• Domain: farm-connect-eta-ten.vercel.app</text>
+      <text x="14" y="84" class="host-desc">• Regional Edge Points-of-Presence (India/Mumbai)</text>
+      <text x="14" y="104" class="host-desc">• Automatic Brotli / Gzip compression</text>
+      <text x="14" y="124" class="host-desc">• Caches immutable static JS/CSS assets</text>
+      <text x="14" y="144" class="host-desc">• SSR dynamic execution at the edge</text>
+      <text x="14" y="164" class="host-desc">• Environment: NEXT_PUBLIC_API_URL</text>
+      <text x="14" y="194" class="host-code">Vercel Build: npm run build</text>
+    </g>
+
+    <!-- CI/CD Integration -->
+    <g transform="translate(18, 430)">
+      <rect width="314" height="200" class="host-box" />
+      <text x="14" y="24" class="host-title">GitHub Version Control &amp; CI/CD</text>
+      <text x="14" y="44" class="host-desc">Repository: Farm Connect Monorepo</text>
+      <text x="14" y="64" class="host-desc">• Branch: main (Production Source of Truth)</text>
+      <text x="14" y="84" class="host-desc">• Webhook 1: Triggers Vercel Frontend Build</text>
+      <text x="14" y="104" class="host-desc">• Webhook 2: Triggers Render Container Build</text>
+      <text x="14" y="124" class="host-desc">• Zero-Downtime Rolling Deployments</text>
+      <text x="14" y="144" class="host-desc">• Automated smoke tests verify health check</text>
+      <text x="14" y="174" class="host-code">git push origin main</text>
+    </g>
+  </g>
+
+  <!-- Connect 1 to 2 -->
+  <path d="M 395, 300 L 435, 300" class="net-arrow" />
+  <text x="400" y="290" font-family="sans-serif" font-size="9" font-weight="700" fill="#38bdf8">REST</text>
+
+  <!-- ================= TIER 2: COMPUTE CONTAINER ================= -->
+  <g transform="translate(435, 95)">
+    <rect width="350" height="660" class="zone-card" />
+    <text x="20" y="32" class="zone-title">TIER 2: COMPUTE CLOUD (RENDER)</text>
+
+    <!-- Render Web Service -->
+    <g transform="translate(18, 50)">
+      <rect width="314" height="260" class="host-box" style="stroke: #10b981;" />
+      <text x="14" y="24" class="host-title">Render Web Service Container</text>
+      <text x="14" y="44" class="host-desc">Backend Production Host: Node.js / Express</text>
+      <text x="14" y="64" class="host-desc">• Port: 5000 (Internal) mapped to HTTPS :443</text>
+      <text x="14" y="84" class="host-desc">• Load Balancer Proxy: app.set('trust proxy', 1)</text>
+      <text x="14" y="104" class="host-desc">• CORS Origin Whitelist: Vercel frontend URL</text>
+      <text x="14" y="124" class="host-desc">• Express Rate Limiter: 300 requests / 15 mins</text>
+      <text x="14" y="144" class="host-desc">• Health Probe: GET /health (Status 200)</text>
+      <text x="14" y="164" class="host-desc">• Auto-restarts on uncaught process exceptions</text>
+      <text x="14" y="184" class="host-desc">• Morgan logging streamed to cloud dashboard</text>
+      <text x="14" y="224" class="host-code">Render Build: npm install &amp;&amp; npm start</text>
+    </g>
+
+    <!-- Environment Boundary -->
+    <g transform="translate(18, 330)">
+      <rect width="314" height="300" class="host-box" />
+      <text x="14" y="24" class="host-title">Secure Environment Boundaries</text>
+      <text x="14" y="44" class="host-desc">Injected via encrypted cloud environment vault:</text>
+      <text x="14" y="68" font-family="monospace" font-size="10" fill="#34d399">• DATABASE_URL (PostgreSQL SSL)</text>
+      <text x="14" y="90" font-family="monospace" font-size="10" fill="#34d399">• JWT_SECRET &amp; JWT_EXPIRES_IN</text>
+      <text x="14" y="112" font-family="monospace" font-size="10" fill="#34d399">• FAST2SMS_API_KEY</text>
+      <text x="14" y="134" font-family="monospace" font-size="10" fill="#34d399">• CLOUDINARY_URL</text>
+      <text x="14" y="156" font-family="monospace" font-size="10" fill="#34d399">• ALLOWED_ORIGINS</text>
+      <text x="14" y="178" font-family="monospace" font-size="10" fill="#34d399">• NODE_ENV=production</text>
+      <text x="14" y="210" class="host-desc">Security Guarantee: Zero credentials checked into Git</text>
+      <text x="14" y="230" class="host-desc">Strict .gitignore blocks .env files from commits</text>
+      <text x="14" y="260" class="host-code">Secrets Stored in Render Vault</text>
+    </g>
+  </g>
+
+  <!-- Connect 2 to 3 -->
+  <path d="M 785, 220 L 825, 220" class="db-arrow" />
+  <text x="790" y="210" font-family="sans-serif" font-size="9" font-weight="700" fill="#10b981">TCP</text>
+
+  <path d="M 785, 450 L 825, 450" class="ext-arrow" />
+  <text x="790" y="440" font-family="sans-serif" font-size="9" font-weight="700" fill="#f59e0b">HTTP</text>
+
+  <!-- ================= TIER 3: DATA & THIRD PARTY ================= -->
+  <g transform="translate(825, 95)">
+    <rect width="330" height="660" class="zone-card" />
+    <text x="20" y="32" class="zone-title">TIER 3: DATABASE &amp; THIRD PARTY</text>
+
+    <!-- Supabase PostgreSQL -->
+    <g transform="translate(18, 50)">
+      <rect width="294" height="190" class="host-box" style="stroke: #10b981;" />
+      <text x="14" y="24" class="host-title">Supabase Cloud Database</text>
+      <text x="14" y="44" class="host-desc">Engine: PostgreSQL 15 (AWS ap-south-1)</text>
+      <text x="14" y="64" class="host-desc">• SSL Enforced (rejectUnauthorized: false)</text>
+      <text x="14" y="84" class="host-desc">• Max Connections: 10 pooled clients</text>
+      <text x="14" y="104" class="host-desc">• Spatial Proc: calculate_distance_km()</text>
+      <text x="14" y="124" class="host-desc">• Automated daily database backups</text>
+      <text x="14" y="154" class="host-code">Port :5432 (TCP Encrypted)</text>
+    </g>
+
+    <!-- Fast2SMS -->
+    <g transform="translate(18, 260)">
+      <rect width="294" height="150" class="host-box" style="stroke: #f59e0b;" />
+      <text x="14" y="24" class="host-title">Fast2SMS Bulk Gateway</text>
+      <text x="14" y="44" class="host-desc">Telecom Carrier Bridge</text>
+      <text x="14" y="64" class="host-desc">• Dispatches OTP to Indian mobile networks</text>
+      <text x="14" y="84" class="host-desc">• Direct route: "otp" with dynamic variables</text>
+      <text x="14" y="104" class="host-desc">• Dev toggle: OTP_DEMO_MODE=true</text>
+      <text x="14" y="128" class="host-code">HTTPS REST: fast2sms.com</text>
+    </g>
+
+    <!-- Cloudinary -->
+    <g transform="translate(18, 430)">
+      <rect width="294" height="150" class="host-box" style="stroke: #f59e0b;" />
+      <text x="14" y="24" class="host-title">Cloudinary Media CDN</text>
+      <text x="14" y="44" class="host-desc">Global Asset Delivery</text>
+      <text x="14" y="64" class="host-desc">• Stores farmer produce crop photos</text>
+      <text x="14" y="84" class="host-desc">• Automatic image compression &amp; WebP</text>
+      <text x="14" y="104" class="host-desc">• Next.js Image component optimized</text>
+      <text x="14" y="128" class="host-code">HTTPS: res.cloudinary.com</text>
+    </g>
+  </g>
+
+</svg>

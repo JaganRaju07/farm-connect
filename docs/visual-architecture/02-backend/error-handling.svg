@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .err-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .err-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #ef4444; letter-spacing: 0.05em; }
+      .sub { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .sub-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .sub-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .sub-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #f87171; }
+      .arr { stroke: #ef4444; stroke-width: 2; fill: none; marker-end: url(#arrow-red); }
+      .arr-green { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+    </style>
+    <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#ef4444" />
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="780" class="bg" />
+
+  <!-- Title -->
+  <text x="45" y="45" class="title">Farm Connect — Backend Error Handling &amp; Fault Resilience</text>
+  <text x="45" y="68" class="subtitle">Exception boundaries, 404 handlers, database pool crash guards, and production message sanitization</text>
+
+  <!-- ================= LEFT: EXCEPTION PIPELINE ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="645" class="err-card" />
+    <text x="25" y="32" class="err-title">CENTRALIZED ERROR DISPATCH PIPELINE</text>
+
+    <!-- Block 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="95" class="sub" />
+      <text x="16" y="24" class="sub-title">1. Controller Try / Catch Wrapper</text>
+      <text x="16" y="44" class="sub-desc">• Every async route controller is wrapped in try { ... } catch (error) { next(error); }</text>
+      <text x="16" y="62" class="sub-desc">• Catches unhandled Promise rejections and SQL execution failures</text>
+      <text x="16" y="80" class="sub-desc">• Forwards error object down the Express middleware stack to next()</text>
+      <text x="320" y="24" class="sub-code">authController.js #L74</text>
+    </g>
+    <path d="M 265, 145 L 265, 175" class="arr" />
+
+    <!-- Block 2 -->
+    <g transform="translate(25, 175)">
+      <rect width="480" height="110" class="sub" />
+      <text x="16" y="24" class="sub-title">2. Catch-All 404 Route Handler</text>
+      <text x="16" y="44" class="sub-desc">• Mounted after all valid /api/v1 routes: app.use((req, res) =&gt; { ... })</text>
+      <text x="16" y="62" class="sub-desc">• Intercepts typos and deprecated API endpoints</text>
+      <text x="16" y="80" class="sub-desc">• Returns structured JSON with HTTP 404 status:</text>
+      <text x="26" y="98" font-family="monospace" font-size="10" fill="#fca5a5">{ success: false, error: { code: 'ROUTE_NOT_FOUND', message: ... } }</text>
+      <text x="310" y="24" class="sub-code">backend/src/app.js #L100</text>
+    </g>
+    <path d="M 265, 285 L 265, 315" class="arr" />
+
+    <!-- Block 3 -->
+    <g transform="translate(25, 315)">
+      <rect width="480" height="145" class="sub" />
+      <text x="16" y="24" class="sub-title">3. Global 500 Error Middleware (app.use((err, req, res, next)))</text>
+      <text x="16" y="44" class="sub-desc">• 4-argument signature signals Express this is the terminal error catcher</text>
+      <text x="16" y="62" class="sub-desc">• Asynchronous Safety: Removed synchronous fs.writeFileSync to avoid</text>
+      <text x="26" y="78" class="sub-desc">blocking the Node.js single-threaded event loop under production load</text>
+      <text x="16" y="96" class="sub-desc">• Production Sanitization: Masks database stack traces from external callers</text>
+      <text x="26" y="114" font-family="monospace" font-size="10" fill="#38bdf8">message: isProd ? 'Internal Server Error' : (err.message || ...)</text>
+      <text x="16" y="132" class="sub-desc">• Returns standardized HTTP 500 response payload</text>
+      <text x="310" y="24" class="sub-code">backend/src/app.js #L110</text>
+    </g>
+    <path d="M 265, 460 L 265, 490" class="arr" />
+
+    <!-- Block 4 -->
+    <g transform="translate(25, 490)">
+      <rect width="480" height="120" class="sub" />
+      <text x="16" y="24" class="sub-title">4. Standardized JSON Error Contract</text>
+      <text x="16" y="44" class="sub-desc">• Guarantees every error returns predictable format to client:</text>
+      <text x="26" y="64" font-family="monospace" font-size="10.5" fill="#f87171">{ success: false, error: { code: 'SERVER_ERROR', message: ... } }</text>
+      <text x="16" y="84" class="sub-desc">• Frontend Axios Interceptor reads error.message or code</text>
+      <text x="16" y="102" class="sub-desc">• Triggers UI toast notification or user error display</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: DATABASE & HARDWARE FAULTS ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="645" class="err-card" />
+    <text x="25" y="32" class="err-title" style="fill: #f59e0b;">DATABASE &amp; HARDWARE FAULT ISOLATION</text>
+
+    <!-- Block 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="125" class="sub" />
+      <text x="16" y="24" class="sub-title">1. PostgreSQL Pool Crash Safety</text>
+      <text x="16" y="44" class="sub-desc">• Idle Client Listener: pool.on('error', (err, client) =&gt; { ... })</text>
+      <text x="16" y="62" class="sub-desc">• If a socket disconnects abruptly on an idle client, node-postgres calls this</text>
+      <text x="16" y="80" class="sub-desc">• Prevents unhandled background exception from silently crashing Node.js</text>
+      <text x="16" y="98" class="sub-desc">• Logs: "❌ Unexpected error on idle client" and safely exits process</text>
+      <text x="16" y="114" class="sub-desc">• Process supervisor (Render container) immediately restarts instance</text>
+      <text x="350" y="24" class="sub-code">src/config/db.js #L20</text>
+    </g>
+
+    <!-- Block 2 -->
+    <g transform="translate(25, 195)">
+      <rect width="480" height="125" class="sub" />
+      <text x="16" y="24" class="sub-title">2. Startup Connection Pre-Flight</text>
+      <text x="16" y="44" class="sub-desc">• testConnection() executes SELECT NOW() on boot before accepting HTTP</text>
+      <text x="16" y="62" class="sub-desc">• Fails loudly if DATABASE_URL is malformed or database is unreachable</text>
+      <text x="16" y="80" class="sub-desc">• Prevents "half-started" zombie servers that accept requests but fail on queries</text>
+      <text x="16" y="98" class="sub-desc">• Prints actionable error message: "Check DATABASE_URL in .env"</text>
+      <text x="16" y="114" class="sub-desc">• Explicit process.exit(1) triggers immediate deployment rollback</text>
+      <text x="310" y="24" class="sub-code">backend/database.js</text>
+    </g>
+
+    <!-- Block 3 -->
+    <g transform="translate(25, 340)">
+      <rect width="480" height="135" class="sub" />
+      <text x="16" y="24" class="sub-title">3. Atomic Transaction Rollback</text>
+      <text x="16" y="44" class="sub-desc">• executeTransaction(callback) in backend/src/config/database.js</text>
+      <text x="16" y="62" class="sub-desc">• If order insert or stock decrement throws error midway in order.service.js:</text>
+      <text x="26" y="80" font-family="monospace" font-size="10.5" fill="#f59e0b">await client.query('ROLLBACK'); // Undoes all changes</text>
+      <text x="16" y="100" class="sub-desc">• Prevents phantom deductions where stock drops but no order is created</text>
+      <text x="16" y="118" class="sub-desc">• finally { client.release(); } guarantees connection is returned to pool</text>
+      <text x="310" y="24" class="sub-code">backend/database.js</text>
+    </g>
+
+    <!-- Block 4 -->
+    <g transform="translate(25, 495)">
+      <rect width="480" height="115" class="sub" />
+      <text x="16" y="24" class="sub-title">4. Fast2SMS Third-Party Gateway Fallback</text>
+      <text x="16" y="44" class="sub-desc">• If Fast2SMS credit runs out or external API is down:</text>
+      <text x="16" y="62" class="sub-desc">• Catches axios error, logs message, returns false cleanly</text>
+      <text x="16" y="80" class="sub-desc">• Controller responds with user-friendly 400: "Failed to send OTP"</text>
+      <text x="16" y="98" class="sub-desc">• Developer bypass (OTP_DEMO_MODE=true) enables offline development</text>
+      <text x="350" y="24" class="sub-code">smsservice.js #L41</text>
+    </g>
+  </g>
+
+</svg>

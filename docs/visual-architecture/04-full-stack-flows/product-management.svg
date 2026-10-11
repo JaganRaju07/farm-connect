@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .flow-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .flow-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #10b981; letter-spacing: 0.05em; }
+      .box { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .box-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .box-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #34d399; }
+      .flow-arrow { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Workflow: Cultivator Product Management (CRUD)</text>
+  <text x="45" y="68" class="subtitle">Complete trace of farmer inventory listing, harvest date scheduling, Cloudinary image upload, and DB mutations</text>
+
+  <!-- ================= LEFT: FARMER DASHBOARD UI ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="660" class="flow-card" />
+    <text x="25" y="32" class="flow-title">1. FARMER DASHBOARD (FRONTEND)</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">1. Protected Route Access</text>
+      <text x="16" y="44" class="box-desc">• Cultivator navigates to /farmer/dashboard</text>
+      <text x="16" y="62" class="box-desc">• ProtectedRoute(requiredRole="farmer") validates JWT in AuthContext</text>
+      <text x="16" y="80" class="box-desc">• Automatically attaches Authorization: Bearer &lt;token&gt; header</text>
+      <text x="16" y="98" class="box-desc">• Loads active inventory via GET /api/v1/farmers/products</text>
+      <text x="350" y="24" class="box-code">ProtectedRoute.tsx</text>
+    </g>
+    <path d="M 265, 160 L 265, 185" class="flow-arrow" />
+
+    <!-- Step 2 -->
+    <g transform="translate(25, 185)">
+      <rect width="480" height="135" class="box" />
+      <text x="16" y="24" class="box-title">2. Product Creation Form (Add Product Modal)</text>
+      <text x="16" y="44" class="box-desc">• Fields: Crop Name, Category, Description, Price (₹/unit)</text>
+      <text x="16" y="62" class="box-desc">• Unit select: 'kg' | 'g' | 'L' | 'ml' | 'piece' | 'dozen'</text>
+      <text x="16" y="80" class="box-desc">• Stock available &amp; Minimum order quantity</text>
+      <text x="16" y="98" class="box-desc">• Organic Certified checkbox toggle &amp; Harvest Date selector</text>
+      <text x="16" y="116" class="box-desc">• Image upload input: Triggers Cloudinary pipeline</text>
+      <text x="350" y="24" class="box-code">src/types/products.ts</text>
+    </g>
+    <path d="M 265, 320 L 265, 345" class="flow-arrow" />
+
+    <!-- Step 3 -->
+    <g transform="translate(25, 345)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">3. Inline Stock &amp; Price Updates</text>
+      <text x="16" y="44" class="box-desc">• Farmer clicks 'Edit' on existing product row</text>
+      <text x="16" y="62" class="box-desc">• Updates stock_available (e.g., harvested 20kg fresh today)</text>
+      <text x="16" y="80" class="box-desc">• Submits PUT /api/v1/farmers/products/:id</text>
+      <text x="16" y="98" class="box-desc">• Toast triggers: "Product updated successfully"</text>
+      <text x="350" y="24" class="box-code">farmerroutes.js #L15</text>
+    </g>
+    <path d="M 265, 465 L 265, 490" class="flow-arrow" />
+
+    <!-- Step 4 -->
+    <g transform="translate(25, 490)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">4. Deactivation &amp; Deletion</text>
+      <text x="16" y="44" class="box-desc">• Farmer toggles product active switch or deletes listing</text>
+      <text x="16" y="62" class="box-desc">• Submits DELETE /api/v1/farmers/products/:id</text>
+      <text x="16" y="80" class="box-desc">• Instantly removes product from public marketplace search</text>
+      <text x="350" y="24" class="box-code">farmerroutes.js #L16</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: BACKEND & DATABASE ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="660" class="flow-card" />
+    <text x="25" y="32" class="flow-title">2. API CONTROLLER &amp; PERSISTENCE (BACKEND)</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="130" class="box" />
+      <text x="16" y="24" class="box-title">1. Cloudinary Image Upload (POST /api/v1/upload)</text>
+      <text x="16" y="44" class="box-desc">• Multer handles multipart/form-data crop photo in memory</text>
+      <text x="16" y="62" class="box-desc">• Streams file buffer directly to Cloudinary CDN</text>
+      <text x="16" y="80" class="box-desc">• Receives secure CDN URL: https://res.cloudinary.com/.../crop.webp</text>
+      <text x="16" y="98" class="box-desc">• URL passed in product creation payload</text>
+      <text x="310" y="24" class="box-code">backend/upload.routes.js</text>
+    </g>
+    <path d="M 265, 180 L 265, 205" class="flow-arrow" />
+
+    <!-- Step 2 -->
+    <g transform="translate(25, 205)">
+      <rect width="480" height="150" class="box" />
+      <text x="16" y="24" class="box-title">2. Product Insertion (POST /api/v1/farmers/products)</text>
+      <text x="16" y="44" class="box-desc">farmerController.addProduct validates fields and inserts:</text>
+      <text x="26" y="66" font-family="monospace" font-size="9.5" fill="#38bdf8">INSERT INTO products (</text>
+      <text x="36" y="82" font-family="monospace" font-size="9.5" fill="#38bdf8">  farmer_id, name, category, description, price, unit,</text>
+      <text x="36" y="98" font-family="monospace" font-size="9.5" fill="#38bdf8">  stock_available, min_order_qty, image_url, is_organic, harvest_date</text>
+      <text x="26" y="114" font-family="monospace" font-size="9.5" fill="#38bdf8">) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)</text>
+      <text x="26" y="130" font-family="monospace" font-size="9.5" fill="#10b981">RETURNING id, name, price, stock_available;</text>
+      <text x="350" y="24" class="box-code">INSERT products</text>
+    </g>
+    <path d="M 265, 355 L 265, 380" class="flow-arrow" />
+
+    <!-- Step 3 -->
+    <g transform="translate(25, 380)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">3. Atomic Stock Update (PUT /products/:id)</text>
+      <text x="16" y="44" class="box-desc">Executes parameterised update enforcing ownership:</text>
+      <text x="26" y="66" font-family="monospace" font-size="9.5" fill="#f8fafc">UPDATE products SET stock_available=$1, price=$2, updated_at=NOW()</text>
+      <text x="26" y="82" font-family="monospace" font-size="9.5" fill="#10b981">WHERE id=$3 AND farmer_id=$4 RETURNING id;</text>
+      <text x="16" y="102" class="box-desc">Guarantees farmer can only update their own crop inventory</text>
+      <text x="350" y="24" class="box-code">Ownership Guard</text>
+    </g>
+    <path d="M 265, 500 L 265, 525" class="flow-arrow" />
+
+    <!-- Step 4 -->
+    <g transform="translate(25, 525)">
+      <rect width="480" height="100" class="box" />
+      <text x="16" y="24" class="box-title">4. Immediate Catalog Reflection</text>
+      <text x="16" y="44" class="box-desc">• PostgreSQL composite indexes update in real-time</text>
+      <text x="16" y="62" class="box-desc">• Nearby consumers querying GET /api/v1/products immediately see fresh crop</text>
+      <text x="16" y="80" class="box-desc">• Zero caching delay; fresh harvests visible within milliseconds</text>
+      <text x="350" y="24" class="box-code">Live Catalog</text>
+    </g>
+  </g>
+
+</svg>

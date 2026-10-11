@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .pipe-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .pipe-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #f59e0b; letter-spacing: 0.05em; }
+      .box { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .box-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .box-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #fbbf24; }
+      .arrow { stroke: #f59e0b; stroke-width: 2; fill: none; marker-end: url(#arrow-amber); }
+    </style>
+    <marker id="arrow-amber" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Title -->
+  <text x="45" y="45" class="title">Farm Connect — Workflow: Crop Image Upload &amp; Cloudinary CDN</text>
+  <text x="45" y="68" class="subtitle">Complete trace of multipart image file selection, Multer memory buffer, Cloudinary streaming, and Next.js optimization</text>
+
+  <!-- ================= LEFT: FRONTEND TO BACKEND ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="660" class="pipe-card" />
+    <text x="25" y="32" class="pipe-title">1. UPLOAD DISPATCH &amp; MULTER BUFFER</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">1. Farmer Photo Selection (Frontend)</text>
+      <text x="16" y="44" class="box-desc">• Farmer clicks 'Upload Photo' on Add Product Modal</text>
+      <text x="16" y="62" class="box-desc">• HTML &lt;input type="file" accept="image/*" /&gt;</text>
+      <text x="16" y="80" class="box-desc">• Client validates file type (JPEG / PNG / WebP) and size (&lt; 5MB)</text>
+      <text x="16" y="98" class="box-desc">• Packages into FormData: formData.append('image', file)</text>
+      <text x="350" y="24" class="box-code">FormData</text>
+    </g>
+    <path d="M 265, 160 L 265, 185" class="arrow" />
+
+    <!-- Step 2 -->
+    <g transform="translate(25, 185)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">2. Multipart HTTP Transmission</text>
+      <text x="16" y="44" class="box-desc">• Dispatches POST /api/v1/upload via Axios client</text>
+      <text x="16" y="62" class="box-desc">• Header: 'Content-Type': 'multipart/form-data'</text>
+      <text x="16" y="80" class="box-desc">• Bearer JWT authorization token attached automatically</text>
+      <text x="16" y="98" class="box-desc">• Transmitted securely to Express API gateway over TLS</text>
+      <text x="350" y="24" class="box-code">POST /upload</text>
+    </g>
+    <path d="M 265, 295 L 265, 320" class="arrow" />
+
+    <!-- Step 3 -->
+    <g transform="translate(25, 320)">
+      <rect width="480" height="130" class="box" />
+      <text x="16" y="24" class="box-title">3. Multer In-Memory Buffer Parsing (Backend)</text>
+      <text x="16" y="44" class="box-desc">• Multer middleware intercepts request: multer({ storage: multer.memoryStorage() })</text>
+      <text x="16" y="62" class="box-desc">• Stores file buffer in RAM without writing to ephemeral disk</text>
+      <text x="16" y="80" class="box-desc">• Prevents disk leak on containerized hosting (Render)</text>
+      <text x="16" y="98" class="box-desc">• req.file.buffer accessible in controller</text>
+      <text x="350" y="24" class="box-code">multer.memoryStorage()</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: CLOUDINARY & OPTIMIZATION ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="660" class="pipe-card" />
+    <text x="25" y="32" class="pipe-title">2. CLOUDINARY STREAMING &amp; NEXT.JS DELIVERY</text>
+
+    <!-- Step 4 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="140" class="box" />
+      <text x="16" y="24" class="box-title">4. Cloudinary Stream Pipeline</text>
+      <text x="16" y="44" class="box-desc">upload.routes.js streams memory buffer to Cloudinary CDN:</text>
+      <text x="26" y="66" font-family="monospace" font-size="9.5" fill="#38bdf8">cloudinary.uploader.upload_stream({</text>
+      <text x="36" y="82" font-family="monospace" font-size="9.5" fill="#38bdf8">  folder: 'farm-connect/products', format: 'webp'</text>
+      <text x="26" y="98" font-family="monospace" font-size="9.5" fill="#38bdf8">}, (err, result) =&gt; { ... }).end(req.file.buffer);</text>
+      <text x="16" y="122" class="box-desc">• Converts image to modern WebP format; generates secure_url</text>
+      <text x="350" y="24" class="box-code">upload_stream()</text>
+    </g>
+    <path d="M 265, 190 L 265, 215" class="arrow" />
+
+    <!-- Step 5 -->
+    <g transform="translate(25, 215)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">5. Database URL Persistence</text>
+      <text x="16" y="44" class="box-desc">• Returns { success: true, url: result.secure_url }</text>
+      <text x="16" y="62" class="box-desc">• When farmer submits product form, image_url is stored in PostgreSQL:</text>
+      <text x="26" y="80" font-family="monospace" font-size="9.5" fill="#10b981">INSERT INTO products (image_url, ...) VALUES ('https://res.cloudinary...', ...)</text>
+      <text x="350" y="24" class="box-code">products.image_url</text>
+    </g>
+    <path d="M 265, 325 L 265, 350" class="arrow" />
+
+    <!-- Step 6 -->
+    <g transform="translate(25, 350)">
+      <rect width="480" height="140" class="box" />
+      <text x="16" y="24" class="box-title">6. Next.js Image Component &amp; Bulletproof Fallbacks</text>
+      <text x="16" y="44" class="box-desc">• next.config.ts configures remotePatterns for res.cloudinary.com</text>
+      <text x="16" y="62" class="box-desc">• ProductCard renders image using Next.js &lt;Image&gt; optimization</text>
+      <text x="16" y="80" class="box-desc">• Deterministic Fallback: If image fails to load (onError), hashes product id</text>
+      <text x="26" y="98" font-family="monospace" font-size="9.5" fill="#fbbf24">onError={() =&gt; setImgSrc('/images/fallback-crop.jpg')}</text>
+      <text x="16" y="120" class="box-desc">• Prevents infinite error loops and maintains pristine UI appearance</text>
+      <text x="350" y="24" class="box-code">next.config.ts</text>
+    </g>
+  </g>
+
+</svg>

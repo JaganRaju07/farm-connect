@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .flow-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .flow-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .box { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .box-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .box-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #10b981; }
+      .flow-arrow { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Workflow: Notifications &amp; Toast Alert Pipeline</text>
+  <text x="45" y="68" class="subtitle">Complete notification pipeline covering client-side ToastContext, SMS dispatch triggers, and backend alert polling</text>
+
+  <!-- ================= LEFT: CLIENT TOAST DISPATCH QUEUE ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="660" class="flow-card" />
+    <text x="25" y="32" class="flow-title">1. CLIENT-SIDE TOAST DISPATCH (TOASTCONTEXT.TSX)</text>
+
+    <!-- Block 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">1. UI Action Trigger Event</text>
+      <text x="16" y="44" class="box-desc">• User removes item from cart: removeFromCart()</text>
+      <text x="16" y="62" class="box-desc">• User logs in or enters invalid OTP</text>
+      <text x="16" y="80" class="box-desc">• Axios interceptor catches HTTP 401 session expiry</text>
+      <text x="16" y="98" class="box-desc">• Calls useToast().success() / error() / warning()</text>
+      <text x="350" y="24" class="box-code">ToastContext.tsx</text>
+    </g>
+    <path d="M 265, 170 L 265, 195" class="flow-arrow" />
+
+    <!-- Block 2 -->
+    <g transform="translate(25, 195)">
+      <rect width="480" height="135" class="box" />
+      <text x="16" y="24" class="box-title">2. StrictMode Deduplication &amp; Timer Lifecycle</text>
+      <text x="16" y="44" class="box-desc">• React 18 / 19 StrictMode runs state updaters twice in dev</text>
+      <text x="16" y="62" class="box-desc">• ToastContext tracks active toast IDs, preventing double-toasts</text>
+      <text x="16" y="80" class="box-desc">• Sets auto-dismissal timer: setTimeout(removeToast, 4000ms)</text>
+      <text x="16" y="98" class="box-desc">• Manual close button allows instant user dismissal</text>
+      <text x="16" y="116" class="box-desc">• AnimatePresence / CSS handles slide-in &amp; fade-out transitions</text>
+      <text x="350" y="24" class="box-code">Deduplication</text>
+    </g>
+    <path d="M 265, 330 L 265, 355" class="flow-arrow" />
+
+    <!-- Block 3 -->
+    <g transform="translate(25, 355)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">3. Viewport Overlay Mount</text>
+      <text x="16" y="44" class="box-desc">• Fixed viewport positioning (bottom-right: fixed bottom-5 right-5 z-50)</text>
+      <text x="16" y="62" class="box-desc">• Color-coded by alert severity:</text>
+      <text x="26" y="80" class="box-desc">Success: Emerald (#10b981) | Error: Rose (#ef4444) | Warning: Amber (#f59e0b)</text>
+      <text x="16" y="98" class="box-desc">• Accessible ARIA live region (aria-live="polite") for screen readers</text>
+      <text x="350" y="24" class="box-code">Overlay Viewport</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: BACKEND NOTIFICATION ENDPOINTS ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="660" class="flow-card" />
+    <text x="25" y="32" class="flow-title">2. BACKEND NOTIFICATION PIPELINE</text>
+
+    <!-- Block 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">1. Order Event Notification Trigger</text>
+      <text x="16" y="44" class="box-desc">• When consumer places order: POST /api/v1/consumers/orders</text>
+      <text x="16" y="62" class="box-desc">• Backend emits notification record for farmer_id in database</text>
+      <text x="16" y="80" class="box-desc">• When farmer updates status to 'confirmed': Notification created for consumer</text>
+      <text x="16" y="98" class="box-desc">• Type: 'ORDER_PLACED', 'ORDER_ACCEPTED', 'ORDER_DELIVERED'</text>
+      <text x="350" y="24" class="box-code">Order Trigger</text>
+    </g>
+    <path d="M 265, 170 L 265, 195" class="flow-arrow" />
+
+    <!-- Block 2 -->
+    <g transform="translate(25, 195)">
+      <rect width="480" height="135" class="box" />
+      <text x="16" y="24" class="box-title">2. Notification Endpoints (notification.routes.js)</text>
+      <text x="16" y="44" class="box-desc">• GET /api/v1/notifications : Fetches unread alert queue for authenticated user</text>
+      <text x="16" y="62" class="box-desc">• PATCH /api/v1/notifications/:id/read : Marks alert as acknowledged</text>
+      <text x="16" y="80" class="box-desc">• Query uses parameterised SQL: WHERE user_id=$1 AND is_read=FALSE</text>
+      <text x="16" y="98" class="box-desc">• Returns JSON: { success: true, count: N, data: notifications }</text>
+      <text x="350" y="24" class="box-code">notification.routes.js</text>
+    </g>
+    <path d="M 265, 330 L 265, 355" class="flow-arrow" />
+
+    <!-- Block 3 -->
+    <g transform="translate(25, 355)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">3. SMS Gateway Event Trigger (Fast2SMS)</text>
+      <text x="16" y="44" class="box-desc">• Critical operational alerts (e.g. OTP verification codes)</text>
+      <text x="16" y="62" class="box-desc">• Calls Fast2SMS Bulk V2 REST gateway asynchronously</text>
+      <text x="16" y="80" class="box-desc">• Non-blocking execution prevents holding up HTTP response cycle</text>
+      <text x="16" y="98" class="box-desc">• Delivery confirmed via telecom carrier</text>
+      <text x="350" y="24" class="box-code">Fast2SMS Bridge</text>
+    </g>
+  </g>
+
+</svg>

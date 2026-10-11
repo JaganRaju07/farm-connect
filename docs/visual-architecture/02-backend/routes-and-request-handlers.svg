@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1250 820" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .route-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .route-header { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .row { fill: #1e293b; stroke: #334155; stroke-width: 1; rx: 6px; }
+      .method-post { fill: #f59e0b; rx: 4px; }
+      .method-get { fill: #10b981; rx: 4px; }
+      .method-put { fill: #3b82f6; rx: 4px; }
+      .method-del { fill: #ef4444; rx: 4px; }
+      .method-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 800; fill: #ffffff; }
+      .path-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 11px; font-weight: 700; fill: #f8fafc; }
+      .handler-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .db-tag { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 9.5px; font-weight: 600; fill: #34d399; }
+    </style>
+  </defs>
+
+  <rect width="1250" height="820" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Backend Routes &amp; Request Handler Matrix</text>
+  <text x="45" y="68" class="subtitle">Complete catalog of REST API endpoints, HTTP methods, controller handlers, and target database operations</text>
+
+  <!-- ================= SECTION 1: AUTHENTICATION ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="570" height="320" class="route-card" />
+    <text x="20" y="30" class="route-header">1. AUTHENTICATION MODULE (src/routes/authroutes.js)</text>
+
+    <!-- POST /send-otp -->
+    <g transform="translate(18, 45)">
+      <rect width="534" height="65" class="row" />
+      <rect x="12" y="14" width="45" height="18" class="method-post" />
+      <text x="18" y="27" class="method-text">POST</text>
+      <text x="65" y="27" class="path-text">/api/v1/auth/send-otp</text>
+      <text x="350" y="27" class="db-tag">TABLE: otp_store</text>
+      <text x="12" y="48" class="handler-text">Handler: authController.sendOTP | Body: { phone, userType, action }</text>
+      <text x="330" y="48" class="handler-text">Reuses unexpired code; Fast2SMS API call</text>
+    </g>
+
+    <!-- POST /verify-otp -->
+    <g transform="translate(18, 120)">
+      <rect width="534" height="75" class="row" />
+      <rect x="12" y="14" width="45" height="18" class="method-post" />
+      <text x="18" y="27" class="method-text">POST</text>
+      <text x="65" y="27" class="path-text">/api/v1/auth/verify-otp</text>
+      <text x="350" y="27" class="db-tag">TABLE: farmers / consumers</text>
+      <text x="12" y="48" class="handler-text">Handler: authController.verifyOTP | Body: { phone, otp, userType, ... }</text>
+      <text x="12" y="64" class="handler-text">Deletes OTP from otp_store; returns JWT session payload with user record</text>
+    </g>
+
+    <!-- GET /demo-otp -->
+    <g transform="translate(18, 205)">
+      <rect width="534" height="65" class="row" />
+      <rect x="12" y="14" width="38" height="18" class="method-get" />
+      <text x="18" y="27" class="method-text">GET</text>
+      <text x="58" y="27" class="path-text">/api/v1/auth/demo-otp/:phone</text>
+      <text x="350" y="27" class="db-tag">HEADER: x-demo-secret</text>
+      <text x="12" y="48" class="handler-text">Handler: authController.getDemoOTP | Protected developer test inspection</text>
+      <text x="330" y="48" class="handler-text">Active only when OTP_DEMO_MODE=true</text>
+    </g>
+  </g>
+
+  <!-- ================= SECTION 2: PRODUCTS ================= -->
+  <g transform="translate(635, 95)">
+    <rect width="570" height="320" class="route-card" />
+    <text x="20" y="30" class="route-header">2. PRODUCT CATALOG (src/routes/productroutes.js)</text>
+
+    <!-- GET /search -->
+    <g transform="translate(18, 45)">
+      <rect width="534" height="75" class="row" />
+      <rect x="12" y="14" width="38" height="18" class="method-get" />
+      <text x="18" y="27" class="method-text">GET</text>
+      <text x="58" y="27" class="path-text">/api/v1/products/search?lat=&amp;lon=&amp;radius=</text>
+      <text x="340" y="27" class="db-tag">FN: calculate_distance_km</text>
+      <text x="12" y="48" class="handler-text">Handler: productController.searchNearbyProducts | Query: lat, lon, radius</text>
+      <text x="12" y="64" class="handler-text">Joins products &amp; farmers; filters verified farmers; sorts by distance ASC</text>
+    </g>
+
+    <!-- GET /category/:categoryName -->
+    <g transform="translate(18, 130)">
+      <rect width="534" height="65" class="row" />
+      <rect x="12" y="14" width="38" height="18" class="method-get" />
+      <text x="18" y="27" class="method-text">GET</text>
+      <text x="58" y="27" class="path-text">/api/v1/products/category/:categoryName</text>
+      <text x="350" y="27" class="db-tag">TABLE: products JOIN farmers</text>
+      <text x="12" y="48" class="handler-text">Handler: productController.getProductsByCategory | Param: categoryName</text>
+      <text x="330" y="48" class="handler-text">Filters is_active=true &amp; is_verified=true</text>
+    </g>
+
+    <!-- GET / (marketplace) -->
+    <g transform="translate(18, 205)">
+      <rect width="534" height="65" class="row" />
+      <rect x="12" y="14" width="38" height="18" class="method-get" />
+      <text x="18" y="27" class="method-text">GET</text>
+      <text x="58" y="27" class="path-text">/api/v1/products?search=&amp;category=&amp;isOrganic=</text>
+      <text x="350" y="27" class="db-tag">UNIFIED QUERY PARAMS</text>
+      <text x="12" y="48" class="handler-text">Unified catalog endpoint supporting dynamic keyword filtering and price ranges</text>
+    </g>
+  </g>
+
+  <!-- ================= SECTION 3: FARMERS ================= -->
+  <g transform="translate(45, 435)">
+    <rect width="570" height="345" class="route-card" />
+    <text x="20" y="30" class="route-header">3. CULTIVATORS &amp; DASHBOARD (src/routes/farmerroutes.js)</text>
+
+    <!-- POST /register -->
+    <g transform="translate(18, 42)">
+      <rect width="534" height="52" class="row" />
+      <rect x="12" y="10" width="45" height="18" class="method-post" />
+      <text x="18" y="23" class="method-text">POST</text>
+      <text x="65" y="23" class="path-text">/api/v1/farmers/register</text>
+      <text x="350" y="23" class="db-tag">TABLE: farmers</text>
+      <text x="12" y="42" class="handler-text">Handler: farmerController.registerFarmer | Body: { name, phone, lat, lon, city }</text>
+    </g>
+
+    <!-- GET /dashboard -->
+    <g transform="translate(18, 102)">
+      <rect width="534" height="52" class="row" />
+      <rect x="12" y="10" width="38" height="18" class="method-get" />
+      <text x="18" y="23" class="method-text">GET</text>
+      <text x="58" y="23" class="path-text">/api/v1/farmers/dashboard</text>
+      <text x="350" y="23" class="db-tag">METRICS AGGREGATION</text>
+      <text x="12" y="42" class="handler-text">Handler: farmerController.getDashboard | Aggregates sales, active listings, alerts</text>
+    </g>
+
+    <!-- CRUD /products -->
+    <g transform="translate(18, 162)">
+      <rect width="534" height="52" class="row" />
+      <rect x="12" y="10" width="45" height="18" class="method-post" />
+      <text x="18" y="23" class="method-text">POST</text>
+      <text x="65" y="23" class="path-text">/api/v1/farmers/products</text>
+      <text x="350" y="23" class="db-tag">TABLE: products</text>
+      <text x="12" y="42" class="handler-text">Handler: farmerController.addProduct | Adds crop listing with Cloudinary image</text>
+    </g>
+
+    <!-- GET /products & /orders -->
+    <g transform="translate(18, 222)">
+      <rect width="534" height="52" class="row" />
+      <rect x="12" y="10" width="38" height="18" class="method-get" />
+      <text x="18" y="23" class="method-text">GET</text>
+      <text x="58" y="23" class="path-text">/api/v1/farmers/orders</text>
+      <text x="350" y="23" class="db-tag">TABLE: orders</text>
+      <text x="12" y="42" class="handler-text">Handler: farmerController.getOrders | Retrieves incoming customer orders</text>
+    </g>
+
+    <!-- PUT & DEL /products/:id -->
+    <g transform="translate(18, 282)">
+      <rect width="534" height="52" class="row" />
+      <rect x="12" y="10" width="38" height="18" class="method-put" />
+      <text x="18" y="23" class="method-text">PUT</text>
+      <text x="58" y="23" class="path-text">/api/v1/farmers/products/:id</text>
+      <text x="350" y="23" class="db-tag">TABLE: products (UPDATE/DEL)</text>
+      <text x="12" y="42" class="handler-text">Handlers: farmerController.updateProduct &amp; farmerController.deleteProduct</text>
+    </g>
+  </g>
+
+  <!-- ================= SECTION 4: CONSUMERS & ORDERS ================= -->
+  <g transform="translate(635, 435)">
+    <rect width="570" height="345" class="route-card" />
+    <text x="20" y="30" class="route-header">4. CONSUMERS &amp; CHECKOUT (src/routes/consumerroutes.js)</text>
+
+    <!-- POST /register -->
+    <g transform="translate(18, 42)">
+      <rect width="534" height="60" class="row" />
+      <rect x="12" y="12" width="45" height="18" class="method-post" />
+      <text x="18" y="25" class="method-text">POST</text>
+      <text x="65" y="25" class="path-text">/api/v1/consumers/register</text>
+      <text x="350" y="25" class="db-tag">TABLE: consumers</text>
+      <text x="12" y="46" class="handler-text">Handler: consumerController.registerConsumer | Inserts name, phone, coords, address</text>
+    </g>
+
+    <!-- POST /orders -->
+    <g transform="translate(18, 112)">
+      <rect width="534" height="95" class="row" />
+      <rect x="12" y="12" width="45" height="18" class="method-post" />
+      <text x="18" y="25" class="method-text">POST</text>
+      <text x="65" y="25" class="path-text">/api/v1/consumers/orders (Place Order)</text>
+      <text x="350" y="25" class="db-tag">TABLE: orders</text>
+      <text x="12" y="46" class="handler-text">Handler: consumerController.placeOrder | Body: { consumer_id, farmer_id, items, ... }</text>
+      <text x="12" y="64" class="handler-text">• Checks consumer &amp; farmer coordinates; computes calculate_distance_km()</text>
+      <text x="12" y="82" class="handler-text">• Generates order_number "FC${Date.now()}"; saves JSONB items snapshot</text>
+    </g>
+
+    <!-- GET /orders -->
+    <g transform="translate(18, 217)">
+      <rect width="534" height="60" class="row" />
+      <rect x="12" y="12" width="38" height="18" class="method-get" />
+      <text x="18" y="25" class="method-text">GET</text>
+      <text x="58" y="25" class="path-text">/api/v1/consumers/orders?consumer_id=:id</text>
+      <text x="350" y="25" class="db-tag">TABLE: orders</text>
+      <text x="12" y="46" class="handler-text">Handler: consumerController.getOrderHistory | Chronological consumer order list</text>
+    </g>
+  </g>
+
+</svg>

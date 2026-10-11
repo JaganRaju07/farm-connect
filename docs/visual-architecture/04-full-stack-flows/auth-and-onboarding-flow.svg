@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .actor-line { stroke: #334155; stroke-width: 1.5; stroke-dasharray: 4,4; }
+      .actor-box { fill: #1e293b; stroke: #38bdf8; stroke-width: 1.5; rx: 8px; }
+      .actor-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .actor-sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle; }
+      .msg-line { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+      .msg-ret { stroke: #38bdf8; stroke-width: 2; stroke-dasharray: 4,4; fill: none; marker-end: url(#arrow-cyan); }
+      .msg-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 600; fill: #f1f5f9; }
+      .msg-detail { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 9.5px; fill: #94a3b8; }
+      .num-circ { fill: #064e3b; }
+      .num-txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; font-weight: 800; fill: #34d399; text-anchor: middle; }
+      .note-box { fill: #1e293b; stroke: #f59e0b; stroke-width: 1; rx: 6px; }
+      .note-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; fill: #fbbf24; }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="850" class="bg" />
+
+  <!-- Title -->
+  <text x="45" y="45" class="title">Farm Connect — Auth &amp; Progressive Onboarding Full-Stack Flow</text>
+  <text x="45" y="68" class="subtitle">End-to-end trace from mobile number input to Fast2SMS gateway, otp_store table, JWT issuance, and localStorage</text>
+
+  <!-- Actors Header -->
+  <!-- Actor 1: User -->
+  <g transform="translate(100, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">User (Client)</text>
+    <text x="0" y="40" class="actor-sub">Browser / Mobile</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 2: Frontend Context -->
+  <g transform="translate(350, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">Next.js UI &amp; Auth</text>
+    <text x="0" y="40" class="actor-sub">AuthContext.tsx</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 3: Express Backend -->
+  <g transform="translate(600, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">Express API</text>
+    <text x="0" y="40" class="actor-sub">authController.js</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 4: PostgreSQL -->
+  <g transform="translate(850, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">Supabase Database</text>
+    <text x="0" y="40" class="actor-sub">otp_store / users</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 5: Fast2SMS -->
+  <g transform="translate(1080, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">Fast2SMS Gateway</text>
+    <text x="0" y="40" class="actor-sub">Bulk V2 SMS API</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- ================= FLOW STEPS ================= -->
+  <!-- Step 1 -->
+  <circle cx="90" cy="180" r="10" class="num-circ" />
+  <text x="90" y="184" class="num-txt">1</text>
+  <path d="M 100, 180 L 350, 180" class="msg-line" />
+  <text x="120" y="174" class="msg-text">Enters Mobile Phone &amp; Selects Role (Farmer / Consumer)</text>
+
+  <!-- Step 2 -->
+  <circle cx="340" cy="225" r="10" class="num-circ" />
+  <text x="340" y="229" class="num-txt">2</text>
+  <path d="M 350, 225 L 600, 225" class="msg-line" />
+  <text x="370" y="217" class="msg-text">POST /api/v1/auth/send-otp</text>
+  <text x="370" y="235" class="msg-detail">{ phone: "9876543210", userType: "farmer", action: "login" }</text>
+
+  <!-- Step 3 -->
+  <circle cx="590" cy="275" r="10" class="num-circ" />
+  <text x="590" y="279" class="num-txt">3</text>
+  <path d="M 600, 275 L 850, 275" class="msg-line" />
+  <text x="620" y="267" class="msg-text">Query User Existence &amp; Active OTP Check</text>
+  <text x="620" y="285" class="msg-detail">SELECT id FROM farmers WHERE phone=$1; SELECT otp_code, expires_at...</text>
+
+  <!-- Note on reuse -->
+  <g transform="translate(620, 305)">
+    <rect width="210" height="35" class="note-box" />
+    <text x="10" y="16" class="note-text">If unexpired OTP exists (&gt;4m remaining):</text>
+    <text x="10" y="28" class="note-text">Reuses existing code to prevent spam</text>
+  </g>
+
+  <!-- Step 4 -->
+  <circle cx="590" cy="370" r="10" class="num-circ" />
+  <text x="590" y="374" class="num-txt">4</text>
+  <path d="M 600, 370 L 850, 370" class="msg-line" />
+  <text x="620" y="362" class="msg-text">Upsert OTP with 5-minute Expiry</text>
+  <text x="620" y="380" class="msg-detail">INSERT INTO otp_store ... ON CONFLICT (phone) DO UPDATE ...</text>
+
+  <!-- Step 5 -->
+  <circle cx="590" cy="425" r="10" class="num-circ" />
+  <text x="590" y="429" class="num-txt">5</text>
+  <path d="M 600, 425 L 1080, 425" class="msg-line" />
+  <text x="620" y="417" class="msg-text">Trigger SMS Transmission (smsservice.js)</text>
+  <text x="620" y="435" class="msg-detail">GET https://www.fast2sms.com/dev/bulkV2 (or log if OTP_DEMO_MODE=true)</text>
+
+  <!-- Step 6 -->
+  <path d="M 1080, 465 L 600, 465" class="msg-ret" />
+  <text x="750" y="457" class="msg-text">200 OK (SMS Dispatched to Carrier)</text>
+
+  <path d="M 600, 490 L 350, 490" class="msg-ret" />
+  <text x="400" y="482" class="msg-text">{ success: true, message: "OTP sent successfully" }</text>
+
+  <!-- Step 7 -->
+  <circle cx="90" cy="535" r="10" class="num-circ" />
+  <text x="90" y="539" class="num-txt">6</text>
+  <path d="M 100, 535 L 350, 535" class="msg-line" />
+  <text x="120" y="527" class="msg-text">User Receives SMS &amp; Inputs 6-digit Code</text>
+
+  <!-- Step 8 -->
+  <circle cx="340" cy="575" r="10" class="num-circ" />
+  <text x="340" y="579" class="num-txt">7</text>
+  <path d="M 350, 575 L 600, 575" class="msg-line" />
+  <text x="370" y="567" class="msg-text">POST /api/v1/auth/verify-otp</text>
+  <text x="370" y="585" class="msg-detail">{ phone: "...", otp: "482910", userType: "farmer" }</text>
+
+  <!-- Step 9 -->
+  <circle cx="590" cy="625" r="10" class="num-circ" />
+  <text x="590" y="629" class="num-txt">8</text>
+  <path d="M 600, 625 L 850, 625" class="msg-line" />
+  <text x="620" y="617" class="msg-text">Validate Match, Purge OTP, Sign JWT</text>
+  <text x="620" y="635" class="msg-detail">DELETE FROM otp_store; jwt.sign({ userId, phone, role })</text>
+
+  <!-- Step 10 -->
+  <path d="M 600, 670 L 350, 670" class="msg-ret" />
+  <text x="390" y="662" class="msg-text">{ success: true, data: { token, user } }</text>
+
+  <!-- Step 11 -->
+  <circle cx="340" cy="710" r="10" class="num-circ" />
+  <text x="340" y="714" class="num-txt">9</text>
+  <path d="M 350, 710 L 100, 710" class="msg-ret" />
+  <text x="130" y="702" class="msg-text">Stores tokens in localStorage &amp; redirects to /marketplace or /farmer/dashboard</text>
+
+</svg>

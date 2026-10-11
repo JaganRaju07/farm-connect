@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .flow-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .flow-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .box { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .box-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .box-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #10b981; }
+      .flow-arrow { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Workflow: Nearby Farmer Discovery &amp; Taluk Resolution</text>
+  <text x="45" y="68" class="subtitle">Complete trace of consumer GPS acquisition, taluk location mapping, Haversine nearby query, and editorial cultivator showcase</text>
+
+  <!-- ================= LEFT: HOMEPAGE RESOLUTION ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="660" class="flow-card" />
+    <text x="25" y="32" class="flow-title">1. CLIENT HOMEPAGE &amp; TALUK DETECTION</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">1. Geolocation Hook Ingestion (src/app/page.tsx)</text>
+      <text x="16" y="44" class="box-desc">• Consumer accesses Homepage /</text>
+      <text x="16" y="62" class="box-desc">• useLocation() hook provides { latitude: 12.9716, longitude: 77.5946 }</text>
+      <text x="16" y="80" class="box-desc">• useEffect triggers fetchFarmers() when coordinates become available</text>
+      <text x="16" y="98" class="box-desc">• Dispatches GET /api/v1/farmers/nearby?latitude=...&amp;longitude=...</text>
+      <text x="350" y="24" class="box-code">page.tsx #L30-63</text>
+    </g>
+    <path d="M 265, 160 L 265, 185" class="flow-arrow" />
+
+    <!-- Step 2 -->
+    <g transform="translate(25, 185)">
+      <rect width="480" height="130" class="box" />
+      <text x="16" y="24" class="box-title">2. Taluk Name &amp; Distance Metric Resolution</text>
+      <text x="16" y="44" class="box-desc">• Extracts city of closest registered farm: setUserTaluk(farmers[0].city)</text>
+      <text x="16" y="62" class="box-desc">• Sets closest distance metric: setClosestDistance(farmers[0].distance_km)</text>
+      <text x="16" y="80" class="box-desc">• Passes taluk string and nearby farm count to child editorial components</text>
+      <text x="16" y="98" class="box-desc">• If GPS unavailable: Gracefully defaults to Karnataka regional showcase</text>
+      <text x="350" y="24" class="box-code">Taluk Resolution</text>
+    </g>
+    <path d="M 265, 315 L 265, 340" class="flow-arrow" />
+
+    <!-- Step 3 -->
+    <g transform="translate(25, 340)">
+      <rect width="480" height="130" class="box" />
+      <text x="16" y="24" class="box-title">3. Modular Editorial Components Rendered</text>
+      <text x="16" y="44" class="box-desc">• HeroNarrative: "Connecting cultivators with households in {userTaluk}"</text>
+      <text x="16" y="62" class="box-desc">• WhatsGrowingAroundYou: Radial harvest radar (closest farm: 3.2km)</text>
+      <text x="16" y="80" class="box-desc">• FeaturedFarmersEditorial: Cultivator profiles with verified badges</text>
+      <text x="16" y="98" class="box-desc">• LocalFarmNetwork: Proximity tier breakdown (5km, 15km, 30km)</text>
+      <text x="350" y="24" class="box-code">src/components/home/</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: BACKEND SPATIAL LOGIC ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="660" class="flow-card" />
+    <text x="25" y="32" class="flow-title">2. BACKEND SPATIAL RADIUS CALCULATION</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">1. Endpoint Ingestion (GET /api/v1/farmers/nearby)</text>
+      <text x="16" y="44" class="box-desc">• Handler in farmerroutes.js / farmerController</text>
+      <text x="16" y="62" class="box-desc">• Validates latitude and longitude query parameters</text>
+      <text x="16" y="80" class="box-desc">• Default discovery radius: 50km</text>
+      <text x="350" y="24" class="box-code">farmerroutes.js</text>
+    </g>
+    <path d="M 265, 160 L 265, 185" class="flow-arrow" />
+
+    <!-- Step 2 -->
+    <g transform="translate(25, 185)">
+      <rect width="480" height="150" class="box" />
+      <text x="16" y="24" class="box-title">2. PostgreSQL Spatial Radius Query</text>
+      <text x="16" y="44" class="box-desc">Executes parameterised spatial selection:</text>
+      <text x="26" y="66" font-family="monospace" font-size="9.5" fill="#38bdf8">SELECT f.id, f.name, f.city, f.is_verified, f.rating, f.latitude, f.longitude,</text>
+      <text x="26" y="82" font-family="monospace" font-size="9.5" fill="#10b981">  calculate_distance_km($1, $2, f.latitude, f.longitude) AS distance_km</text>
+      <text x="26" y="98" font-family="monospace" font-size="9.5" fill="#f8fafc">FROM farmers f WHERE f.is_verified = TRUE</text>
+      <text x="26" y="114" font-family="monospace" font-size="9.5" fill="#fbbf24">  AND calculate_distance_km($1, $2, f.latitude, f.longitude) &lt;= 50</text>
+      <text x="26" y="130" font-family="monospace" font-size="9.5" fill="#f8fafc">ORDER BY distance_km ASC LIMIT 10;</text>
+      <text x="350" y="24" class="box-code">SQL Execution</text>
+    </g>
+    <path d="M 265, 335 L 265, 360" class="flow-arrow" />
+
+    <!-- Step 3 -->
+    <g transform="translate(25, 360)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">3. Response Serialization</text>
+      <text x="16" y="44" class="box-desc">• Serializes closest verified cultivators into JSON</text>
+      <text x="16" y="62" class="box-desc">• Format: { success: true, data: { farmers: rows } }</text>
+      <text x="16" y="80" class="box-desc">• Distance formatted to 1 decimal place (e.g. 3.2 km)</text>
+      <text x="16" y="98" class="box-desc">• Sent back to frontend within &lt; 50ms latency</text>
+      <text x="350" y="24" class="box-code">HTTP 200 OK</text>
+    </g>
+  </g>
+
+</svg>

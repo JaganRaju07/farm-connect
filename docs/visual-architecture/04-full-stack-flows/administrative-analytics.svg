@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .flow-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .flow-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #818cf8; letter-spacing: 0.05em; }
+      .box { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .box-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .box-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #a5b4fc; }
+      .flow-arrow { stroke: #818cf8; stroke-width: 2; fill: none; marker-end: url(#arrow-indigo); }
+    </style>
+    <marker id="arrow-indigo" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#818cf8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Workflow: Administrative Analytics &amp; Platform Telemetry</text>
+  <text x="45" y="68" class="subtitle">Complete trace of platform metric aggregation, cultivator verification, Recharts visualization, and admin oversight</text>
+
+  <!-- ================= LEFT: ADMIN DASHBOARD UI ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="660" class="flow-card" />
+    <text x="25" y="32" class="flow-title">1. ADMIN PORTAL (SRC/APP/ADMIN/DASHBOARD)</text>
+
+    <!-- Block 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">1. Role Guard &amp; Session Ingestion</text>
+      <text x="16" y="44" class="box-desc">• Admin accesses /admin/dashboard</text>
+      <text x="16" y="62" class="box-desc">• ProtectedRoute(requiredRole="admin") validates active JWT role claim</text>
+      <text x="16" y="80" class="box-desc">• If unauthorized: Instantly redirects to /login with permission alert</text>
+      <text x="16" y="98" class="box-desc">• Fires GET /api/v1/admin/analytics with Bearer token</text>
+      <text x="350" y="24" class="box-code">admin.routes.js</text>
+    </g>
+    <path d="M 265, 160 L 265, 185" class="flow-arrow" />
+
+    <!-- Block 2 -->
+    <g transform="translate(25, 185)">
+      <rect width="480" height="135" class="box" />
+      <text x="16" y="24" class="box-title">2. Recharts Data Visualization Display</text>
+      <text x="16" y="44" class="box-desc">• Monthly GMV Area Chart: Revenue trends across Karnataka taluks</text>
+      <text x="16" y="62" class="box-desc">• Active Cultivators vs Consumers metric cards</text>
+      <text x="16" y="80" class="box-desc">• Average delivery radius gauge (typically 3.8km - 14.2km)</text>
+      <text x="16" y="98" class="box-desc">• Order fulfillment rate (Pending vs Delivered)</text>
+      <text x="16" y="116" class="box-desc">• Recharts 2.12.0 responsive SVG container</text>
+      <text x="350" y="24" class="box-code">Recharts 2.12.0</text>
+    </g>
+    <path d="M 265, 320 L 265, 345" class="flow-arrow" />
+
+    <!-- Block 3 -->
+    <g transform="translate(25, 345)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">3. Cultivator Verification Management Table</text>
+      <text x="16" y="44" class="box-desc">• Lists newly registered farmers pending KYC verification</text>
+      <text x="16" y="62" class="box-desc">• Displays farm address, GPS coordinates, and phone number</text>
+      <text x="16" y="80" class="box-desc">• Admin clicks 'Verify': Submits PATCH /api/v1/admin/farmers/:id/verify</text>
+      <text x="16" y="98" class="box-desc">• Sets is_verified = TRUE; activates farmer products in marketplace</text>
+      <text x="350" y="24" class="box-code">KYC Verification</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: DATABASE AGGREGATIONS ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="660" class="flow-card" />
+    <text x="25" y="32" class="flow-title">2. POSTGRESQL AGGREGATION QUERIES</text>
+
+    <!-- Block 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="150" class="box" />
+      <text x="16" y="24" class="box-title">1. Platform Aggregate Telemetry Query</text>
+      <text x="16" y="44" class="box-desc">Backend executes consolidated SQL aggregation query:</text>
+      <text x="26" y="66" font-family="monospace" font-size="9.5" fill="#38bdf8">SELECT </text>
+      <text x="36" y="82" font-family="monospace" font-size="9.5" fill="#38bdf8">  (SELECT COUNT(*) FROM farmers WHERE is_verified=TRUE) AS total_farmers,</text>
+      <text x="36" y="98" font-family="monospace" font-size="9.5" fill="#38bdf8">  (SELECT COUNT(*) FROM consumers) AS total_consumers,</text>
+      <text x="36" y="114" font-family="monospace" font-size="9.5" fill="#10b981">  (SELECT COALESCE(SUM(total_amount), 0) FROM orders WHERE order_status='delivered') AS total_gmv,</text>
+      <text x="36" y="130" font-family="monospace" font-size="9.5" fill="#f59e0b">  (SELECT AVG(delivery_distance_km) FROM orders) AS avg_delivery_distance;</text>
+      <text x="350" y="24" class="box-code">SQL Aggregation</text>
+    </g>
+    <path d="M 265, 200 L 265, 225" class="flow-arrow" />
+
+    <!-- Block 2 -->
+    <g transform="translate(25, 225)">
+      <rect width="480" height="130" class="box" />
+      <text x="16" y="24" class="box-title">2. Cultivator KYC Verification Mutation</text>
+      <text x="16" y="44" class="box-desc">When admin approves registered cultivator:</text>
+      <text x="26" y="66" font-family="monospace" font-size="9.5" fill="#10b981">UPDATE farmers SET is_verified = TRUE, updated_at = NOW()</text>
+      <text x="26" y="82" font-family="monospace" font-size="9.5" fill="#10b981">WHERE id = $1 RETURNING id, name, is_verified;</text>
+      <text x="16" y="104" class="box-desc">• Triggers immediate inclusion in public marketplace proximity queries</text>
+      <text x="16" y="120" class="box-desc">• Cultivator products instantly unlock for local consumer ordering</text>
+      <text x="350" y="24" class="box-code">UPDATE farmers</text>
+    </g>
+    <path d="M 265, 355 L 265, 380" class="flow-arrow" />
+
+    <!-- Block 3 -->
+    <g transform="translate(25, 380)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">3. Audit Logging &amp; Platform Metrics</text>
+      <text x="16" y="44" class="box-desc">• Admin verification actions recorded with timestamp</text>
+      <text x="16" y="62" class="box-desc">• Response payload returned to dashboard within &lt; 40ms</text>
+      <text x="16" y="80" class="box-desc">• Format: { success: true, message: "Farmer verified successfully" }</text>
+      <text x="16" y="98" class="box-desc">• Dashboard refreshes active cultivator counter live</text>
+      <text x="350" y="24" class="box-code">Telemetry Audit</text>
+    </g>
+  </g>
+
+</svg>

@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .card { fill: #1e293b; stroke: #334155; stroke-width: 2; rx: 12px; }
+      .card-highlight { fill: #1e293b; stroke: #10b981; stroke-width: 2.5; rx: 12px; }
+      .card-ext { fill: #1e293b; stroke: #6366f1; stroke-width: 2; rx: 12px; }
+      .card-db { fill: #1e293b; stroke: #3b82f6; stroke-width: 2; rx: 12px; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; fill: #94a3b8; }
+      .card-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 16px; font-weight: 700; fill: #f1f5f9; }
+      .card-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; fill: #94a3b8; }
+      .tag { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 11px; font-weight: 600; }
+      .tag-green { fill: #34d399; }
+      .tag-blue { fill: #60a5fa; }
+      .tag-indigo { fill: #818cf8; }
+      .arrow { stroke: #64748b; stroke-width: 2; stroke-dasharray: 6,4; fill: none; marker-end: url(#arrowhead); }
+      .arrow-solid { stroke: #10b981; stroke-width: 2.5; fill: none; marker-end: url(#arrowhead-green); }
+      .label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #cbd5e1; font-weight: 600; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="700" class="bg" />
+
+  <!-- Header -->
+  <text x="50" y="55" class="title">Farm Connect — System Context Diagram</text>
+  <text x="50" y="80" class="subtitle">Global boundary map showing primary actors, system cores, and integrated cloud providers</text>
+
+  <!-- Group 1: Users / Actors -->
+  <g transform="translate(50, 130)">
+    <rect width="250" height="520" fill="#0f172a" stroke="#334155" stroke-dasharray="4,4" rx="16" />
+    <text x="20" y="35" class="tag tag-green">USER ACTORS</text>
+
+    <!-- Consumer -->
+    <g transform="translate(20, 55)">
+      <rect width="210" height="125" class="card" />
+      <text x="15" y="30" class="card-title">Consumer Buyer</text>
+      <text x="15" y="52" class="card-desc">• Hyperlocal harvest discovery</text>
+      <text x="15" y="70" class="card-desc">• GPS proximity filtering</text>
+      <text x="15" y="88" class="card-desc">• Cart & Direct-to-farm orders</text>
+      <text x="15" y="108" class="tag tag-blue">Role: consumer</text>
+    </g>
+
+    <!-- Farmer -->
+    <g transform="translate(20, 205)">
+      <rect width="210" height="135" class="card" />
+      <text x="15" y="30" class="card-title">Cultivator / Farmer</text>
+      <text x="15" y="52" class="card-desc">• Zero-commission crop listing</text>
+      <text x="15" y="70" class="card-desc">• Harvest date management</text>
+      <text x="15" y="88" class="card-desc">• Real-time order queue</text>
+      <text x="15" y="106" class="card-desc">• Cloudinary crop photos</text>
+      <text x="15" y="124" class="tag tag-green">Role: farmer</text>
+    </g>
+
+    <!-- Admin -->
+    <g transform="translate(20, 365)">
+      <rect width="210" height="110" class="card" />
+      <text x="15" y="30" class="card-title">Platform Admin</text>
+      <text x="15" y="52" class="card-desc">• Platform metrics & users</text>
+      <text x="15" y="70" class="card-desc">• Cultivator verification</text>
+      <text x="15" y="95" class="tag tag-indigo">Role: admin</text>
+    </g>
+  </g>
+
+  <!-- Group 2: Core System Boundaries -->
+  <g transform="translate(360, 130)">
+    <rect width="480" height="520" fill="#0b1329" stroke="#10b981" stroke-width="1.5" rx="16" />
+    <text x="25" y="35" class="tag tag-green">FARM CONNECT SYSTEM CORE</text>
+
+    <!-- Next.js Frontend -->
+    <g transform="translate(25, 55)">
+      <rect width="430" height="195" class="card-highlight" />
+      <text x="20" y="32" class="card-title">Next.js 16 Web Application (Frontend)</text>
+      <text x="20" y="54" class="card-desc">Framework: Next.js 16 (App Router) + React 19 + Tailwind CSS</text>
+      <text x="20" y="74" class="card-desc">Hosting: Vercel Edge Network</text>
+      <text x="20" y="100" class="card-desc">• Modular Editorial Landing (Taluk resolution via GPS)</text>
+      <text x="20" y="118" class="card-desc">• Dual-Mode Marketplace (Grid View + Leaflet Map Explorer)</text>
+      <text x="20" y="136" class="card-desc">• Global Contexts: AuthContext, CartContext, LocationContext</text>
+      <text x="20" y="154" class="card-desc">• Axios Interceptor attaching Bearer JWT Authorization</text>
+      <rect x="20" y="168" width="130" height="18" fill="#064e3b" rx="4" />
+      <text x="25" y="181" class="tag tag-green">PORT: 3000 (Local)</text>
+    </g>
+
+    <!-- Express API -->
+    <g transform="translate(25, 280)">
+      <rect width="430" height="215" class="card-highlight" />
+      <text x="20" y="32" class="card-title">Express 5 REST API Gateway (Backend)</text>
+      <text x="20" y="54" class="card-desc">Framework: Node.js + Express 5 / 4</text>
+      <text x="20" y="74" class="card-desc">Hosting: Render Cloud Container (trust proxy = 1)</text>
+      <text x="20" y="100" class="card-desc">• Middleware: Helmet, Strict CORS Whitelist, Rate Limiter</text>
+      <text x="20" y="118" class="card-desc">• Auth Engine: 6-digit SMS OTP via Fast2SMS + 30d JWT Tokens</text>
+      <text x="20" y="136" class="card-desc">• Spatial Queries: Haversine distance calculations in PostgreSQL</text>
+      <text x="20" y="154" class="card-desc">• Order Engine: Geocoded checkout & atomic stock reservation</text>
+      <rect x="20" y="174" width="130" height="18" fill="#064e3b" rx="4" />
+      <text x="25" y="187" class="tag tag-green">PORT: 5000 / 4000</text>
+    </g>
+  </g>
+
+  <!-- Group 3: External Cloud Providers -->
+  <g transform="translate(900, 130)">
+    <rect width="250" height="520" fill="#0f172a" stroke="#334155" stroke-dasharray="4,4" rx="16" />
+    <text x="20" y="35" class="tag tag-blue">EXTERNAL SERVICES</text>
+
+    <!-- Supabase PostgreSQL -->
+    <g transform="translate(20, 55)">
+      <rect width="210" height="135" class="card-db" />
+      <text x="15" y="30" class="card-title">Supabase Database</text>
+      <text x="15" y="52" class="card-desc">Engine: PostgreSQL</text>
+      <text x="15" y="70" class="card-desc">• Relational Schema (pg pool)</text>
+      <text x="15" y="88" class="card-desc">• calculate_distance_km()</text>
+      <text x="15" y="106" class="card-desc">• SSL Enforced Connection</text>
+      <text x="15" y="124" class="tag tag-blue">DATABASE_URL</text>
+    </g>
+
+    <!-- Fast2SMS -->
+    <g transform="translate(20, 215)">
+      <rect width="210" height="120" class="card-ext" />
+      <text x="15" y="30" class="card-title">Fast2SMS Gateway</text>
+      <text x="15" y="52" class="card-desc">Service: Bulk V2 REST API</text>
+      <text x="15" y="70" class="card-desc">• Passwordless OTP delivery</text>
+      <text x="15" y="88" class="card-desc">• Dev bypass: OTP_DEMO_MODE</text>
+      <text x="15" y="108" class="tag tag-indigo">FAST2SMS_API_KEY</text>
+    </g>
+
+    <!-- Cloudinary -->
+    <g transform="translate(20, 360)">
+      <rect width="210" height="120" class="card-ext" />
+      <text x="15" y="30" class="card-title">Cloudinary CDN</text>
+      <text x="15" y="52" class="card-desc">Service: Cloud Media Storage</text>
+      <text x="15" y="70" class="card-desc">• Crop photo uploads (Multer)</text>
+      <text x="15" y="88" class="card-desc">• Dynamic responsive delivery</text>
+      <text x="15" y="108" class="tag tag-indigo">CLOUDINARY_URL</text>
+    </g>
+  </g>
+
+  <!-- Connections -->
+  <!-- Users to Frontend -->
+  <path d="M 280, 250 L 385, 250" class="arrow-solid" />
+  <text x="290" y="242" class="label">HTTPS / UX</text>
+
+  <!-- Frontend to Backend -->
+  <path d="M 600, 380 L 600, 410" class="arrow-solid" />
+  <text x="610" y="398" class="label">Axios REST (Bearer JWT)</text>
+
+  <!-- Backend to Supabase -->
+  <path d="M 815, 430 L 920, 230" class="arrow" />
+  <text x="820" y="315" class="label">pg Pool (SQL)</text>
+
+  <!-- Backend to Fast2SMS -->
+  <path d="M 815, 450 L 920, 400" class="arrow" />
+  <text x="825" y="440" class="label">HTTPS GET</text>
+
+  <!-- Backend to Cloudinary -->
+  <path d="M 815, 490 L 920, 500" class="arrow" />
+  <text x="825" y="515" class="label">Multipart POST</text>
+
+</svg>

@@ -1,0 +1,360 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="100%" height="100%" style="background:#090d16;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+
+    <linearGradient id="rowGrad1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(16, 185, 129, 0.12)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.6)"/>
+    </linearGradient>
+
+    <linearGradient id="rowGrad2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(56, 189, 248, 0.12)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.6)"/>
+    </linearGradient>
+
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1600" height="1200" fill="url(#bgGrad)"/>
+  <rect width="1600" height="1200" fill="none" stroke="#1e293b" stroke-width="2"/>
+
+  <!-- Subtle Blueprint Grid -->
+  <g stroke="#1e293b" stroke-width="0.5" opacity="0.25">
+    <line x1="260" y1="0" x2="260" y2="1200"/>
+    <line x1="560" y1="0" x2="560" y2="1200"/>
+    <line x1="880" y1="0" x2="880" y2="1200"/>
+    <line x1="1240" y1="0" x2="1240" y2="1200"/>
+  </g>
+
+  <!-- Header Banner -->
+  <g transform="translate(60, 40)">
+    <rect x="0" y="0" width="1480" height="75" rx="12" fill="#0f172a" stroke="#334155" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <circle cx="45" cy="37" r="20" fill="#10b981" fill-opacity="0.2"/>
+    <text x="45" y="44" fill="#10b981" font-size="16" font-weight="700" text-anchor="middle">IDX</text>
+    
+    <text x="80" y="34" fill="#f8fafc" font-size="22" font-weight="700">FEATURE-TO-CODE TRACEABILITY INDEX</text>
+    <text x="80" y="56" fill="#94a3b8" font-size="13">Direct cross-stack mappings: Feature requirements → Frontend UI &amp; State → REST Endpoints → Backend Logic → PostgreSQL Database</text>
+
+    <rect x="1270" y="22" width="180" height="30" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+    <text x="1360" y="42" fill="#34d399" font-size="11" font-weight="600" text-anchor="middle">8 WORKFLOWS MAPPED</text>
+  </g>
+
+  <!-- TABLE COLUMN HEADERS -->
+  <g transform="translate(60, 135)">
+    <rect x="0" y="0" width="1480" height="38" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+    
+    <text x="25" y="24" fill="#38bdf8" font-size="12" font-weight="700">FEATURE &amp; CAPABILITY</text>
+    <text x="250" y="24" fill="#38bdf8" font-size="12" font-weight="700">FRONTEND (PAGE &amp; CONTEXT)</text>
+    <text x="560" y="24" fill="#38bdf8" font-size="12" font-weight="700">API CLIENT &amp; HTTP ENDPOINT</text>
+    <text x="880" y="24" fill="#38bdf8" font-size="12" font-weight="700">BACKEND CONTROLLER &amp; SERVICE</text>
+    <text x="1240" y="24" fill="#38bdf8" font-size="12" font-weight="700">POSTGRESQL &amp; PERSISTENCE</text>
+  </g>
+
+  <!-- TABLE ROWS -->
+  <g transform="translate(60, 185)">
+
+    <!-- ROW 1: SMS OTP Auth -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="1480" height="110" rx="8" fill="url(#rowGrad1)" stroke="#334155" stroke-width="1"/>
+      <circle cx="15" cy="55" r="4" fill="#10b981"/>
+
+      <!-- Feature -->
+      <text x="30" y="32" fill="#f8fafc" font-size="13" font-weight="700">SMS OTP Authentication</text>
+      <text x="30" y="52" fill="#94a3b8" font-size="11">Passwordless login, 6-digit</text>
+      <text x="30" y="70" fill="#94a3b8" font-size="11">SMS token verification</text>
+      <text x="30" y="88" fill="#34d399" font-size="10">Role: Farmer / Consumer</text>
+
+      <!-- Frontend -->
+      <text x="250" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">login/page.tsx</text>
+      <text x="250" y="48" fill="#e2e8f0" font-size="11.5" font-weight="600">register/page.tsx</text>
+      <text x="250" y="68" fill="#a78bfa" font-size="10.5">AuthContext.tsx (useAuth)</text>
+      <text x="250" y="88" fill="#64748b" font-size="10">localStorage ('auth_token')</text>
+
+      <!-- API -->
+      <text x="560" y="32" fill="#f59e0b" font-size="11" font-weight="700">POST /api/v1/auth/send-otp</text>
+      <text x="560" y="50" fill="#94a3b8" font-size="10.5">Payload: { phone, userType, action }</text>
+      <text x="560" y="72" fill="#38bdf8" font-size="11" font-weight="700">POST /api/v1/auth/verify-otp</text>
+      <text x="560" y="90" fill="#94a3b8" font-size="10.5">Payload: { phone, otp, userType }</text>
+
+      <!-- Backend -->
+      <text x="880" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">authController.sendOTP()</text>
+      <text x="880" y="48" fill="#94a3b8" font-size="10.5">• smsservice.js (Fast2SMS API)</text>
+      <text x="880" y="68" fill="#e2e8f0" font-size="11.5" font-weight="600">authController.verifyOTP()</text>
+      <text x="880" y="88" fill="#94a3b8" font-size="10.5">• Signs JWT (30-day expiration)</text>
+
+      <!-- DB -->
+      <text x="1240" y="30" fill="#34d399" font-size="11.5" font-weight="600">otp_store</text>
+      <text x="1240" y="48" fill="#94a3b8" font-size="10.5">• Upsert with 5-min TTL</text>
+      <text x="1240" y="68" fill="#34d399" font-size="11.5" font-weight="600">farmers / consumers</text>
+      <text x="1240" y="88" fill="#94a3b8" font-size="10.5">• Profile seed on registration</text>
+    </g>
+
+    <!-- ROW 2: Hyperlocal Proximity Search -->
+    <g transform="translate(0, 118)">
+      <rect x="0" y="0" width="1480" height="110" rx="8" fill="url(#rowGrad2)" stroke="#334155" stroke-width="1"/>
+      <circle cx="15" cy="55" r="4" fill="#38bdf8"/>
+
+      <!-- Feature -->
+      <text x="30" y="32" fill="#f8fafc" font-size="13" font-weight="700">Hyperlocal Search &amp; Map</text>
+      <text x="30" y="52" fill="#94a3b8" font-size="11">Proximity distance sorting,</text>
+      <text x="30" y="70" fill="#94a3b8" font-size="11">dynamic radius filter</text>
+      <text x="30" y="88" fill="#38bdf8" font-size="10">Radius: 5km – 100km</text>
+
+      <!-- Frontend -->
+      <text x="250" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">marketplace/page.tsx</text>
+      <text x="250" y="48" fill="#e2e8f0" font-size="11.5" font-weight="600">MapExplorer.tsx (Leaflet)</text>
+      <text x="250" y="68" fill="#a78bfa" font-size="10.5">LocationContext.tsx (useLocation)</text>
+      <text x="250" y="88" fill="#64748b" font-size="10">useGeolocation.ts / useDebounce.ts</text>
+
+      <!-- API -->
+      <text x="560" y="32" fill="#10b981" font-size="11" font-weight="700">GET /api/v1/products</text>
+      <text x="560" y="52" fill="#94a3b8" font-size="10.5">Query Params:</text>
+      <text x="560" y="70" fill="#cbd5e1" font-size="10" font-family="monospace">?lat=12.97&amp;lon=77.59&amp;radius=30</text>
+      <text x="560" y="88" fill="#cbd5e1" font-size="10" font-family="monospace">&amp;category=Vegetables&amp;search=tomato</text>
+
+      <!-- Backend -->
+      <text x="880" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">productController.searchNearbyProducts()</text>
+      <text x="880" y="50" fill="#94a3b8" font-size="10.5">• Validates numeric lat/lon bounds</text>
+      <text x="880" y="68" fill="#94a3b8" font-size="10.5">• Defaults radius to 30km if omitted</text>
+      <text x="880" y="88" fill="#94a3b8" font-size="10.5">• Sanitizes input search query string</text>
+
+      <!-- DB -->
+      <text x="1240" y="30" fill="#fbbf24" font-size="11.5" font-weight="600">calculate_distance_km()</text>
+      <text x="1240" y="50" fill="#94a3b8" font-size="10.5">• Haversine distance equation</text>
+      <text x="1240" y="68" fill="#34d399" font-size="11.5" font-weight="600">products JOIN farmers</text>
+      <text x="1240" y="88" fill="#94a3b8" font-size="10.5">• ORDER BY distance_km ASC</text>
+    </g>
+
+    <!-- ROW 3: Farmer Catalog & Image Upload -->
+    <g transform="translate(0, 236)">
+      <rect x="0" y="0" width="1480" height="110" rx="8" fill="url(#rowGrad1)" stroke="#334155" stroke-width="1"/>
+      <circle cx="15" cy="55" r="4" fill="#10b981"/>
+
+      <!-- Feature -->
+      <text x="30" y="32" fill="#f8fafc" font-size="13" font-weight="700">Crop Catalog &amp; Media Upload</text>
+      <text x="30" y="52" fill="#94a3b8" font-size="11">Farmer inventory creation,</text>
+      <text x="30" y="70" fill="#94a3b8" font-size="11">Cloudinary media pipeline</text>
+      <text x="30" y="88" fill="#34d399" font-size="10">Max file: 5MB</text>
+
+      <!-- Frontend -->
+      <text x="250" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">farmer/products/page.tsx</text>
+      <text x="250" y="48" fill="#e2e8f0" font-size="11.5" font-weight="600">ProductForm.tsx</text>
+      <text x="250" y="68" fill="#a78bfa" font-size="10.5">ToastContext.tsx (showToast)</text>
+      <text x="250" y="88" fill="#64748b" font-size="10">Role Guard: farmer only</text>
+
+      <!-- API -->
+      <text x="560" y="32" fill="#f59e0b" font-size="11" font-weight="700">POST /api/v1/upload/image</text>
+      <text x="560" y="50" fill="#94a3b8" font-size="10.5">Content-Type: multipart/form-data</text>
+      <text x="560" y="72" fill="#f59e0b" font-size="11" font-weight="700">POST /api/v1/products/create</text>
+      <text x="560" y="90" fill="#94a3b8" font-size="10.5">Payload: { name, price, stock, unit, img }</text>
+
+      <!-- Backend -->
+      <text x="880" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">upload.controller.js</text>
+      <text x="880" y="48" fill="#94a3b8" font-size="10.5">• Multer buffer → Cloudinary upload stream</text>
+      <text x="880" y="68" fill="#e2e8f0" font-size="11.5" font-weight="600">productController.createProduct()</text>
+      <text x="880" y="88" fill="#94a3b8" font-size="10.5">• Injects verified farmer_id from JWT</text>
+
+      <!-- DB -->
+      <text x="1240" y="30" fill="#34d399" font-size="11.5" font-weight="600">products</text>
+      <text x="1240" y="50" fill="#94a3b8" font-size="10.5">• INSERT with foreign key (farmer_id)</text>
+      <text x="1240" y="68" fill="#94a3b8" font-size="10.5">• image_url: HTTPS Cloudinary CDN</text>
+      <text x="1240" y="88" fill="#94a3b8" font-size="10.5">• is_active: DEFAULT true</text>
+    </g>
+
+    <!-- ROW 4: Shopping Cart & Clamping -->
+    <g transform="translate(0, 354)">
+      <rect x="0" y="0" width="1480" height="110" rx="8" fill="url(#rowGrad2)" stroke="#334155" stroke-width="1"/>
+      <circle cx="15" cy="55" r="4" fill="#38bdf8"/>
+
+      <!-- Feature -->
+      <text x="30" y="32" fill="#f8fafc" font-size="13" font-weight="700">Client Cart &amp; Stock Guard</text>
+      <text x="30" y="52" fill="#94a3b8" font-size="11">Local persistence, quantity</text>
+      <text x="30" y="70" fill="#94a3b8" font-size="11">clamping to available stock</text>
+      <text x="30" y="88" fill="#38bdf8" font-size="10">Zero round-trips on mutation</text>
+
+      <!-- Frontend -->
+      <text x="250" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">cart/page.tsx</text>
+      <text x="250" y="48" fill="#e2e8f0" font-size="11.5" font-weight="600">CartItem.tsx / OrderSummary.tsx</text>
+      <text x="250" y="68" fill="#a78bfa" font-size="10.5">cartcontext.tsx (useCart)</text>
+      <text x="250" y="88" fill="#64748b" font-size="10">localStorage ('farmconnect_cart')</text>
+
+      <!-- API -->
+      <text x="560" y="32" fill="#64748b" font-size="11" font-weight="700">CLIENT RUNTIME ONLY</text>
+      <text x="560" y="50" fill="#94a3b8" font-size="10.5">Operates entirely in browser memory</text>
+      <text x="560" y="70" fill="#94a3b8" font-size="10.5">Synchronizes with localStorage</text>
+      <text x="560" y="88" fill="#94a3b8" font-size="10.5">No backend hit until checkout</text>
+
+      <!-- Backend -->
+      <text x="880" y="30" fill="#64748b" font-size="11.5" font-weight="600">N/A (Decoupled Architecture)</text>
+      <text x="880" y="50" fill="#94a3b8" font-size="10.5">• Math.min(newQ, product.stockAvailable)</text>
+      <text x="880" y="68" fill="#94a3b8" font-size="10.5">• Real-time compute: getSubtotal()</text>
+      <text x="880" y="88" fill="#94a3b8" font-size="10.5">• Real-time compute: getItemCount()</text>
+
+      <!-- DB -->
+      <text x="1240" y="30" fill="#64748b" font-size="11.5" font-weight="600">N/A (Local Client)</text>
+      <text x="1240" y="50" fill="#94a3b8" font-size="10.5">• Stock verified at checkout against</text>
+      <text x="1240" y="68" fill="#94a3b8" font-size="10.5">  products.stock_available</text>
+      <text x="1240" y="88" fill="#94a3b8" font-size="10.5">• Prevents phantom cart writes</text>
+    </g>
+
+    <!-- ROW 5: Checkout & Order Creation -->
+    <g transform="translate(0, 472)">
+      <rect x="0" y="0" width="1480" height="110" rx="8" fill="url(#rowGrad1)" stroke="#334155" stroke-width="1"/>
+      <circle cx="15" cy="55" r="4" fill="#10b981"/>
+
+      <!-- Feature -->
+      <text x="30" y="32" fill="#f8fafc" font-size="13" font-weight="700">Geotagged Checkout</text>
+      <text x="30" y="52" fill="#94a3b8" font-size="11">Delivery distance fee calculation,</text>
+      <text x="30" y="70" fill="#94a3b8" font-size="11">atomic order placement</text>
+      <text x="30" y="88" fill="#34d399" font-size="10">Frozen JSONB pricing</text>
+
+      <!-- Frontend -->
+      <text x="250" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">checkout/page.tsx</text>
+      <text x="250" y="48" fill="#a78bfa" font-size="10.5">useCart() (items, clearCart)</text>
+      <text x="250" y="68" fill="#a78bfa" font-size="10.5">useLocation() (delivery coordinates)</text>
+      <text x="250" y="88" fill="#a78bfa" font-size="10.5">useAuth() (consumer JWT)</text>
+
+      <!-- API -->
+      <text x="560" y="32" fill="#f59e0b" font-size="11" font-weight="700">POST /api/v1/consumers/orders</text>
+      <text x="560" y="50" fill="#94a3b8" font-size="10.5">Headers: Authorization Bearer &lt;JWT&gt;</text>
+      <text x="560" y="68" fill="#cbd5e1" font-size="10" font-family="monospace">{ farmer_id, items: [...], </text>
+      <text x="560" y="86" fill="#cbd5e1" font-size="10" font-family="monospace">  delivery_lat, delivery_lng, ... }</text>
+
+      <!-- Backend -->
+      <text x="880" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">consumerController.createOrder()</text>
+      <text x="880" y="48" fill="#94a3b8" font-size="10.5">• Auth middleware consumer role guard</text>
+      <text x="880" y="68" fill="#94a3b8" font-size="10.5">• Computes delivery transit distance</text>
+      <text x="880" y="88" fill="#94a3b8" font-size="10.5">• Generates unique order number (FC...)</text>
+
+      <!-- DB -->
+      <text x="1240" y="30" fill="#34d399" font-size="11.5" font-weight="600">orders</text>
+      <text x="1240" y="48" fill="#94a3b8" font-size="10.5">• INSERT items AS JSONB snapshot</text>
+      <text x="1240" y="66" fill="#94a3b8" font-size="10.5">• delivery_distance_km recorded</text>
+      <text x="1240" y="86" fill="#94a3b8" font-size="10.5">• status: 'pending', total_amount</text>
+    </g>
+
+    <!-- ROW 6: Order Fulfillment Lifecycle -->
+    <g transform="translate(0, 590)">
+      <rect x="0" y="0" width="1480" height="110" rx="8" fill="url(#rowGrad2)" stroke="#334155" stroke-width="1"/>
+      <circle cx="15" cy="55" r="4" fill="#38bdf8"/>
+
+      <!-- Feature -->
+      <text x="30" y="32" fill="#f8fafc" font-size="13" font-weight="700">Order Fulfillment Lifecycle</text>
+      <text x="30" y="52" fill="#94a3b8" font-size="11">State machine transitions,</text>
+      <text x="30" y="70" fill="#94a3b8" font-size="11">farmer accept &amp; dispatch</text>
+      <text x="30" y="88" fill="#38bdf8" font-size="10">pending → confirmed → delivered</text>
+
+      <!-- Frontend -->
+      <text x="250" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">farmer/orders/page.tsx</text>
+      <text x="250" y="48" fill="#e2e8f0" font-size="11.5" font-weight="600">OrderStatusDropdown.tsx</text>
+      <text x="250" y="68" fill="#e2e8f0" font-size="11.5" font-weight="600">orders/page.tsx (Consumer)</text>
+      <text x="250" y="88" fill="#a78bfa" font-size="10.5">ToastContext.tsx (status alerts)</text>
+
+      <!-- API -->
+      <text x="560" y="32" fill="#38bdf8" font-size="11" font-weight="700">PUT /api/v1/farmers/orders/:id/status</text>
+      <text x="560" y="50" fill="#94a3b8" font-size="10.5">Payload: { status: 'confirmed' | ... }</text>
+      <text x="560" y="72" fill="#10b981" font-size="11" font-weight="700">GET /api/v1/consumers/orders</text>
+      <text x="560" y="90" fill="#94a3b8" font-size="10.5">Returns authenticated consumer orders</text>
+
+      <!-- Backend -->
+      <text x="880" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">farmerController.updateOrderStatus()</text>
+      <text x="880" y="48" fill="#94a3b8" font-size="10.5">• Validates caller owns the order</text>
+      <text x="880" y="68" fill="#e2e8f0" font-size="11.5" font-weight="600">consumerController.getConsumerOrders()</text>
+      <text x="880" y="88" fill="#94a3b8" font-size="10.5">• Joins farmers table for seller info</text>
+
+      <!-- DB -->
+      <text x="1240" y="30" fill="#34d399" font-size="11.5" font-weight="600">orders</text>
+      <text x="1240" y="48" fill="#94a3b8" font-size="10.5">• UPDATE order_status=$1, updated_at=NOW()</text>
+      <text x="1240" y="68" fill="#94a3b8" font-size="10.5">• WHERE id=$2 AND farmer_id=$3</text>
+      <text x="1240" y="88" fill="#34d399" font-size="11.5" font-weight="600">notifications (Sub-backend)</text>
+    </g>
+
+    <!-- ROW 7: Reviews & Ratings -->
+    <g transform="translate(0, 708)">
+      <rect x="0" y="0" width="1480" height="110" rx="8" fill="url(#rowGrad1)" stroke="#334155" stroke-width="1"/>
+      <circle cx="15" cy="55" r="4" fill="#10b981"/>
+
+      <!-- Feature -->
+      <text x="30" y="32" fill="#f8fafc" font-size="13" font-weight="700">Reviews &amp; Farmer Trust Score</text>
+      <text x="30" y="52" fill="#94a3b8" font-size="11">Star rating submission,</text>
+      <text x="30" y="70" fill="#94a3b8" font-size="11">automated aggregate rating sync</text>
+      <text x="30" y="88" fill="#34d399" font-size="10">Range: 1 – 5 Stars</text>
+
+      <!-- Frontend -->
+      <text x="250" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">product/[id]/page.tsx</text>
+      <text x="250" y="48" fill="#e2e8f0" font-size="11.5" font-weight="600">ReviewList.tsx / ReviewForm.tsx</text>
+      <text x="250" y="68" fill="#a78bfa" font-size="10.5">useAuth() (verified buyer check)</text>
+      <text x="250" y="88" fill="#a78bfa" font-size="10.5">ToastContext.tsx</text>
+
+      <!-- API -->
+      <text x="560" y="32" fill="#f59e0b" font-size="11" font-weight="700">POST /api/v1/reviews</text>
+      <text x="560" y="50" fill="#94a3b8" font-size="10.5">Payload: { product_id, rating, comment }</text>
+      <text x="560" y="72" fill="#10b981" font-size="11" font-weight="700">GET /api/v1/products/:id/reviews</text>
+      <text x="560" y="90" fill="#94a3b8" font-size="10.5">Returns paginated reviews with buyer name</text>
+
+      <!-- Backend -->
+      <text x="880" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">review.controller.createReview()</text>
+      <text x="880" y="48" fill="#94a3b8" font-size="10.5">• Validates 1 &lt;= rating &lt;= 5</text>
+      <text x="880" y="68" fill="#94a3b8" font-size="10.5">• Triggers background avg recalculation</text>
+      <text x="880" y="88" fill="#94a3b8" font-size="10.5">• Updates farmers.rating cache</text>
+
+      <!-- DB -->
+      <text x="1240" y="30" fill="#34d399" font-size="11.5" font-weight="600">product_reviews</text>
+      <text x="1240" y="48" fill="#94a3b8" font-size="10.5">• INSERT with consumer_id &amp; product_id</text>
+      <text x="1240" y="68" fill="#34d399" font-size="11.5" font-weight="600">farmers</text>
+      <text x="1240" y="88" fill="#94a3b8" font-size="10.5">• UPDATE rating = AVG(product_reviews.rating)</text>
+    </g>
+
+    <!-- ROW 8: Admin Analytics -->
+    <g transform="translate(0, 826)">
+      <rect x="0" y="0" width="1480" height="110" rx="8" fill="url(#rowGrad2)" stroke="#334155" stroke-width="1"/>
+      <circle cx="15" cy="55" r="4" fill="#38bdf8"/>
+
+      <!-- Feature -->
+      <text x="30" y="32" fill="#f8fafc" font-size="13" font-weight="700">Platform Analytics &amp; Admin</text>
+      <text x="30" y="52" fill="#94a3b8" font-size="11">Total GMV, active users,</text>
+      <text x="30" y="70" fill="#94a3b8" font-size="11">farmer verification workflow</text>
+      <text x="30" y="88" fill="#fbbf24" font-size="10">Role: Admin only</text>
+
+      <!-- Frontend -->
+      <text x="250" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">admin/page.tsx</text>
+      <text x="250" y="48" fill="#e2e8f0" font-size="11.5" font-weight="600">StatCard.tsx / MetricChart.tsx</text>
+      <text x="250" y="68" fill="#a78bfa" font-size="10.5">useAuth() (role: 'admin' guard)</text>
+      <text x="250" y="88" fill="#64748b" font-size="10">Farmer verification table</text>
+
+      <!-- API -->
+      <text x="560" y="32" fill="#10b981" font-size="11" font-weight="700">GET /api/v1/admin/metrics</text>
+      <text x="560" y="50" fill="#94a3b8" font-size="10.5">Returns GMV, orders count, user counts</text>
+      <text x="560" y="72" fill="#38bdf8" font-size="11" font-weight="700">PUT /api/v1/admin/farmers/:id/verify</text>
+      <text x="560" y="90" fill="#94a3b8" font-size="10.5">Payload: { is_verified: true }</text>
+
+      <!-- Backend -->
+      <text x="880" y="30" fill="#e2e8f0" font-size="11.5" font-weight="600">admin.controller.getPlatformMetrics()</text>
+      <text x="880" y="48" fill="#94a3b8" font-size="10.5">• Executes multi-table COUNT &amp; SUM</text>
+      <text x="880" y="68" fill="#e2e8f0" font-size="11.5" font-weight="600">admin.controller.verifyFarmer()</text>
+      <text x="880" y="88" fill="#94a3b8" font-size="10.5">• Grants badge &amp; enables nearby listings</text>
+
+      <!-- DB -->
+      <text x="1240" y="30" fill="#34d399" font-size="11.5" font-weight="600">farmers, consumers, orders</text>
+      <text x="1240" y="48" fill="#94a3b8" font-size="10.5">• SUM(total_amount) AS platform_gmv</text>
+      <text x="1240" y="68" fill="#94a3b8" font-size="10.5">• UPDATE farmers SET is_verified=TRUE</text>
+      <text x="1240" y="88" fill="#94a3b8" font-size="10.5">• WHERE id=$1</text>
+    </g>
+
+  </g>
+
+  <!-- Footer -->
+  <g transform="translate(60, 1140)">
+    <rect x="0" y="0" width="1480" height="40" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <circle cx="20" cy="20" r="4" fill="#10b981"/>
+    <text x="35" y="24" fill="#94a3b8" font-size="11">Architecture verification: All mapped endpoints and files verified in D:\farm-connect repository.</text>
+    <text x="1450" y="24" fill="#64748b" font-size="11" text-anchor="end">Farm Connect Visual Architecture Atlas • 06-code-tracing/feature-to-code-index.svg</text>
+  </g>
+</svg>

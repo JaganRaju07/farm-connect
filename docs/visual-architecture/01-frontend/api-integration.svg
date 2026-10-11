@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .pipe-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .pipe-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .step-card { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .step-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f1f5f9; }
+      .step-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .step-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #10b981; }
+      .arrow { stroke: #0284c7; stroke-width: 2; fill: none; marker-end: url(#arrow-cyan); }
+      .arrow-err { stroke: #ef4444; stroke-width: 2; stroke-dasharray: 4,4; fill: none; marker-end: url(#arrow-red); }
+    </style>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0284c7" />
+    </marker>
+    <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#ef4444" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="780" class="bg" />
+
+  <!-- Title -->
+  <text x="45" y="45" class="title">Farm Connect — Frontend API Integration &amp; Interceptor Pipeline</text>
+  <text x="45" y="68" class="subtitle">Axios client configuration, Bearer token injection, AbortController request cancellation, and response error interceptors</text>
+
+  <!-- ================= LEFT COLUMN: OUTBOUND REQUEST PIPELINE ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="645" class="pipe-card" />
+    <text x="25" y="32" class="pipe-title">OUTBOUND REQUEST LIFECYCLE</text>
+
+    <!-- Step 1: Component Trigger -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="80" class="step-card" />
+      <text x="16" y="24" class="step-title">1. UI Action / Component Trigger</text>
+      <text x="16" y="44" class="step-desc">• User searches product, toggles radius, or places order</text>
+      <text x="16" y="62" class="step-desc">• Invokes client API wrapper (e.g. getProducts(filters))</text>
+      <text x="320" y="24" class="step-code">src/lib/api/products.ts</text>
+    </g>
+    <path d="M 265, 130 L 265, 155" class="arrow" />
+
+    <!-- Step 2: AbortController Signal -->
+    <g transform="translate(25, 155)">
+      <rect width="480" height="95" class="step-card" />
+      <text x="16" y="24" class="step-title">2. AbortController Signal Binding</text>
+      <text x="16" y="44" class="step-desc">• Marketplace binds signal: controller.signal</text>
+      <text x="16" y="62" class="step-desc">• Cancels inflight requests when user types rapidly (300ms debounce)</text>
+      <text x="16" y="80" class="step-desc">• Catches axios.isCancel(err) silently without logging false errors</text>
+      <text x="310" y="24" class="step-code">MarketplaceContent()</text>
+    </g>
+    <path d="M 265, 250 L 265, 275" class="arrow" />
+
+    <!-- Step 3: Axios Interceptor Attachment -->
+    <g transform="translate(25, 275)">
+      <rect width="480" height="110" class="step-card" />
+      <text x="16" y="24" class="step-title">3. Request Interceptor (AxiosInterceptorWrapper)</text>
+      <text x="16" y="44" class="step-desc">• Reads active token from localStorage.getItem('auth_token')</text>
+      <text x="16" y="64" class="step-desc">• Injects HTTP Header if session is active:</text>
+      <text x="24" y="82" font-family="monospace" font-size="10.5" fill="#38bdf8">config.headers['Authorization'] = `Bearer ${token}`;</text>
+      <text x="16" y="100" class="step-desc">• Attaches 'Content-Type': 'application/json'</text>
+    </g>
+    <path d="M 265, 385 L 265, 410" class="arrow" />
+
+    <!-- Step 4: Network Transmission -->
+    <g transform="translate(25, 410)">
+      <rect width="480" height="100" class="step-card" />
+      <text x="16" y="24" class="step-title">4. Network Dispatch to Express API Gateway</text>
+      <text x="16" y="44" class="step-desc">• Target URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'</text>
+      <text x="16" y="64" class="step-desc">• Transmits with Credentials (CORS: credentials: true)</text>
+      <text x="16" y="82" class="step-desc">• Render Load Balancer forwards IP via trust proxy = 1</text>
+    </g>
+
+    <!-- Wrapper Summary -->
+    <g transform="translate(25, 530)">
+      <rect width="480" height="85" fill="#0f172a" stroke="#0284c7" stroke-width="1" rx="6" />
+      <text x="16" y="24" class="step-title">Active Typed API Wrappers (src/lib/api/)</text>
+      <text x="16" y="44" class="step-desc">• getProducts(filters): Promise&lt;Product[]&gt; (/products)</text>
+      <text x="16" y="62" class="step-desc">• getProductById(id): Promise&lt;Product&gt; (/products/:id)</text>
+      <text x="16" y="80" class="step-desc">• placeOrder(orderData) &amp; getOrderHistory(consumerId)</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT COLUMN: INBOUND RESPONSE & ERROR HANDLING ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="645" class="pipe-card" />
+    <text x="25" y="32" class="pipe-title">INBOUND RESPONSE &amp; ERROR INTERCEPTION</text>
+
+    <!-- Step 1: Successful Response -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="step-card" />
+      <text x="16" y="24" class="step-title">1. HTTP 200 / 201 Success Resolution</text>
+      <text x="16" y="44" class="step-desc">• Response payload format: { success: true, data: [...], message: "..." }</text>
+      <text x="16" y="62" class="step-desc">• Resolves Promise immediately to caller</text>
+      <text x="16" y="80" class="step-desc">• Triggers UI state updates (setProducts, setItems, setFeaturedFarmers)</text>
+      <text x="16" y="98" class="step-desc">• Fires success toast where applicable via useToast().success()</text>
+    </g>
+
+    <!-- Step 2: 401 Unauthorized Interception -->
+    <g transform="translate(25, 180)">
+      <rect width="480" height="125" class="step-card" style="stroke: #ef4444;" />
+      <text x="16" y="24" class="step-title" style="fill: #fca5a5;">2. HTTP 401 Unauthorized Interception</text>
+      <text x="16" y="44" class="step-desc">• Token expired or invalid JWT signature</text>
+      <text x="16" y="62" class="step-desc">• Interceptor clears stale localStorage tokens:</text>
+      <text x="24" y="80" font-family="monospace" font-size="10" fill="#f87171">localStorage.removeItem('auth_token'); delete axios.defaults...</text>
+      <text x="16" y="100" class="step-desc">• Calls useToast().error("Session expired. Please log in again.")</text>
+      <text x="16" y="116" class="step-desc">• Automatically redirects user to /login</text>
+    </g>
+
+    <!-- Step 3: 429 Rate Limit Interception -->
+    <g transform="translate(25, 325)">
+      <rect width="480" height="100" class="step-card" style="stroke: #f59e0b;" />
+      <text x="16" y="24" class="step-title" style="fill: #fcd34d;">3. HTTP 429 Rate Limit Interception</text>
+      <text x="16" y="44" class="step-desc">• Express Rate Limiter exceeded (300 req / 15m window)</text>
+      <text x="16" y="62" class="step-desc">• Prevents rapid OTP spamming or search hammer loops</text>
+      <text x="16" y="80" class="step-desc">• Displays non-blocking warning toast: "Too many requests. Please wait."</text>
+      <text x="16" y="96" class="step-desc">• Leaves user session and cart intact</text>
+    </g>
+
+    <!-- Step 4: 500 Server Error Boundary -->
+    <g transform="translate(25, 445)">
+      <rect width="480" height="100" class="step-card" />
+      <text x="16" y="24" class="step-title">4. HTTP 500 / Network Error Boundary</text>
+      <text x="16" y="44" class="step-desc">• Database connection drop or unexpected server exception</text>
+      <text x="16" y="62" class="step-desc">• Backend sanitizes message in production (Internal Server Error)</text>
+      <text x="16" y="80" class="step-desc">• UI falls back to cached offline items or renders EmptyState component</text>
+      <text x="16" y="96" class="step-desc">• Logs structured diagnostic info to browser developer console</text>
+    </g>
+
+    <!-- Interceptor Connection Summary -->
+    <g transform="translate(25, 565)">
+      <rect width="480" height="60" fill="#0f172a" stroke="#10b981" stroke-width="1" rx="6" />
+      <text x="16" y="24" class="step-title">Guaranteed UI Continuity</text>
+      <text x="16" y="44" class="step-desc">Zero application crashes from network drops; graceful fallbacks on all views.</text>
+    </g>
+  </g>
+
+</svg>

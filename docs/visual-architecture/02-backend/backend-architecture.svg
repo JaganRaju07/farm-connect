@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 820" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .layer-container { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .layer-header { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #10b981; letter-spacing: 0.05em; }
+      .block { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .block-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12.5px; font-weight: 700; fill: #f1f5f9; }
+      .block-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .block-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #38bdf8; }
+      .pipe-arrow { stroke: #10b981; stroke-width: 2.2; fill: none; marker-end: url(#arrow-green); }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="820" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Backend Express API Architecture</text>
+  <text x="45" y="68" class="subtitle">Layered architectural decomposition of server startup, security middleware, REST dispatch, controllers, and database access</text>
+
+  <!-- ================= LAYER 1: BOOTSTRAP & MIDDLEWARE ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="1110" height="135" class="layer-container" />
+    <text x="25" y="28" class="layer-header">LAYER 1: HTTP ENTRY &amp; SECURITY MIDDLEWARE (server.js &amp; src/app.js)</text>
+
+    <!-- Block 1: Bootstrap -->
+    <g transform="translate(25, 42)">
+      <rect width="250" height="75" class="block" />
+      <text x="14" y="22" class="block-title">Server Bootstrap</text>
+      <text x="14" y="40" class="block-desc">• dotenv.config()</text>
+      <text x="14" y="56" class="block-desc">• app.listen(PORT, '0.0.0.0')</text>
+      <text x="180" y="22" class="block-code">:5000 / :4000</text>
+    </g>
+
+    <!-- Block 2: Network / Proxy -->
+    <g transform="translate(290, 42)">
+      <rect width="250" height="75" class="block" />
+      <text x="14" y="22" class="block-title">Network &amp; Proxy Config</text>
+      <text x="14" y="40" class="block-desc">• app.set('trust proxy', 1)</text>
+      <text x="14" y="56" class="block-desc">• Identifies client IPs behind Render</text>
+      <text x="175" y="22" class="block-code">Render Ready</text>
+    </g>
+
+    <!-- Block 3: Security Headers -->
+    <g transform="translate(555, 42)">
+      <rect width="250" height="75" class="block" />
+      <text x="14" y="22" class="block-title">Security &amp; CORS</text>
+      <text x="14" y="40" class="block-desc">• helmet({ CORP: 'cross-origin' })</text>
+      <text x="14" y="56" class="block-desc">• cors({ origin: getAllowedOrigins() })</text>
+      <text x="175" y="22" class="block-code">Vercel Whitelist</text>
+    </g>
+
+    <!-- Block 4: Rate Limiting & Parser -->
+    <g transform="translate(820, 42)">
+      <rect width="265" height="75" class="block" />
+      <text x="14" y="22" class="block-title">Rate Limit &amp; Body Parser</text>
+      <text x="14" y="40" class="block-desc">• express-rate-limit (300 req / 15m)</text>
+      <text x="14" y="56" class="block-desc">• express.json({ limit: '10mb' })</text>
+      <text x="185" y="22" class="block-code">DDoS Defense</text>
+    </g>
+  </g>
+  <path d="M 600, 230 L 600, 255" class="pipe-arrow" />
+
+  <!-- ================= LAYER 2: REST ROUTING DISPATCH ================= -->
+  <g transform="translate(45, 255)">
+    <rect width="1110" height="130" class="layer-container" />
+    <text x="25" y="28" class="layer-header">LAYER 2: REST ROUTE DISPATCH GATEWAY (/api/v1/*)</text>
+
+    <!-- Auth Route -->
+    <g transform="translate(25, 42)">
+      <rect width="250" height="72" class="block" />
+      <text x="14" y="22" class="block-title">/api/v1/auth</text>
+      <text x="14" y="40" class="block-desc">• POST /send-otp</text>
+      <text x="14" y="56" class="block-desc">• POST /verify-otp, GET /demo-otp</text>
+      <text x="155" y="22" class="block-code">authroutes.js</text>
+    </g>
+
+    <!-- Product Route -->
+    <g transform="translate(290, 42)">
+      <rect width="250" height="72" class="block" />
+      <text x="14" y="22" class="block-title">/api/v1/products</text>
+      <text x="14" y="40" class="block-desc">• GET /search (Haversine radius)</text>
+      <text x="14" y="56" class="block-desc">• GET /category/:categoryName</text>
+      <text x="145" y="22" class="block-code">productroutes.js</text>
+    </g>
+
+    <!-- Farmer Route -->
+    <g transform="translate(555, 42)">
+      <rect width="250" height="72" class="block" />
+      <text x="14" y="22" class="block-title">/api/v1/farmers</text>
+      <text x="14" y="40" class="block-desc">• GET /nearby, GET /dashboard</text>
+      <text x="14" y="56" class="block-desc">• CRUD: /products, GET /orders</text>
+      <text x="150" y="22" class="block-code">farmerroutes.js</text>
+    </g>
+
+    <!-- Consumer Route -->
+    <g transform="translate(820, 42)">
+      <rect width="265" height="72" class="block" />
+      <text x="14" y="22" class="block-title">/api/v1/consumers</text>
+      <text x="14" y="40" class="block-desc">• POST /register</text>
+      <text x="14" y="56" class="block-desc">• POST /orders (place), GET /orders</text>
+      <text x="140" y="22" class="block-code">consumerroutes.js</text>
+    </g>
+  </g>
+  <path d="M 600, 385 L 600, 410" class="pipe-arrow" />
+
+  <!-- ================= LAYER 3: CONTROLLERS & BUSINESS LOGIC ================= -->
+  <g transform="translate(45, 410)">
+    <rect width="1110" height="155" class="layer-container" />
+    <text x="25" y="28" class="layer-header">LAYER 3: CONTROLLERS &amp; DOMAIN SERVICES</text>
+
+    <!-- Auth Controller -->
+    <g transform="translate(25, 42)">
+      <rect width="250" height="95" class="block" />
+      <text x="14" y="22" class="block-title">authController.js</text>
+      <text x="14" y="40" class="block-desc">• Rate checks &amp; OTP token reuse</text>
+      <text x="14" y="56" class="block-desc">• Upserts code into otp_store</text>
+      <text x="14" y="72" class="block-desc">• Issues 30-day JWT token payload</text>
+      <text x="14" y="88" class="block-desc">• Handles progressive profile defaults</text>
+    </g>
+
+    <!-- Product Controller -->
+    <g transform="translate(290, 42)">
+      <rect width="250" height="95" class="block" />
+      <text x="14" y="22" class="block-title">productController.js</text>
+      <text x="14" y="40" class="block-desc">• Validates lat &amp; lon query params</text>
+      <text x="14" y="56" class="block-desc">• Executes calculate_distance_km</text>
+      <text x="14" y="72" class="block-desc">• Filters active crop products</text>
+      <text x="14" y="88" class="block-desc">• Orders results by distance ASC</text>
+    </g>
+
+    <!-- Farmer Controller -->
+    <g transform="translate(555, 42)">
+      <rect width="250" height="95" class="block" />
+      <text x="14" y="22" class="block-title">farmerController.js</text>
+      <text x="14" y="40" class="block-desc">• Cultivator store registration</text>
+      <text x="14" y="56" class="block-desc">• Dashboard telemetry &amp; alerts</text>
+      <text x="14" y="72" class="block-desc">• Product listing CRUD mutations</text>
+      <text x="14" y="88" class="block-desc">• Order fulfillment state updates</text>
+    </g>
+
+    <!-- Consumer Controller -->
+    <g transform="translate(820, 42)">
+      <rect width="265" height="95" class="block" />
+      <text x="14" y="22" class="block-title">consumerController.js</text>
+      <text x="14" y="40" class="block-desc">• Verifies buyer &amp; farmer presence</text>
+      <text x="14" y="56" class="block-desc">• Computes true delivery route km</text>
+      <text x="14" y="72" class="block-desc">• Generates order ID (FC + timestamp)</text>
+      <text x="14" y="88" class="block-desc">• Commits JSONB items snapshot</text>
+    </g>
+  </g>
+  <path d="M 600, 565 L 600, 590" class="pipe-arrow" />
+
+  <!-- ================= LAYER 4: DATABASE & TRANSACTIONS ================= -->
+  <g transform="translate(45, 590)">
+    <rect width="1110" height="190" class="layer-container" />
+    <text x="25" y="28" class="layer-header">LAYER 4: POSTGRESQL POOL &amp; EXTERNAL SERVICES</text>
+
+    <!-- DB Pool -->
+    <g transform="translate(25, 42)">
+      <rect width="360" height="130" class="block" />
+      <text x="14" y="22" class="block-title">PostgreSQL Connection Pool (pg.Pool)</text>
+      <text x="14" y="42" class="block-desc">• Max 10 production connections / 5 local</text>
+      <text x="14" y="60" class="block-desc">• idleTimeoutMillis: 30000ms | connectionTimeout: 2000ms</text>
+      <text x="14" y="78" class="block-desc">• SSL: rejectUnauthorized: false for Supabase</text>
+      <text x="14" y="96" class="block-desc">• testConnection(): Diagnostic check on boot</text>
+      <text x="14" y="116" class="block-code">src/config/db.js &amp; database.js</text>
+    </g>
+
+    <!-- Transactions -->
+    <g transform="translate(400, 42)">
+      <rect width="350" height="130" class="block" />
+      <text x="14" y="22" class="block-title">Transaction Helper (executeTransaction)</text>
+      <text x="14" y="42" class="block-desc">• In backend/src/config/database.js</text>
+      <text x="14" y="60" class="block-desc">• Wraps callback in BEGIN / COMMIT / ROLLBACK</text>
+      <text x="14" y="78" class="block-desc">• Used by order.service.js for atomic order &amp; stock decrement</text>
+      <text x="14" y="96" class="block-desc">• Always releases client in finally block</text>
+      <text x="14" y="116" class="block-code">Modular Backend ACID</text>
+    </g>
+
+    <!-- External Services -->
+    <g transform="translate(765, 42)">
+      <rect width="320" height="130" class="block" />
+      <text x="14" y="22" class="block-title">External Cloud Services</text>
+      <text x="14" y="42" class="block-desc">• Fast2SMS: sendOTP(phone, code) via bulkV2</text>
+      <text x="14" y="60" class="block-desc">• Demo Bypass: OTP_DEMO_MODE=true</text>
+      <text x="14" y="78" class="block-desc">• Cloudinary: Multer crop photo upload</text>
+      <text x="14" y="96" class="block-desc">• Supabase: Spatial distance stored procedure</text>
+      <text x="14" y="116" class="block-code">Third-Party Gateway</text>
+    </g>
+  </g>
+
+</svg>

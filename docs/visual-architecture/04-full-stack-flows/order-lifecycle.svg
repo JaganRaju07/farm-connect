@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .state-card { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 12px; }
+      .state-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 800; fill: #f8fafc; }
+      .state-badge { fill: #064e3b; rx: 4px; }
+      .state-badge-txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 700; fill: #34d399; }
+      .state-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .trans-arrow { stroke: #10b981; stroke-width: 2.2; fill: none; marker-end: url(#arrow-green); }
+      .trans-arrow-red { stroke: #ef4444; stroke-width: 2; fill: none; stroke-dasharray: 4,4; marker-end: url(#arrow-red); }
+      .trans-lbl { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; font-weight: 600; fill: #cbd5e1; }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#ef4444" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Title -->
+  <text x="45" y="45" class="title">Farm Connect — Workflow: Order Lifecycle State Machine</text>
+  <text x="45" y="68" class="subtitle">Complete state transition model from consumer order submission to dawn harvest, transit, and doorstep settlement</text>
+
+  <!-- ================= STATE 1: PENDING ================= -->
+  <g transform="translate(60, 150)">
+    <rect width="300" height="130" class="state-card" style="stroke: #f59e0b;" />
+    <text x="20" y="32" class="state-title">1. Pending Confirmation</text>
+    <rect x="200" y="18" width="80" height="18" fill="#78350f" rx="4" />
+    <text x="208" y="31" font-family="monospace" font-size="10" font-weight="700" fill="#fde68a">STATUS: pending</text>
+    <text x="20" y="60" class="state-desc">• Trigger: Consumer submits checkout on /checkout</text>
+    <text x="20" y="78" class="state-desc">• Order record committed to PostgreSQL orders table</text>
+    <text x="20" y="96" class="state-desc">• Appears in farmer's dashboard incoming queue</text>
+    <text x="20" y="114" class="state-desc">• Farmer receives real-time order alert</text>
+  </g>
+
+  <!-- Transition: Accept / Cancel -->
+  <path d="M 360, 215 L 470, 215" class="trans-arrow" />
+  <text x="375" y="205" class="trans-lbl">Farmer: Accepts</text>
+
+  <path d="M 210, 280 L 210, 420" class="trans-arrow-red" />
+  <text x="220" y="350" class="trans-lbl" style="fill: #f87171;">Farmer: Rejects</text>
+
+  <!-- ================= STATE: CANCELLED ================= -->
+  <g transform="translate(60, 420)">
+    <rect width="300" height="120" class="state-card" style="stroke: #ef4444;" />
+    <text x="20" y="32" class="state-title" style="fill: #fca5a5;">Terminal: Cancelled</text>
+    <rect x="190" y="18" width="90" height="18" fill="#7f1d1d" rx="4" />
+    <text x="198" y="31" font-family="monospace" font-size="10" font-weight="700" fill="#fca5a5">STATUS: cancelled</text>
+    <text x="20" y="60" class="state-desc">• Cancellation reason logged</text>
+    <text x="20" y="78" class="state-desc">• Stock reservation restored to products table</text>
+    <text x="20" y="96" class="state-desc">• Consumer order status updated in /orders</text>
+  </g>
+
+  <!-- ================= STATE 2: CONFIRMED ================= -->
+  <g transform="translate(470, 150)">
+    <rect width="300" height="130" class="state-card" style="stroke: #3b82f6;" />
+    <text x="20" y="32" class="state-title">2. Confirmed &amp; Scheduled</text>
+    <rect x="185" y="18" width="95" height="18" fill="#1e3a8a" rx="4" />
+    <text x="192" y="31" font-family="monospace" font-size="10" font-weight="700" fill="#93c5fd">STATUS: confirmed</text>
+    <text x="20" y="60" class="state-desc">• Farmer commits to harvest order</text>
+    <text x="20" y="78" class="state-desc">• Expected delivery schedule calculated (&lt;12h window)</text>
+    <text x="20" y="96" class="state-desc">• Status history logged: updatedBy='farmer'</text>
+    <text x="20" y="114" class="state-desc">• Consumer views progress in /orders timeline</text>
+  </g>
+
+  <!-- Transition: Harvested -->
+  <path d="M 770, 215 L 870, 215" class="trans-arrow" />
+  <text x="785" y="205" class="trans-lbl">Harvested</text>
+
+  <!-- ================= STATE 3: PROCESSING ================= -->
+  <g transform="translate(870, 150)">
+    <rect width="280" height="130" class="state-card" style="stroke: #8b5cf6;" />
+    <text x="20" y="32" class="state-title">3. Dawn Harvesting</text>
+    <rect x="165" y="18" width="95" height="18" fill="#4c1d95" rx="4" />
+    <text x="172" y="31" font-family="monospace" font-size="10" font-weight="700" fill="#c4b5fd">STATUS: processing</text>
+    <text x="20" y="60" class="state-desc">• Fresh morning harvest from farm</text>
+    <text x="20" y="78" class="state-desc">• Produce washed, weighed, and crated</text>
+    <text x="20" y="96" class="state-desc">• Zero cold-storage holding delay</text>
+    <text x="20" y="114" class="state-desc">• Direct loading for local transit</text>
+  </g>
+
+  <!-- Transition: Dispatched -->
+  <path d="M 1010, 280 L 1010, 420" class="trans-arrow" />
+  <text x="1020" y="350" class="trans-lbl">Dispatched</text>
+
+  <!-- ================= STATE 4: OUT FOR DELIVERY ================= -->
+  <g transform="translate(870, 420)">
+    <rect width="280" height="130" class="state-card" style="stroke: #06b6d4;" />
+    <text x="20" y="32" class="state-title">4. Local Transit</text>
+    <rect x="155" y="18" width="105" height="18" fill="#164e63" rx="4" />
+    <text x="162" y="31" font-family="monospace" font-size="10" font-weight="700" fill="#67e8f9">STATUS: out_for_delivery</text>
+    <text x="20" y="60" class="state-desc">• Produce dispatched directly from farm</text>
+    <text x="20" y="78" class="state-desc">• Traverses taluk route (delivery_distance_km)</text>
+    <text x="20" y="96" class="state-desc">• Consumer receives "Out for delivery" alert</text>
+    <text x="20" y="114" class="state-desc">• Doorstep ETA confirmed</text>
+  </g>
+
+  <!-- Transition: Delivered -->
+  <path d="M 870, 485 L 770, 485" class="trans-arrow" />
+  <text x="785" y="475" class="trans-lbl">Delivered</text>
+
+  <!-- ================= STATE 5: DELIVERED (TERMINAL) ================= -->
+  <g transform="translate(470, 420)">
+    <rect width="300" height="150" class="state-card" style="stroke: #10b981; stroke-width: 2;" />
+    <text x="20" y="32" class="state-title" style="fill: #34d399;">5. Delivered &amp; Settled</text>
+    <rect x="185" y="18" width="95" height="18" fill="#064e3b" rx="4" />
+    <text x="194" y="31" font-family="monospace" font-size="10" font-weight="700" fill="#34d399">STATUS: delivered</text>
+    <text x="20" y="60" class="state-desc">• Doorstep handover to consumer household</text>
+    <text x="20" y="78" class="state-desc">• Direct Settlement: Cash on Delivery or UPI</text>
+    <text x="20" y="96" class="state-desc">• 100% price retention goes directly to farmer</text>
+    <text x="20" y="114" class="state-desc">• Consumer invited to leave review on /reviews</text>
+    <text x="20" y="132" class="state-desc">• Order marked COMPLETED in analytics</text>
+  </g>
+
+</svg>

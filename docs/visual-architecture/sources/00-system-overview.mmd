@@ -1,0 +1,103 @@
+%% ========================================================
+%% FARM CONNECT — SYSTEM OVERVIEW DIAGRAM SOURCES (MERMAID)
+%% ========================================================
+
+%% --------------------------------------------------------
+%% 1. SYSTEM CONTEXT (system-context.svg)
+%% --------------------------------------------------------
+flowchart TB
+    subgraph Users ["Agricultural Stakeholders"]
+        Farmer["🌾 Farmer / Producer<br/>(Crop listing, Inventory, Fulfillment)"]
+        Consumer["🛒 Consumer / Buyer<br/>(Hyperlocal search, Cart, Geotagged Orders)"]
+        Admin["🛡️ Platform Admin<br/>(Farmer verification, GMV metrics)"]
+    end
+
+    subgraph FarmConnectPlatform ["Farm Connect Platform Boundary"]
+        FrontendApp["Frontend Web Application<br/>Next.js 16 App Router<br/>(Hosted on Vercel CDN)"]
+        BackendAPI["Core Express API Cluster<br/>Node.js 18 LTS Runtime<br/>(Hosted on Render)"]
+        SpatialDB[("Supabase PostgreSQL DB<br/>PL/pgSQL Haversine Engine<br/>JSONB Line Items")]
+    end
+
+    subgraph ExternalIntegrations ["Third-Party External Services"]
+        SMSGateway["📱 Fast2SMS Gateway<br/>(Bulk V2 REST OTP Delivery)"]
+        CloudinaryCDN["☁️ Cloudinary Media CDN<br/>(Crop Images & Optimization)"]
+        OSM["🗺️ OpenStreetMap / Leaflet<br/>(Tile Server & Reverse Geocoding)"]
+    end
+
+    Farmer -->|"HTTPS / Desktop & Mobile Web"| FrontendApp
+    Consumer -->|"HTTPS / Mobile Geolocation"| FrontendApp
+    Admin -->|"HTTPS / Admin Portal"| FrontendApp
+
+    FrontendApp -->|"REST API / Bearer JWT"| BackendAPI
+    BackendAPI -->|"TLS 1.3 / pg.Pool"| SpatialDB
+
+    BackendAPI -->|"REST API (API Key Auth)"| SMSGateway
+    BackendAPI -->|"Multipart Buffer Stream"| CloudinaryCDN
+    FrontendApp -->|"Direct Tile Fetch"| OSM
+
+%% --------------------------------------------------------
+%% 2. COMPLETE ARCHITECTURE (complete-architecture.svg)
+%% --------------------------------------------------------
+flowchart TD
+    subgraph ClientTier ["Client Browser Tier (Next.js 16.2.4)"]
+        UI_Pages["Pages: Marketplace, Product, Cart, Checkout, Orders, Farmer Portal"]
+        UI_Context["Context Cascade: Theme -> Auth -> Location -> Toast -> Cart"]
+        UI_Hooks["Hooks: useGeolocation, useAuth, useCart, useDebounce"]
+        AxiosClient["Axios Interceptor Instance<br/>Auto-attaches Authorization: Bearer <JWT>"]
+    end
+
+    subgraph APIGateway ["Network & Ingestion Gateway (Render)"]
+        ReverseProxy["Render TLS Reverse Proxy (trust proxy: 1)"]
+        RateLimiter["express-rate-limit (300 req / 15 min)"]
+        CORSConfig["CORS Policy (Origin whitelist)"]
+    end
+
+    subgraph ExpressBackend ["Backend Application Runtime (Node.js / Express)"]
+        RootRoutes["Root Routes (Port 5000):<br/>/api/v1/auth<br/>/api/v1/products<br/>/api/v1/consumers<br/>/api/v1/farmers"]
+        ModularRoutes["Modular Routes (Port 4000):<br/>/api/v1/reviews<br/>/api/v1/wishlists<br/>/api/v1/notifications<br/>/api/v1/upload<br/>/api/v1/admin"]
+        Controllers["Controllers: authController, productController, consumerController, farmerController"]
+        Services["Services: smsservice, otpservice, geoservice"]
+    end
+
+    subgraph DataStorage ["Persistence Tier (Supabase PostgreSQL)"]
+        PGPool["pg.Pool (max 10, idleTimeout 30s)"]
+        Tables["Tables: farmers, consumers, products, orders, otp_store, reviews, wishlists, notifications"]
+        SpatialProc["Stored Function: calculate_distance_km()"]
+    end
+
+    ClientTier -->|"HTTPS Request"| ReverseProxy
+    ReverseProxy --> RateLimiter --> CORSConfig --> ExpressBackend
+    ExpressBackend --> PGPool --> Tables
+    Tables --> SpatialProc
+
+%% --------------------------------------------------------
+%% 3. TECHNOLOGY & SERVICE MAP (technology-and-service-map.svg)
+%% --------------------------------------------------------
+mindmap
+  root((Farm Connect Technology Stack))
+    Frontend
+      Next.js 16.2.4 (App Router)
+      React 19.2.4 & React-DOM
+      Tailwind CSS 3.4.4
+      Leaflet 1.9.4 & React-Leaflet 5
+      Lucide-React (Icons)
+      Axios (HTTP Client)
+    Backend
+      Node.js 18+ LTS
+      Express 4.x
+      pg (node-postgres Pool)
+      jsonwebtoken (30d expiry)
+      multer (Memory Storage)
+      express-rate-limit
+      cors & helmet
+    Database
+      PostgreSQL 15+ (Supabase)
+      JSONB frozen order items
+      PL/pgSQL Haversine function
+      B-tree & compound spatial indexes
+    Infrastructure
+      Vercel (Frontend Edge Hosting)
+      Render (Backend Container Service)
+      Cloudinary (Image Media Cloud)
+      Fast2SMS (Bulk V2 SMS Gateway)
+      OpenStreetMap (Tile Provider)

@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .actor-line { stroke: #334155; stroke-width: 1.5; stroke-dasharray: 4,4; }
+      .actor-box { fill: #1e293b; stroke: #38bdf8; stroke-width: 1.5; rx: 8px; }
+      .actor-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; text-anchor: middle; }
+      .actor-sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle; }
+      .msg-line { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+      .msg-ret { stroke: #38bdf8; stroke-width: 2; stroke-dasharray: 4,4; fill: none; marker-end: url(#arrow-cyan); }
+      .msg-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 600; fill: #f1f5f9; }
+      .msg-detail { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 9.5px; fill: #94a3b8; }
+      .num-circ { fill: #064e3b; }
+      .num-txt { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; font-weight: 800; fill: #34d399; text-anchor: middle; }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="850" class="bg" />
+
+  <!-- Title -->
+  <text x="45" y="45" class="title">Farm Connect — Checkout &amp; Order Fulfillment Full-Stack Flow</text>
+  <text x="45" y="68" class="subtitle">Complete trace of geotagged order placement, database transaction snapshot, cart cleanup, and farmer fulfillment queue</text>
+
+  <!-- Actors Header -->
+  <!-- Actor 1: Consumer -->
+  <g transform="translate(100, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">Consumer UI</text>
+    <text x="0" y="40" class="actor-sub">/checkout</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 2: CartProvider -->
+  <g transform="translate(360, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">CartContext</text>
+    <text x="0" y="40" class="actor-sub">cartcontext.tsx</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 3: Express Backend -->
+  <g transform="translate(620, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">Express API</text>
+    <text x="0" y="40" class="actor-sub">consumerController.js</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 4: PostgreSQL -->
+  <g transform="translate(870, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">PostgreSQL DB</text>
+    <text x="0" y="40" class="actor-sub">orders &amp; products</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Actor 5: Farmer Dashboard -->
+  <g transform="translate(1100, 100)">
+    <rect x="-80" y="0" width="160" height="50" class="actor-box" />
+    <text x="0" y="24" class="actor-title">Farmer Portal</text>
+    <text x="0" y="40" class="actor-sub">/farmer/dashboard</text>
+    <line x1="0" y1="50" x2="0" y2="700" class="actor-line" />
+  </g>
+
+  <!-- Steps -->
+  <!-- Step 1 -->
+  <circle cx="90" cy="180" r="10" class="num-circ" />
+  <text x="90" y="184" class="num-txt">1</text>
+  <path d="M 100, 180 L 360, 180" class="msg-line" />
+  <text x="120" y="172" class="msg-text">Reviews cart items &amp; confirms delivery GPS address</text>
+  <text x="120" y="190" class="msg-detail">Subtotal: ₹320, Delivery Fee: ₹30, Total: ₹350</text>
+
+  <!-- Step 2 -->
+  <circle cx="90" cy="235" r="10" class="num-circ" />
+  <text x="90" y="239" class="num-txt">2</text>
+  <path d="M 100, 235 L 620, 235" class="msg-line" />
+  <text x="120" y="227" class="msg-text">POST /api/v1/consumers/orders</text>
+  <text x="120" y="245" class="msg-detail">{ consumer_id: 12, farmer_id: 4, items: [...], total_amount: 350 }</text>
+
+  <!-- Step 3 -->
+  <circle cx="610" cy="290" r="10" class="num-circ" />
+  <text x="610" y="294" class="num-txt">3</text>
+  <path d="M 620, 290 L 870, 290" class="msg-line" />
+  <text x="640" y="282" class="msg-text">Validate Consumer &amp; Farmer Coordinates</text>
+  <text x="640" y="300" class="msg-detail">SELECT lat, lon FROM consumers; SELECT lat, lon FROM farmers</text>
+
+  <!-- Step 4 -->
+  <circle cx="610" cy="350" r="10" class="num-circ" />
+  <text x="610" y="354" class="num-txt">4</text>
+  <path d="M 620, 350 L 870, 350" class="msg-line" />
+  <text x="640" y="342" class="msg-text">Compute Route Distance via calculate_distance_km()</text>
+  <text x="640" y="360" class="msg-detail">SELECT calculate_distance_km(c.lat, c.lon, f.lat, f.lon) AS dist</text>
+
+  <!-- Step 5 -->
+  <circle cx="610" cy="410" r="10" class="num-circ" />
+  <text x="610" y="414" class="num-txt">5</text>
+  <path d="M 620, 410 L 870, 410" class="msg-line" />
+  <text x="640" y="402" class="msg-text">Insert Order with JSONB Snapshot &amp; Status 'Pending'</text>
+  <text x="640" y="420" class="msg-detail">INSERT INTO orders (order_number: "FC17300...", items: JSON.stringify(...))</text>
+
+  <!-- Step 6 -->
+  <path d="M 870, 460 L 620, 460" class="msg-ret" />
+  <text x="670" y="452" class="msg-text">Returns new Order Record (id: 88, status: 'pending')</text>
+
+  <path d="M 620, 490 L 100, 490" class="msg-ret" />
+  <text x="220" y="482" class="msg-text">HTTP 201 Created: { success: true, order: rows[0] }</text>
+
+  <!-- Step 7 -->
+  <circle cx="90" cy="540" r="10" class="num-circ" />
+  <text x="90" y="544" class="num-txt">6</text>
+  <path d="M 100, 540 L 360, 540" class="msg-line" />
+  <text x="120" y="532" class="msg-text">Clear Cart Storage in CartContext</text>
+  <text x="120" y="550" class="msg-detail">clearCart(); localStorage.removeItem('farmconnect_cart')</text>
+
+  <!-- Step 8 -->
+  <circle cx="90" cy="600" r="10" class="num-circ" />
+  <text x="90" y="604" class="num-txt">7</text>
+  <path d="M 100, 600 L 100, 640" class="msg-line" />
+  <text x="115" y="625" class="msg-text">Redirects to /orders order history page</text>
+
+  <!-- Step 9 -->
+  <circle cx="1090" cy="640" r="10" class="num-circ" />
+  <text x="1090" y="644" class="num-txt">8</text>
+  <path d="M 1100, 640 L 620, 640" class="msg-line" />
+  <text x="750" y="632" class="msg-text">Farmer Polls Incoming Orders Queue</text>
+  <text x="750" y="650" class="msg-detail">GET /api/v1/farmers/orders (order #FC17300 appears live)</text>
+
+  <!-- Step 10 -->
+  <circle cx="1090" cy="690" r="10" class="num-circ" />
+  <text x="1090" y="694" class="num-txt">9</text>
+  <path d="M 1100, 690 L 870, 690" class="msg-line" />
+  <text x="910" y="682" class="msg-text">Farmer Updates Status: 'Pending' → 'Accepted' → 'Delivered'</text>
+
+</svg>

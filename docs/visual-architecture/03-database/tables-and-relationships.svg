@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .tbl-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .tbl-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .box { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .box-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .box-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #10b981; }
+      .fk-arrow { stroke: #38bdf8; stroke-width: 2; fill: none; marker-end: url(#arrow-cyan); }
+    </style>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Title -->
+  <text x="45" y="45" class="title">Farm Connect — Tables &amp; Relationship Integrity Specifications</text>
+  <text x="45" y="68" class="subtitle">Foreign key definitions, explicit database constraints, cascading behaviors, and application-level JSONB associations</text>
+
+  <!-- ================= LEFT: DATABASE CONSTRAINTS MATRIX ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="660" class="tbl-card" />
+    <text x="25" y="32" class="tbl-title">EXPLICIT DATABASE CONSTRAINTS &amp; KEYS</text>
+
+    <!-- Table 1: Farmers -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">farmers Table Constraints</text>
+      <text x="16" y="44" class="box-desc">• PRIMARY KEY (id) - Unique auto-incrementing serial identifier</text>
+      <text x="16" y="62" class="box-desc">• UNIQUE CONSTRAINT uk_farmers_phone (phone) - Prevents duplicate registrations</text>
+      <text x="16" y="80" class="box-desc">• CHECK latitude BETWEEN -90 AND 90; longitude BETWEEN -180 AND 180</text>
+      <text x="16" y="98" class="box-desc">• DEFAULT is_verified = FALSE, phone_verified = TRUE (upon OTP verify)</text>
+      <text x="350" y="24" class="box-code">Explicit Constraint</text>
+    </g>
+
+    <!-- Table 2: Consumers -->
+    <g transform="translate(25, 175)">
+      <rect width="480" height="100" class="box" />
+      <text x="16" y="24" class="box-title">consumers Table Constraints</text>
+      <text x="16" y="44" class="box-desc">• PRIMARY KEY (id) - Unique buyer identifier</text>
+      <text x="16" y="62" class="box-desc">• UNIQUE CONSTRAINT uk_consumers_phone (phone)</text>
+      <text x="16" y="80" class="box-desc">• CHECK pincode ~ '^[0-9]{6}$' (Valid 6-digit Indian PIN format)</text>
+      <text x="350" y="24" class="box-code">Explicit Constraint</text>
+    </g>
+
+    <!-- Table 3: Products -->
+    <g transform="translate(25, 290)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">products Table Constraints &amp; FKs</text>
+      <text x="16" y="44" class="box-desc">• FOREIGN KEY (farmer_id) REFERENCES farmers(id) ON DELETE CASCADE</text>
+      <text x="16" y="62" class="box-desc">• CHECK price &gt;= 0 AND stock_available &gt;= 0 (Prevents negative inventory)</text>
+      <text x="16" y="80" class="box-desc">• CHECK category IN ('vegetables', 'fruits', 'grains', 'dairy', 'spices', 'other')</text>
+      <text x="16" y="100" class="box-desc">• DEFAULT is_active = TRUE, min_order_qty = 1</text>
+      <text x="350" y="24" class="box-code">FK: farmer_id</text>
+    </g>
+
+    <!-- Table 4: Orders -->
+    <g transform="translate(25, 425)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">orders Table Constraints &amp; FKs</text>
+      <text x="16" y="44" class="box-desc">• PRIMARY KEY (id); UNIQUE CONSTRAINT uk_order_number (order_number)</text>
+      <text x="16" y="62" class="box-desc">• FOREIGN KEY (consumer_id) REFERENCES consumers(id) ON DELETE RESTRICT</text>
+      <text x="16" y="80" class="box-desc">• FOREIGN KEY (farmer_id) REFERENCES farmers(id) ON DELETE RESTRICT</text>
+      <text x="16" y="100" class="box-desc">• CHECK order_status IN ('pending', 'confirmed', 'delivered', 'cancelled')</text>
+      <text x="350" y="24" class="box-code">FK: consumer &amp; farmer</text>
+    </g>
+
+    <!-- Table 5: OTP Store -->
+    <g transform="translate(25, 560)">
+      <rect width="480" height="80" class="box" />
+      <text x="16" y="24" class="box-title">otp_store Table Constraints</text>
+      <text x="16" y="44" class="box-desc">• PRIMARY KEY (phone); CHECK otp_code ~ '^[0-9]{6}$'</text>
+      <text x="16" y="62" class="box-desc">• ON CONFLICT (phone) DO UPDATE SET otp_code=$2, expires_at=$3 ...</text>
+      <text x="350" y="24" class="box-code">PK: phone</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: APPLICATION-LEVEL ASSOCIATIONS ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="660" class="tbl-card" />
+    <text x="25" y="32" class="tbl-title">APPLICATION-LEVEL ASSOCIATIONS &amp; JSONB</text>
+
+    <!-- Block 1: JSONB Line Items -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="200" class="box" />
+      <text x="16" y="24" class="box-title">1. JSONB Immutable Item Snapshot (orders.items)</text>
+      <text x="16" y="44" class="box-desc">Why JSONB instead of an order_items join table?</text>
+      <text x="26" y="64" font-family="monospace" font-size="9.5" fill="#38bdf8">• Locks exact historical price, name, and unit at time of checkout</text>
+      <text x="26" y="80" font-family="monospace" font-size="9.5" fill="#38bdf8">• Farmer price changes never alter past order invoices or reports</text>
+      <text x="16" y="102" class="box-desc">Schema Structure inside JSONB array:</text>
+      <text x="26" y="120" font-family="monospace" font-size="9" fill="#f8fafc">[{</text>
+      <text x="36" y="136" font-family="monospace" font-size="9" fill="#f8fafc">  "productId": 104, "name": "Organic Tomatoes", "quantity": 3,</text>
+      <text x="36" y="152" font-family="monospace" font-size="9" fill="#f8fafc">  "unit": "kg", "pricePerUnit": 40.00, "totalPrice": 120.00,</text>
+      <text x="36" y="168" font-family="monospace" font-size="9" fill="#f8fafc">  "isOrganic": true, "imageUrl": "https://res.cloudinary..."</text>
+      <text x="26" y="184" font-family="monospace" font-size="9" fill="#f8fafc">}]</text>
+    </g>
+
+    <!-- Block 2: Spatial Association -->
+    <g transform="translate(25, 265)">
+      <rect width="480" height="175" class="box" />
+      <text x="16" y="24" class="box-title">2. Spatial Association via Coordinates (Haversine)</text>
+      <text x="16" y="44" class="box-desc">Consumer ↔ Farmer has no foreign key relationship;</text>
+      <text x="16" y="60" class="box-desc">they are dynamically coupled through spatial proximity:</text>
+      <text x="26" y="82" font-family="monospace" font-size="10" fill="#10b981">calculate_distance_km(c.lat, c.lon, f.lat, f.lon) &lt;= radius_km</text>
+      <text x="16" y="104" class="box-desc">• Enables zero-middleman radius filtering</text>
+      <text x="16" y="122" class="box-desc">• Automatically assigns taluk localities based on GPS proximity</text>
+      <text x="16" y="140" class="box-desc">• Computes true delivery transit distance saved in orders.delivery_distance_km</text>
+      <text x="16" y="158" class="box-desc">• Delivery fee = base_fee + (distance_km * rate_per_km)</text>
+    </g>
+
+    <!-- Block 3: Progressive Profile Association -->
+    <g transform="translate(25, 455)">
+      <rect width="480" height="185" class="box" />
+      <text x="16" y="24" class="box-title">3. Ephemeral Auth Link to User Identity</text>
+      <text x="16" y="44" class="box-desc">otp_store ↔ farmers / consumers:</text>
+      <text x="16" y="62" class="box-desc">• Coupled via phone string parameter, not database foreign key</text>
+      <text x="16" y="80" class="box-desc">• Progressive Registration Pattern:</text>
+      <text x="26" y="98" font-family="monospace" font-size="9.5" fill="#f59e0b">On OTP verify: INSERT INTO farmers (name, phone, lat, lon, ...)</text>
+      <text x="26" y="114" font-family="monospace" font-size="9.5" fill="#f59e0b">VALUES ($1, $2, 0, 0, 'Pending Profile Completion', 'Pending', true)</text>
+      <text x="16" y="136" class="box-desc">• Permits instant login before GPS address completion</text>
+      <text x="16" y="154" class="box-desc">• Frontend prompts user to complete profile later via address form</text>
+      <text x="16" y="172" class="box-desc">• JWT token contains { userId, phone, role } for stateless verification</text>
+    </g>
+  </g>
+
+</svg>

@@ -1,0 +1,155 @@
+%% ========================================================
+%% FARM CONNECT — DATABASE ARCHITECTURE SOURCES (MERMAID)
+%% ========================================================
+
+%% --------------------------------------------------------
+%% 1. ENTITY RELATIONSHIP DIAGRAM (ERD)
+%% --------------------------------------------------------
+erDiagram
+    FARMERS ||--o{ PRODUCTS : "produces / lists"
+    FARMERS ||--o{ ORDERS : "fulfills"
+    FARMERS ||--o{ PRODUCT_REVIEWS : "receives ratings"
+    CONSUMERS ||--o{ ORDERS : "places"
+    CONSUMERS ||--o{ PRODUCT_REVIEWS : "writes"
+    CONSUMERS ||--o{ CONSUMER_WISHLIST : "saves items"
+    PRODUCTS ||--o{ PRODUCT_REVIEWS : "reviewed on"
+    PRODUCTS ||--o{ CONSUMER_WISHLIST : "bookmarked in"
+
+    FARMERS {
+        int id PK
+        varchar phone UK "10-digit mobile"
+        varchar name
+        numeric latitude "Decimal degrees"
+        numeric longitude "Decimal degrees"
+        boolean is_verified "Admin badge"
+        numeric rating "Cached aggregate average"
+        varchar city
+        varchar address
+        varchar pincode
+        timestamp created_at
+    }
+
+    CONSUMERS {
+        int id PK
+        varchar phone UK "10-digit mobile"
+        varchar name
+        numeric latitude
+        numeric longitude
+        varchar address
+        varchar city
+        varchar pincode
+        timestamp created_at
+    }
+
+    PRODUCTS {
+        int id PK
+        int farmer_id FK "References farmers(id)"
+        varchar name
+        varchar category "Vegetables, Fruits, Grains, Dairy"
+        text description
+        numeric price "INR per unit"
+        varchar unit "kg, bunch, liter"
+        numeric stock_available "Real-time balance"
+        varchar image_url "Cloudinary CDN HTTPS"
+        boolean is_organic
+        boolean is_active "Visibility toggle"
+        date harvest_date
+        timestamp created_at
+    }
+
+    ORDERS {
+        int id PK
+        varchar order_number UK "e.g. FC172839482"
+        int consumer_id FK "References consumers(id)"
+        int farmer_id FK "References farmers(id)"
+        jsonb items "Frozen line items snapshot"
+        numeric subtotal
+        numeric delivery_fee "Calculated by distance"
+        numeric total_amount
+        varchar order_status "pending, confirmed, shipped, delivered"
+        numeric delivery_latitude
+        numeric delivery_longitude
+        varchar delivery_address
+        numeric delivery_distance_km
+        text consumer_notes
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    OTP_STORE {
+        int id PK
+        varchar phone UK "10-digit mobile"
+        varchar otp_code "6-digit string"
+        timestamp expires_at "5-minute TTL window"
+        varchar user_type "farmer | consumer"
+        varchar action "login | register"
+    }
+
+    PRODUCT_REVIEWS {
+        int id PK
+        int consumer_id FK
+        int product_id FK
+        int farmer_id FK
+        int rating "1 to 5 scale"
+        text comment
+        timestamp created_at
+    }
+
+    CONSUMER_WISHLIST {
+        int id PK
+        int consumer_id FK
+        int product_id FK
+        timestamp created_at
+    }
+
+    NOTIFICATIONS {
+        int id PK
+        int user_id
+        varchar user_type "farmer | consumer"
+        varchar title
+        text message
+        boolean is_read "Default false"
+        timestamp created_at
+    }
+
+%% --------------------------------------------------------
+%% 2. GEOSPATIAL PROXIMITY ENGINE & HAVERSINE FORMULA
+%% --------------------------------------------------------
+flowchart TD
+    subgraph ClientCoordinates ["Consumer Hardware GPS"]
+        Coords["lat1 = 12.9716, lon1 = 77.5946<br/>radius = 30 km"]
+    end
+
+    subgraph DatabaseExecution ["PostgreSQL Engine: calculate_distance_km()"]
+        ConvertRad["Convert lat/lon to Radians:<br/>rad(x) = x * pi / 180"]
+        HaversineFormula["Haversine Formula Spherical Math:<br/>d = 2 * R * asin(sqrt(sin^2(dlat/2) + cos(lat1)*cos(lat2)*sin^2(dlon/2)))<br/>where R = 6371 km"]
+        SpatialFilter["WHERE calculate_distance_km(lat1, lon1, f.latitude, f.longitude) <= radius"]
+        SpatialSort["ORDER BY distance_km ASC"]
+    end
+
+    subgraph QueryOutput ["Result Set"]
+        SortedProducts["List of verified farm crops sorted by nearest physical distance"]
+    end
+
+    Coords --> ConvertRad --> HaversineFormula --> SpatialFilter --> SpatialSort --> SortedProducts
+
+%% --------------------------------------------------------
+%% 3. DATABASE QUERY LIFECYCLE & POOL MANAGEMENT
+%% --------------------------------------------------------
+sequenceDiagram
+    autonumber
+    participant App as Express Request Handler
+    participant Pool as pg.Pool Instance
+    participant Client as Dedicated Client Connection
+    participant Postgres as Supabase PostgreSQL Instance
+
+    App->>Pool: pool.query(sql, params)
+    Pool->>Client: Acquire idle client from pool (max 10)
+    Client->>Postgres: Execute query over TLS 1.3
+    Postgres-->>Client: Return query row results
+    Client->>Pool: Release client back to idle pool
+    Pool-->>App: Return rows array to handler
+
+    Note over Pool,Postgres: In case of unhandled idle disconnection
+    Postgres-xPool: Idle connection dropped
+    Pool->>Pool: pool.on('error') logs event, destroys client

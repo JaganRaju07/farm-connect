@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .ctx-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .ctx-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 15px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .sub-card { fill: #1e293b; stroke: #334155; stroke-width: 1; rx: 8px; }
+      .sub-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12.5px; font-weight: 700; fill: #f1f5f9; }
+      .sub-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .code-tag { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #10b981; }
+      .key-pill { fill: #0f766e; rx: 4px; }
+      .key-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 9.5px; font-weight: 700; fill: #5eead4; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Frontend State &amp; Authentication Architecture</text>
+  <text x="45" y="68" class="subtitle">Detailed lifecycle and localStorage synchronization for AuthContext, CartContext, LocationContext, and ThemeContext</text>
+
+  <!-- ================= QUADRANT 1: AUTHCONTEXT ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="325" class="ctx-card" />
+    <text x="20" y="32" class="ctx-title">AUTHCONTEXT &amp; JWT SESSION MANAGEMENT</text>
+    <text x="360" y="32" class="code-tag">src/context/AuthContext.tsx</text>
+
+    <!-- State Structure -->
+    <g transform="translate(18, 48)">
+      <rect width="494" height="110" class="sub-card" />
+      <text x="14" y="22" class="sub-title">1. Internal React State</text>
+      <text x="14" y="42" class="sub-text">• user: AuthUser | null ({ id, name, phone, email, is_profile_complete, city })</text>
+      <text x="14" y="60" class="sub-text">• token: string | null (Bearer JWT token signed with HMAC-SHA256)</text>
+      <text x="14" y="78" class="sub-text">• role: 'farmer' | 'consumer' | 'admin' | null</text>
+      <text x="14" y="96" class="sub-text">• isAuthenticated: boolean (computed from !!token &amp;&amp; !!user)</text>
+    </g>
+
+    <!-- Storage & Interceptor Sync -->
+    <g transform="translate(18, 170)">
+      <rect width="494" height="135" class="sub-card" />
+      <text x="14" y="22" class="sub-title">2. Persistence &amp; Network Synchronization</text>
+      <text x="14" y="42" class="sub-text">• Storage Keys in localStorage: auth_token, auth_user, auth_role</text>
+      <text x="14" y="62" class="sub-text">• Automatic Axios Header Attachment on Mount &amp; Login:</text>
+      <text x="24" y="80" font-family="monospace" font-size="10" fill="#38bdf8">axios.defaults.headers.common['Authorization'] = `Bearer ${token}`</text>
+      <text x="14" y="100" class="sub-text">• Teardown on logout(): Clears all keys &amp; deletes Axios default header</text>
+      <text x="14" y="118" class="sub-text">• Safe error handling: Corrupted localStorage clears tokens automatically</text>
+    </g>
+  </g>
+
+  <!-- ================= QUADRANT 2: CARTCONTEXT ================= -->
+  <g transform="translate(615, 95)">
+    <rect width="540" height="325" class="ctx-card" />
+    <text x="20" y="32" class="ctx-title">CARTCONTEXT &amp; STOCK BOUNDARY LIMITS</text>
+    <text x="375" y="32" class="code-tag">src/context/cartcontext.tsx</text>
+
+    <!-- State Structure -->
+    <g transform="translate(18, 48)">
+      <rect width="504" height="110" class="sub-card" />
+      <text x="14" y="22" class="sub-title">1. Cart Item Schema &amp; Storage</text>
+      <text x="14" y="42" class="sub-text">• items: CartItem[] = [{ product: Product, quantity: number }]</text>
+      <text x="14" y="60" class="sub-text">• Persistent Key: localStorage.getItem('farmconnect_cart')</text>
+      <text x="14" y="78" class="sub-text">• Mounted Flag: Prevents Next.js SSR hydration mismatches</text>
+      <text x="14" y="96" class="sub-text">• Auto-persists on every state update via useEffect([items, mounted])</text>
+    </g>
+
+    <!-- Operations & Business Rules -->
+    <g transform="translate(18, 170)">
+      <rect width="504" height="135" class="sub-card" />
+      <text x="14" y="22" class="sub-title">2. Mutation Rules &amp; Bound Checks</text>
+      <text x="14" y="42" class="sub-text">• addToCart(product, quantity):</text>
+      <text x="24" y="60" font-family="monospace" font-size="10" fill="#34d399">const finalQ = Math.min(newQ, product.stockAvailable); // Prevents overselling</text>
+      <text x="14" y="80" class="sub-text">• updateQuantity(productId, quantity): Clamps to stock, drops item if &lt;= 0</text>
+      <text x="14" y="98" class="sub-text">• getSubtotal(): items.reduce((sum, i) =&gt; sum + i.product.price * i.quantity, 0)</text>
+      <text x="14" y="116" class="sub-text">• Toast integration: Dispatches item removal notifications via useToast()</text>
+    </g>
+  </g>
+
+  <!-- ================= QUADRANT 3: LOCATIONCONTEXT ================= -->
+  <g transform="translate(45, 440)">
+    <rect width="530" height="325" class="ctx-card" />
+    <text x="20" y="32" class="ctx-title">LOCATIONCONTEXT &amp; GPS ENGINE</text>
+    <text x="345" y="32" class="code-tag">src/context/LocationContext.tsx</text>
+
+    <!-- State Structure -->
+    <g transform="translate(18, 48)">
+      <rect width="494" height="110" class="sub-card" />
+      <text x="14" y="22" class="sub-title">1. Location State (useGeolocation hook)</text>
+      <text x="14" y="42" class="sub-text">• latitude: number | null (e.g., 12.9716 for Bengaluru)</text>
+      <text x="14" y="60" class="sub-text">• longitude: number | null (e.g., 77.5946 for Bengaluru)</text>
+      <text x="14" y="78" class="sub-text">• accuracy: number | null (in meters from GPS/WiFi/IP)</text>
+      <text x="14" y="96" class="sub-text">• loading: boolean &amp; error: string | null</text>
+    </g>
+
+    <!-- Hardware Options & Methods -->
+    <g transform="translate(18, 170)">
+      <rect width="494" height="135" class="sub-card" />
+      <text x="14" y="22" class="sub-title">2. Geolocation API Options &amp; Lifecycle</text>
+      <text x="14" y="42" class="sub-text">• enableHighAccuracy: true (Prefers GPS chip over WiFi lookup)</text>
+      <text x="14" y="60" class="sub-text">• timeout: 10000ms (Aborts after 10s if hardware is non-responsive)</text>
+      <text x="14" y="78" class="sub-text">• maximumAge: 300000ms (Accepts cached coordinates up to 5 minutes old)</text>
+      <text x="14" y="96" class="sub-text">• refreshLocation(): Allows manual re-triggering from the marketplace UI</text>
+      <text x="14" y="114" class="sub-text">• Error code mapping: PERMISSION_DENIED, POSITION_UNAVAILABLE, TIMEOUT</text>
+    </g>
+  </g>
+
+  <!-- ================= QUADRANT 4: THEME & TOAST CONTEXT ================= -->
+  <g transform="translate(615, 440)">
+    <rect width="540" height="325" class="ctx-card" />
+    <text x="20" y="32" class="ctx-title">THEMECONTEXT &amp; NOTIFICATION TOASTS</text>
+    <text x="360" y="32" class="code-tag">src/context/ThemeContext.tsx</text>
+
+    <!-- Theme State -->
+    <g transform="translate(18, 48)">
+      <rect width="504" height="110" class="sub-card" />
+      <text x="14" y="22" class="sub-title">1. Zero-Flicker Theme Engine</text>
+      <text x="14" y="42" class="sub-text">• Storage Key: localStorage.getItem('farmconnect-theme')</text>
+      <text x="14" y="60" class="sub-text">• Modes: 'light' | 'dark' | 'system'</text>
+      <text x="14" y="78" class="sub-text">• Media query listener: window.matchMedia('(prefers-color-scheme: dark)')</text>
+      <text x="14" y="96" class="sub-text">• DOM Mutation: Adds or removes 'dark' class on document.documentElement</text>
+    </g>
+
+    <!-- Toast Notifications -->
+    <g transform="translate(18, 170)">
+      <rect width="504" height="135" class="sub-card" />
+      <text x="14" y="22" class="sub-title">2. Toast Notification Queue (ToastContext.tsx)</text>
+      <text x="14" y="42" class="sub-text">• Methods: success(msg), error(msg), warning(msg), info(msg)</text>
+      <text x="14" y="62" class="sub-text">• Auto-dismissal: 4000ms timer with manual exit button</text>
+      <text x="14" y="80" class="sub-text">• StrictMode deduplication: Prevents double toasts in React 18 / 19</text>
+      <text x="14" y="98" class="sub-text">• Accessible fixed viewport mounting at bottom-right of screen</text>
+      <text x="14" y="116" class="sub-text">• Styled using Tailwind status colors (Emerald, Rose, Amber, Blue)</text>
+    </g>
+  </g>
+
+</svg>

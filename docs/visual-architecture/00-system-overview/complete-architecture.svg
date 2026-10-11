@@ -1,0 +1,209 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1350 850" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #090d16; }
+      .swimlane { fill: #111827; stroke: #1f2937; stroke-width: 1.5; rx: 12px; }
+      .box-fe { fill: #1e293b; stroke: #0ea5e9; stroke-width: 1.5; rx: 8px; }
+      .box-be { fill: #1e293b; stroke: #10b981; stroke-width: 1.5; rx: 8px; }
+      .box-db { fill: #1e293b; stroke: #8b5cf6; stroke-width: 1.5; rx: 8px; }
+      .box-ext { fill: #1e293b; stroke: #f59e0b; stroke-width: 1.5; rx: 8px; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .lane-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #e2e8f0; letter-spacing: 0.05em; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .node-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; fill: #94a3b8; line-height: 1.4; }
+      .node-tag { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; }
+      .tag-cyan { fill: #38bdf8; }
+      .tag-green { fill: #34d399; }
+      .tag-purple { fill: #c084fc; }
+      .tag-amber { fill: #fbbf24; }
+      .conn { stroke: #475569; stroke-width: 1.8; fill: none; marker-end: url(#arrowhead); }
+      .conn-hi { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrowhead-green); }
+      .conn-fe { stroke: #0ea5e9; stroke-width: 2; fill: none; marker-end: url(#arrowhead-cyan); }
+    </style>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#475569" />
+    </marker>
+    <marker id="arrowhead-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrowhead-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0ea5e9" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1350" height="850" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Complete Full-Stack Architecture Map</text>
+  <text x="45" y="68" class="subtitle">Complete component topology from browser interactions through backend services to database persistence</text>
+
+  <!-- ================= TIER 1: FRONTEND ================= -->
+  <g transform="translate(40, 95)">
+    <rect width="390" height="720" class="swimlane" />
+    <text x="20" y="32" class="lane-title">TIER 1: FRONTEND (NEXT.JS 16 APP ROUTER)</text>
+
+    <!-- Layout & Providers -->
+    <g transform="translate(18, 50)">
+      <rect width="354" height="135" class="box-fe" />
+      <text x="14" y="24" class="node-title">RootLayout &amp; Provider Cascade (layout.tsx)</text>
+      <text x="14" y="44" class="node-text">• ThemeProvider (system / dark / light mode)</text>
+      <text x="14" y="60" class="node-text">• AuthProvider (JWT in localStorage, role sync)</text>
+      <text x="14" y="76" class="node-text">• LocationProvider (useGeolocation GPS coordinates)</text>
+      <text x="14" y="92" class="node-text">• CartProvider (persisted cart, stock bounds)</text>
+      <text x="14" y="108" class="node-text">• AxiosInterceptorWrapper (Bearer token injection)</text>
+      <text x="14" y="125" class="node-tag tag-cyan">src/app/layout.tsx</text>
+    </g>
+
+    <!-- Pages & Routes -->
+    <g transform="translate(18, 200)">
+      <rect width="354" height="155" class="box-fe" />
+      <text x="14" y="24" class="node-title">Application Routes (App Router)</text>
+      <text x="14" y="44" class="node-text">• / : Editorial Landing (Taluk resolution, HeroNarrative)</text>
+      <text x="14" y="60" class="node-text">• /marketplace : Dual View (Grid + Leaflet MapExplorer)</text>
+      <text x="14" y="76" class="node-text">• /cart &amp; /checkout : Order review &amp; geo-tagging</text>
+      <text x="14" y="92" class="node-text">• /farmer/dashboard : Crop inventory CRUD &amp; incoming orders</text>
+      <text x="14" y="108" class="node-text">• /login &amp; /register : Passwordless SMS OTP interface</text>
+      <text x="14" y="124" class="node-text">• /admin/dashboard : Platform oversight &amp; analytics</text>
+      <text x="14" y="142" class="node-tag tag-cyan">src/app/*</text>
+    </g>
+
+    <!-- Components & Map -->
+    <g transform="translate(18, 370)">
+      <rect width="354" height="145" class="box-fe" />
+      <text x="14" y="24" class="node-title">Component System &amp; GIS Layer</text>
+      <text x="14" y="44" class="node-text">• MapExplorer (react-leaflet 5, OpenStreetMap tiles)</text>
+      <text x="14" y="60" class="node-text">• ProductCard &amp; ProductSkeleton (Lazy loaded)</text>
+      <text x="14" y="76" class="node-text">• ProductFilter (Radius slider: 25km, 50km, 100km)</text>
+      <text x="14" y="92" class="node-text">• LocalFarmPulse (Aggregate live taluk metrics)</text>
+      <text x="14" y="108" class="node-text">• ProtectedRoute (Role guard: farmer / consumer / admin)</text>
+      <text x="14" y="130" class="node-tag tag-cyan">src/components/*</text>
+    </g>
+
+    <!-- Client API Abstraction -->
+    <g transform="translate(18, 530)">
+      <rect width="354" height="105" class="box-fe" />
+      <text x="14" y="24" class="node-title">Client API Layer (Axios Modules)</text>
+      <text x="14" y="44" class="node-text">• lib/api/products.ts (getProducts, getProductById)</text>
+      <text x="14" y="60" class="node-text">• lib/api/orders.ts (placeOrder, getOrderHistory)</text>
+      <text x="14" y="76" class="node-text">• lib/api/auth.ts (sendOTP, verifyOTP, logout)</text>
+      <text x="14" y="94" class="node-tag tag-cyan">src/lib/api/*</text>
+    </g>
+  </g>
+
+  <!-- ================= TIER 2: BACKEND ================= -->
+  <g transform="translate(455, 95)">
+    <rect width="440" height="720" class="swimlane" />
+    <text x="20" y="32" class="lane-title">TIER 2: BACKEND (EXPRESS 5 REST API)</text>
+
+    <!-- Global Middleware -->
+    <g transform="translate(18, 50)">
+      <rect width="404" height="120" class="box-be" />
+      <text x="14" y="24" class="node-title">Middleware Pipeline (src/app.js)</text>
+      <text x="14" y="44" class="node-text">• trust proxy = 1 (Render load balancer IP forwarding)</text>
+      <text x="14" y="60" class="node-text">• helmet() with crossOriginResourcePolicy</text>
+      <text x="14" y="76" class="node-text">• cors() (Whitelisting Vercel + Local dev origins)</text>
+      <text x="14" y="92" class="node-text">• express-rate-limit (300 req / 15m window on /api)</text>
+      <text x="14" y="108" class="node-tag tag-green">Execution Sequence: Top to Bottom</text>
+    </g>
+
+    <!-- Routing Dispatch -->
+    <g transform="translate(18, 185)">
+      <rect width="404" height="125" class="box-be" />
+      <text x="14" y="24" class="node-title">REST Route Registry (/api/v1/*)</text>
+      <text x="14" y="44" class="node-text">• /auth : authroutes.js (send-otp, verify-otp, demo-otp)</text>
+      <text x="14" y="60" class="node-text">• /products : productroutes.js (search, category, list)</text>
+      <text x="14" y="76" class="node-text">• /farmers : farmerroutes.js (register, dashboard, products)</text>
+      <text x="14" y="92" class="node-text">• /consumers : consumerroutes.js (register, place order)</text>
+      <text x="14" y="112" class="node-tag tag-green">src/routes/*</text>
+    </g>
+
+    <!-- Controllers & Business Logic -->
+    <g transform="translate(18, 325)">
+      <rect width="404" height="195" class="box-be" />
+      <text x="14" y="24" class="node-title">Controllers &amp; Domain Logic</text>
+      <text x="14" y="44" class="node-text">• authController: OTP upsert, rate check, JWT token creation</text>
+      <text x="14" y="62" class="node-text">• productController: PostgreSQL Haversine distance execution</text>
+      <text x="14" y="80" class="node-text">• consumerController: Order placement, delivery fee &amp; distance</text>
+      <text x="14" y="98" class="node-text">• farmerController: Inventory management &amp; incoming queue</text>
+      <text x="14" y="116" class="node-text">• smsservice: Fast2SMS API gateway + OTP demo fallback</text>
+      <text x="14" y="134" class="node-text">• Progressive profile registration (default coordinate fallbacks)</text>
+      <text x="14" y="152" class="node-text">• Error boundary: Centralized 404 &amp; 500 JSON error handling</text>
+      <text x="14" y="180" class="node-tag tag-green">src/controllers/*</text>
+    </g>
+
+    <!-- Database Access Module -->
+    <g transform="translate(18, 535)">
+      <rect width="404" height="120" class="box-be" />
+      <text x="14" y="24" class="node-title">PostgreSQL Connection Pooling</text>
+      <text x="14" y="44" class="node-text">• pg.Pool (Max 10 prod / 5 dev connections, 30s idle timeout)</text>
+      <text x="14" y="60" class="node-text">• SSL configuration: rejectUnauthorized: false in production</text>
+      <text x="14" y="76" class="node-text">• executeTransaction() helper (Atomic BEGIN / COMMIT / ROLLBACK)</text>
+      <text x="14" y="92" class="node-text">• Fail-fast diagnostic check on server startup (SELECT NOW())</text>
+      <text x="14" y="108" class="node-tag tag-green">src/config/db.js &amp; backend/src/config/database.js</text>
+    </g>
+  </g>
+
+  <!-- ================= TIER 3: DATA & EXTERNAL ================= -->
+  <g transform="translate(920, 95)">
+    <rect width="390" height="720" class="swimlane" />
+    <text x="20" y="32" class="lane-title">TIER 3: DATA &amp; CLOUD INFRASTRUCTURE</text>
+
+    <!-- Database Schema -->
+    <g transform="translate(18, 50)">
+      <rect width="354" height="260" class="box-db" />
+      <text x="14" y="24" class="node-title">Supabase PostgreSQL Schema</text>
+      <text x="14" y="44" class="node-text">• farmers : id, name, phone(UK), lat, lon, city, verified</text>
+      <text x="14" y="62" class="node-text">• consumers : id, name, phone(UK), lat, lon, delivery_addr</text>
+      <text x="14" y="80" class="node-text">• products : id, farmer_id(FK), price, stock_available, organic</text>
+      <text x="14" y="98" class="node-text">• orders : id, order_number(UK), items(JSONB), total_amount,</text>
+      <text x="24" y="114" class="node-text">delivery_latitude, delivery_longitude, delivery_distance_km</text>
+      <text x="14" y="132" class="node-text">• otp_store : phone(PK), otp_code, expires_at, user_type</text>
+      <text x="14" y="152" class="node-text">Spatial Stored Function:</text>
+      <text x="24" y="170" class="node-text">• calculate_distance_km(lat1, lon1, lat2, lon2)</text>
+      <text x="24" y="186" class="node-text">Returns Haversine distance in kilometers</text>
+      <text x="14" y="206" class="node-text">Integrity &amp; Constraints:</text>
+      <text x="24" y="222" class="node-text">• Foreign keys on farmer_id &amp; consumer_id</text>
+      <text x="24" y="238" class="node-text">• Unique constraints on phone numbers</text>
+      <text x="14" y="252" class="node-tag tag-purple">PostgreSQL 15+ (Hosted on Supabase)</text>
+    </g>
+
+    <!-- Fast2SMS Integration -->
+    <g transform="translate(18, 330)">
+      <rect width="354" height="110" class="box-ext" />
+      <text x="14" y="24" class="node-title">Fast2SMS Bulk Gateway</text>
+      <text x="14" y="44" class="node-text">• HTTP Endpoint: https://www.fast2sms.com/dev/bulkV2</text>
+      <text x="14" y="60" class="node-text">• Route: "otp" with 6-digit dynamic variable value</text>
+      <text x="14" y="76" class="node-text">• Bypass switch: OTP_DEMO_MODE=true for local test</text>
+      <text x="14" y="96" class="node-tag tag-amber">SMS Dispatch Service</text>
+    </g>
+
+    <!-- Cloudinary CDN -->
+    <g transform="translate(18, 460)">
+      <rect width="354" height="110" class="box-ext" />
+      <text x="14" y="24" class="node-title">Cloudinary Media CDN</text>
+      <text x="14" y="44" class="node-text">• Multer memory storage multipart upload pipeline</text>
+      <text x="14" y="60" class="node-text">• Secure URL generation stored in products.image_url</text>
+      <text x="14" y="76" class="node-text">• next.config.ts remotePattern whitelisting</text>
+      <text x="14" y="96" class="node-tag tag-amber">res.cloudinary.com</text>
+    </g>
+
+    <!-- Deployment Hosts -->
+    <g transform="translate(18, 590)">
+      <rect width="354" height="110" class="box-ext" />
+      <text x="14" y="24" class="node-title">Cloud Hosting Topology</text>
+      <text x="14" y="44" class="node-text">• Frontend: Vercel Edge Network (Global CDN caching)</text>
+      <text x="14" y="60" class="node-text">• Backend: Render Web Service (Node.js runtime)</text>
+      <text x="14" y="76" class="node-text">• Database: Supabase AWS Region (Managed Postgres)</text>
+      <text x="14" y="96" class="node-tag tag-amber">CI/CD: GitHub main branch triggers</text>
+    </g>
+  </g>
+
+  <!-- Connectors -->
+  <path d="M 430, 580 L 473, 580" class="conn-fe" />
+  <path d="M 860, 580 L 938, 200" class="conn-hi" />
+  <path d="M 860, 420 L 938, 380" class="conn" />
+  <path d="M 860, 450 L 938, 510" class="conn" />
+
+</svg>

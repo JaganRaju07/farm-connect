@@ -1,0 +1,78 @@
+%% ========================================================
+%% FARM CONNECT — DEPLOYMENT ARCHITECTURE SOURCES (MERMAID)
+%% ========================================================
+
+%% --------------------------------------------------------
+%% 1. DEPLOYMENT ARCHITECTURE TOPOLOGY
+%% --------------------------------------------------------
+flowchart TB
+    subgraph ClientEnvironments ["Client Edge Devices"]
+        Desktop["💻 Desktop Web Browser"]
+        Mobile["📱 Mobile Smart Device (GPS Enabled)"]
+    end
+
+    subgraph VercelEdge ["Vercel Global Edge Network"]
+        EdgeDNS["Anycast DNS & SSL Termination"]
+        NextCDN["Static Asset CDN (JS/CSS/WebP)"]
+        ServerlessApp["Next.js 16 App Router Runtime<br/>(SSR, RSC, Client Hydration)"]
+    end
+
+    subgraph RenderPlatform ["Render Cloud Web Service (Frankfurt/US)"]
+        ReverseProxy["Envoy / Nginx Reverse Proxy (trust proxy: 1)"]
+        NodeCluster["Node.js 18 LTS Web Service<br/>Express App Cluster (Port 5000 / 4000)<br/>Health Check: GET /api/v1/health"]
+        EnvVault["Render Environment Secrets Vault<br/>(JWT_SECRET, FAST2SMS_API_KEY, DATABASE_URL)"]
+    end
+
+    subgraph SupabaseDB ["Supabase Managed Cloud"]
+        PostgresDB[("PostgreSQL 15 Cluster (AWS)<br/>SSL Mode: Required (rejectUnauthorized: false)<br/>Connection Pool: pg.Pool (max 10)")]
+    end
+
+    subgraph ExternalServices ["External Third-Party APIs"]
+        Fast2SMS["Fast2SMS Bulk V2 API"]
+        Cloudinary["Cloudinary Media API"]
+        OSM["OpenStreetMap Tile Servers"]
+    end
+
+    ClientEnvironments -->|"HTTPS / TLS 1.3"| EdgeDNS
+    EdgeDNS --> NextCDN & ServerlessApp
+    ServerlessApp -->|"REST API / JSON"| ReverseProxy
+    ReverseProxy --> NodeCluster
+    NodeCluster --- EnvVault
+    NodeCluster -->|"PostgreSQL TLS 1.3 / Port 5432"| PostgresDB
+    NodeCluster -->|"HTTPS REST"| Fast2SMS
+    NodeCluster -->|"HTTPS Stream"| Cloudinary
+    ClientEnvironments -->|"Direct Tile Fetch"| OSM
+
+%% --------------------------------------------------------
+%% 2. PRODUCTION REQUEST FLOW SEQUENCE
+%% --------------------------------------------------------
+sequenceDiagram
+    autonumber
+    actor Client as Browser User
+    participant Vercel as Vercel Edge CDN
+    participant Render as Render Web Service (Express)
+    participant Supabase as Supabase PostgreSQL
+    participant Fast2SMS as Fast2SMS Gateway
+
+    Client->>Vercel: GET /marketplace (HTTPS 443)
+    Vercel-->>Client: Returns HTML, Tailwind styles & React bundles
+    Client->>Client: Mounts page, reads GPS coordinates
+
+    Client->>Render: GET /api/v1/products?lat=12.97&lon=77.59
+    Render->>Render: app.set('trust proxy', 1) reads real client IP
+    Render->>Render: Rate limiter check (300 req / 15m)
+    Render->>Supabase: SELECT ... calculate_distance_km(...) <= 30
+    Supabase-->>Render: Query rows returned
+    Render-->>Client: HTTP 200 { success: true, count: N, data: rows }
+    Client-->>Client: Leaflet renders farm markers on map
+
+%% --------------------------------------------------------
+%% 3. EXTERNAL SERVICE INTEGRATION MATRIX
+%% --------------------------------------------------------
+flowchart LR
+    App["Farm Connect Express Core"]
+
+    App -->|"HTTPS POST (authorization header)"| F2S["Fast2SMS Bulk V2<br/>• 6-digit OTP delivery<br/>• Dev bypass fallback"]
+    App -->|"HTTPS Stream (Multer memory buffer)"| Cloud["Cloudinary CDN<br/>• 5MB max payload<br/>• folder: farm-connect/products"]
+    App -->|"TLS 1.3 / Port 5432 (pg.Pool)"| Supa["Supabase PostgreSQL<br/>• calculate_distance_km()<br/>• JSONB line items"]
+    Browser["Client Browser"] -->|"Direct HTTPS Tiles"| OSM["OpenStreetMap & Nominatim<br/>• Tile rendering<br/>• Reverse geocoding"]

@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .flow-card { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .flow-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .box { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .box-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .box-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .box-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #10b981; }
+      .flow-arrow { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Workflow: Marketplace &amp; Product Discovery</text>
+  <text x="45" y="68" class="subtitle">Complete trace of GPS capture, debounced search, radius slider adjustments, Haversine filtering, and dual view rendering</text>
+
+  <!-- ================= LEFT: CLIENT INTERACTION & STATE ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="660" class="flow-card" />
+    <text x="25" y="32" class="flow-title">1. CLIENT ACTION &amp; UI RENDERING</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">1. Page Mount &amp; Geolocation Capture</text>
+      <text x="16" y="44" class="box-desc">• Consumer accesses /marketplace</text>
+      <text x="16" y="62" class="box-desc">• LocationProvider resolves { latitude: 12.9716, longitude: 77.5946 }</text>
+      <text x="16" y="80" class="box-desc">• UI displays shimmer skeletons (ProductSkeleton.tsx) while loading</text>
+      <text x="16" y="98" class="box-desc">• Initial radius default set to 25km</text>
+      <text x="350" y="24" class="box-code">useLocation()</text>
+    </g>
+    <path d="M 265, 160 L 265, 185" class="flow-arrow" />
+
+    <!-- Step 2 -->
+    <g transform="translate(25, 185)">
+      <rect width="480" height="120" class="box" />
+      <text x="16" y="24" class="box-title">2. Debounced Search &amp; Filter Adjustments</text>
+      <text x="16" y="44" class="box-desc">• User types keyword (e.g., "Tomato"); debounced at 300ms</text>
+      <text x="16" y="62" class="box-desc">• Saves search term to localStorage.farmconnect_recent_searches</text>
+      <text x="16" y="80" class="box-desc">• Opens ProductFilter drawer: selects category, organic toggle, min/max price</text>
+      <text x="16" y="98" class="box-desc">• AbortController aborts previous inflight Axios request</text>
+      <text x="350" y="24" class="box-code">debounce(300ms)</text>
+    </g>
+    <path d="M 265, 305 L 265, 330" class="flow-arrow" />
+
+    <!-- Step 3 -->
+    <g transform="translate(25, 330)">
+      <rect width="480" height="130" class="box" />
+      <text x="16" y="24" class="box-title">3. Dual View Mode Display (Grid vs Map)</text>
+      <text x="16" y="44" class="box-desc">• Grid View (default): Renders 4-column responsive grid of ProductCard</text>
+      <text x="16" y="62" class="box-desc">• Distance badge displayed: "3.2 km away"</text>
+      <text x="16" y="80" class="box-desc">• Map View: Renders MapExplorer (react-leaflet 5)</text>
+      <text x="16" y="98" class="box-desc">• Plots user blue pin + green farm pins with interactive popups</text>
+      <text x="350" y="24" class="box-code">MapExplorer.tsx</text>
+    </g>
+    <path d="M 265, 460 L 265, 485" class="flow-arrow" />
+
+    <!-- Step 4 -->
+    <g transform="translate(25, 485)">
+      <rect width="480" height="100" class="box" />
+      <text x="16" y="24" class="box-title">4. Empty State &amp; Radius Expansion</text>
+      <text x="16" y="44" class="box-desc">• If 0 results within 25km: Renders EmptyState component</text>
+      <text x="16" y="62" class="box-desc">• One-click action button: "Expand Search Radius to 50km"</text>
+      <text x="16" y="80" class="box-desc">• Immediately triggers re-fetch with new radius parameter</text>
+      <text x="350" y="24" class="box-code">EmptyState.tsx</text>
+    </g>
+  </g>
+
+  <!-- ================= RIGHT: BACKEND & DATABASE ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="660" class="flow-card" />
+    <text x="25" y="32" class="flow-title">2. BACKEND API &amp; SPATIAL CALCULATION</text>
+
+    <!-- Step 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">1. HTTP Request Ingestion</text>
+      <text x="16" y="44" class="box-desc">• Endpoint: GET /api/v1/products</text>
+      <text x="16" y="62" class="box-desc">• Query: ?lat=12.9716&amp;lon=77.5946&amp;radius=25&amp;search=tomato&amp;isOrganic=true</text>
+      <text x="16" y="80" class="box-desc">• Passes rate limiter (300 req / 15m) and sanitizer</text>
+      <text x="350" y="24" class="box-code">productroutes.js</text>
+    </g>
+    <path d="M 265, 160 L 265, 185" class="flow-arrow" />
+
+    <!-- Step 2 -->
+    <g transform="translate(25, 185)">
+      <rect width="480" height="150" class="box" />
+      <text x="16" y="24" class="box-title">2. PostgreSQL Spatial Haversine Query Execution</text>
+      <text x="16" y="44" class="box-desc">productController.js constructs query using parameterised bindings:</text>
+      <text x="26" y="66" font-family="monospace" font-size="9.5" fill="#38bdf8">SELECT p.*, f.name AS farmer_name, f.city AS farmer_city,</text>
+      <text x="26" y="82" font-family="monospace" font-size="9.5" fill="#10b981">  calculate_distance_km($1, $2, f.latitude, f.longitude) AS distance_km</text>
+      <text x="26" y="98" font-family="monospace" font-size="9.5" fill="#f8fafc">FROM products p JOIN farmers f ON p.farmer_id = f.id</text>
+      <text x="26" y="114" font-family="monospace" font-size="9.5" fill="#f8fafc">WHERE p.is_active = TRUE AND f.is_verified = TRUE</text>
+      <text x="26" y="130" font-family="monospace" font-size="9.5" fill="#fbbf24">  AND calculate_distance_km($1, $2, f.latitude, f.longitude) &lt;= $3</text>
+      <text x="350" y="24" class="box-code">PostgreSQL Query</text>
+    </g>
+    <path d="M 265, 335 L 265, 360" class="flow-arrow" />
+
+    <!-- Step 3 -->
+    <g transform="translate(25, 360)">
+      <rect width="480" height="110" class="box" />
+      <text x="16" y="24" class="box-title">3. Database Result Serialization</text>
+      <text x="16" y="44" class="box-desc">• Rows sorted by distance_km ASC (nearest local cultivators first)</text>
+      <text x="16" y="62" class="box-desc">• Connection returned immediately to pg.Pool</text>
+      <text x="16" y="80" class="box-desc">• Express formats JSON response: { success: true, count: N, data: rows }</text>
+      <text x="350" y="24" class="box-code">HTTP 200 OK</text>
+    </g>
+    <path d="M 265, 470 L 265, 495" class="flow-arrow" />
+
+    <!-- Step 4 -->
+    <g transform="translate(25, 495)">
+      <rect width="480" height="100" class="box" />
+      <text x="16" y="24" class="box-title">4. UI State Hydration &amp; Pulse Widget</text>
+      <text x="16" y="44" class="box-desc">• Marketplace updates state: setProducts(res.data.data)</text>
+      <text x="16" y="62" class="box-desc">• LocalFarmPulse widget recalculates active local farm count</text>
+      <text x="16" y="80" class="box-desc">• ProductCard renders with optimistic Add-to-Cart handlers</text>
+      <text x="350" y="24" class="box-code">State Updated</text>
+    </g>
+  </g>
+
+</svg>

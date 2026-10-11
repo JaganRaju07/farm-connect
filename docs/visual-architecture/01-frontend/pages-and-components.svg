@@ -1,0 +1,243 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1250 820" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .card-cat { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .cat-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .comp-node { fill: #1e293b; stroke: #334155; stroke-width: 1; rx: 6px; }
+      .comp-name { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 700; fill: #f1f5f9; }
+      .comp-sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; fill: #94a3b8; }
+      .comp-tag { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 9.5px; font-weight: 600; fill: #10b981; }
+      .pill-ui { fill: #064e3b; rx: 4px; }
+      .pill-ui-text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 9px; font-weight: 700; fill: #34d399; }
+    </style>
+  </defs>
+
+  <rect width="1250" height="820" class="bg" />
+
+  <!-- Title -->
+  <text x="45" y="45" class="title">Farm Connect — Frontend Pages &amp; Component Taxonomy</text>
+  <text x="45" y="68" class="subtitle">Complete catalog of page routes, custom domain components, GIS explorers, and atomic UI building blocks</text>
+
+  <!-- ================= COLUMN 1: HOMEPAGE & EDITORIAL ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="360" height="690" class="card-cat" />
+    <text x="20" y="32" class="cat-title">HOMEPAGE &amp; EDITORIAL (src/app/page.tsx)</text>
+
+    <!-- Comp 1 -->
+    <g transform="translate(18, 50)">
+      <rect width="324" height="75" class="comp-node" />
+      <text x="14" y="22" class="comp-name">HeroNarrative.tsx</text>
+      <text x="14" y="40" class="comp-sub">Dynamic taluk-aware headline: "From the field to your table"</text>
+      <text x="14" y="56" class="comp-sub">Displays nearest active cultivator count &amp; taluk name</text>
+      <text x="210" y="22" class="comp-tag">src/components/home/</text>
+    </g>
+
+    <!-- Comp 2 -->
+    <g transform="translate(18, 135)">
+      <rect width="324" height="75" class="comp-node" />
+      <text x="14" y="22" class="comp-name">WhatsGrowingAroundYou.tsx</text>
+      <text x="14" y="40" class="comp-sub">Proximity harvest radar showing active seasonal crops</text>
+      <text x="14" y="56" class="comp-sub">Displays closest distance metric (e.g., "Closest farm: 3.2 km")</text>
+      <text x="210" y="22" class="comp-tag">src/components/home/</text>
+    </g>
+
+    <!-- Comp 3 -->
+    <g transform="translate(18, 220)">
+      <rect width="324" height="85" class="comp-node" />
+      <text x="14" y="22" class="comp-name">FarmJourneyTimeline.tsx</text>
+      <text x="14" y="40" class="comp-sub">Interactive 6-stage lifecycle animation (GSAP / CSS):</text>
+      <text x="14" y="56" class="comp-sub">Field → Harvest → Listed → Discovered → Ordered → Delivered</text>
+      <text x="14" y="72" class="comp-sub">Illustrates &lt; 12h dawn-to-doorstep direct freshness</text>
+      <text x="210" y="22" class="comp-tag">src/components/home/</text>
+    </g>
+
+    <!-- Comp 4 -->
+    <g transform="translate(18, 315)">
+      <rect width="324" height="75" class="comp-node" />
+      <text x="14" y="22" class="comp-name">LocalFarmNetwork.tsx</text>
+      <text x="14" y="40" class="comp-sub">Radial proximity visualization mapping cultivator tiers:</text>
+      <text x="14" y="56" class="comp-sub">You → Super Local (&lt;5km) → Local (&lt;15km) → Regional (&lt;30km)</text>
+      <text x="210" y="22" class="comp-tag">src/components/home/</text>
+    </g>
+
+    <!-- Comp 5 -->
+    <g transform="translate(18, 400)">
+      <rect width="324" height="75" class="comp-node" />
+      <text x="14" y="22" class="comp-name">FeaturedFarmersEditorial.tsx</text>
+      <text x="14" y="40" class="comp-sub">Cultivator profile showcase cards with verification badges</text>
+      <text x="14" y="56" class="comp-sub">Highlights organic certification and exact distance in km</text>
+      <text x="210" y="22" class="comp-tag">src/components/home/</text>
+    </g>
+
+    <!-- Comp 6 -->
+    <g transform="translate(18, 485)">
+      <rect width="324" height="75" class="comp-node" />
+      <text x="14" y="22" class="comp-name">Cultivator Pricing Sovereignty</text>
+      <text x="14" y="40" class="comp-sub">Educational manifesto section: "Set Your Own Price"</text>
+      <text x="14" y="56" class="comp-sub">Outlines 0% commission deductions &amp; doorstep direct UPI</text>
+      <text x="210" y="22" class="comp-tag">src/app/page.tsx</text>
+    </g>
+
+    <!-- Comp 7 -->
+    <g transform="translate(18, 570)">
+      <rect width="324" height="85" class="comp-node" />
+      <text x="14" y="22" class="comp-name">Header &amp; Footer Layout Shell</text>
+      <text x="14" y="40" class="comp-sub">Header: Sticky navigation, Cart item count badge, Role button</text>
+      <text x="14" y="56" class="comp-sub">ThemeToggle: Instant client-side light/dark mode switch</text>
+      <text x="14" y="72" class="comp-sub">Footer: Semantic links, Karnataka taluk notices, copyright</text>
+      <text x="210" y="22" class="comp-tag">src/components/layout/</text>
+    </g>
+  </g>
+
+  <!-- ================= COLUMN 2: MARKETPLACE & GIS ================= -->
+  <g transform="translate(435, 95)">
+    <rect width="370" height="690" class="card-cat" />
+    <text x="20" y="32" class="cat-title">MARKETPLACE &amp; GIS (src/app/marketplace/)</text>
+
+    <!-- Comp 1 -->
+    <g transform="translate(18, 50)">
+      <rect width="334" height="95" class="comp-node" />
+      <text x="14" y="22" class="comp-name">MapExplorer.tsx (Leaflet GIS Layer)</text>
+      <text x="14" y="40" class="comp-sub">react-leaflet 5 container rendering OpenStreetMap tiles</text>
+      <text x="14" y="56" class="comp-sub">Plots consumer pin (blue pulse) + nearby farm pins (emerald)</text>
+      <text x="14" y="72" class="comp-sub">Interactive popup cards on marker click showing products</text>
+      <text x="14" y="88" class="comp-sub">Handles SSR disable via next/dynamic { ssr: false }</text>
+      <text x="200" y="22" class="comp-tag">src/components/common/</text>
+    </g>
+
+    <!-- Comp 2 -->
+    <g transform="translate(18, 155)">
+      <rect width="334" height="95" class="comp-node" />
+      <text x="14" y="22" class="comp-name">ProductCard.tsx</text>
+      <text x="14" y="40" class="comp-sub">Primary catalog unit displaying price, unit (kg/g/L), stock</text>
+      <text x="14" y="56" class="comp-sub">Distance badge (e.g. "4.2 km"), Organic tag, Farmer name/city</text>
+      <text x="14" y="72" class="comp-sub">Add-to-cart button with optimistic quantity stepper</text>
+      <text x="14" y="88" class="comp-sub">Image with deterministic fallback to prevent infinite error loops</text>
+      <text x="200" y="22" class="comp-tag">src/components/product/</text>
+    </g>
+
+    <!-- Comp 3 -->
+    <g transform="translate(18, 260)">
+      <rect width="334" height="85" class="comp-node" />
+      <text x="14" y="22" class="comp-name">ProductFilter.tsx (Drawer Panel)</text>
+      <text x="14" y="40" class="comp-sub">Sliding filter modal: Category pills (vegetables, fruits, etc.)</text>
+      <text x="14" y="56" class="comp-sub">Min / Max price inputs, Organic-only toggle</text>
+      <text x="14" y="72" class="comp-sub">Radius distance slider (10km, 25km, 50km, 100km)</text>
+      <text x="200" y="22" class="comp-tag">src/components/product/</text>
+    </g>
+
+    <!-- Comp 4 -->
+    <g transform="translate(18, 355)">
+      <rect width="334" height="75" class="comp-node" />
+      <text x="14" y="22" class="comp-name">LocalFarmPulse.tsx</text>
+      <text x="14" y="40" class="comp-sub">Summary metric widget above marketplace grid</text>
+      <text x="14" y="56" class="comp-sub">Aggregates: Active Farms, Available Harvests, Avg Distance</text>
+      <text x="200" y="22" class="comp-tag">src/components/marketplace/</text>
+    </g>
+
+    <!-- Comp 5 -->
+    <g transform="translate(18, 440)">
+      <rect width="334" height="75" class="comp-node" />
+      <text x="14" y="22" class="comp-name">ProductSkeleton.tsx</text>
+      <text x="14" y="40" class="comp-sub">Shimmer loading placeholder matching ProductCard aspect ratio</text>
+      <text x="14" y="56" class="comp-sub">Renders 8 skeleton cards during initial API fetch</text>
+      <text x="200" y="22" class="comp-tag">src/components/product/</text>
+    </g>
+
+    <!-- Comp 6 -->
+    <g transform="translate(18, 525)">
+      <rect width="334" height="75" class="comp-node" />
+      <text x="14" y="22" class="comp-name">Recent Searches Dropdown</text>
+      <text x="14" y="40" class="comp-sub">Stored in localStorage.farmconnect_recent_searches (max 5)</text>
+      <text x="14" y="56" class="comp-sub">Quick click-to-search chips with "Clear all" button</text>
+      <text x="200" y="22" class="comp-tag">src/app/marketplace/</text>
+    </g>
+
+    <!-- Comp 7 -->
+    <g transform="translate(18, 610)">
+      <rect width="334" height="60" class="comp-node" />
+      <text x="14" y="22" class="comp-name">EmptyState.tsx</text>
+      <text x="14" y="40" class="comp-sub">Zero results UI with action button: "Expand Search Radius"</text>
+      <text x="200" y="22" class="comp-tag">src/components/common/</text>
+    </g>
+  </g>
+
+  <!-- ================= COLUMN 3: ATOMIC UI & GUARDS ================= -->
+  <g transform="translate(835, 95)">
+    <rect width="370" height="690" class="card-cat" />
+    <text x="20" y="32" class="cat-title">ATOMIC UI &amp; NAVIGATION GUARDS</text>
+
+    <!-- Comp 1 -->
+    <g transform="translate(18, 50)">
+      <rect width="334" height="85" class="comp-node" />
+      <text x="14" y="22" class="comp-name">ProtectedRoute.tsx (Auth Guard)</text>
+      <text x="14" y="40" class="comp-sub">Props: requiredRole?: 'farmer' | 'consumer' | 'admin'</text>
+      <text x="14" y="56" class="comp-sub">Validates AuthContext state; redirects unauthorized users to /login</text>
+      <text x="14" y="72" class="comp-sub">Renders loader spinner during initial token verification</text>
+      <text x="200" y="22" class="comp-tag">src/components/common/</text>
+    </g>
+
+    <!-- Comp 2 -->
+    <g transform="translate(18, 145)">
+      <rect width="334" height="95" class="comp-node" />
+      <text x="14" y="22" class="comp-name">Button.tsx &amp; getButtonClasses()</text>
+      <text x="14" y="40" class="comp-sub">Variants: 'primary', 'secondary', 'outline', 'ghost', 'danger'</text>
+      <text x="14" y="56" class="comp-sub">Sizes: 'xs', 'sm', 'md', 'lg'; supports isLoading with spinner</text>
+      <text x="14" y="72" class="comp-sub">Full accessibility support (focus-visible rings, disabled states)</text>
+      <text x="14" y="88" class="comp-sub">Exported helper function allows usage on Next.js &lt;Link&gt; tags</text>
+      <text x="200" y="22" class="comp-tag">src/components/ui/button.tsx</text>
+    </g>
+
+    <!-- Comp 3 -->
+    <g transform="translate(18, 250)">
+      <rect width="334" height="85" class="comp-node" />
+      <text x="14" y="22" class="comp-name">Input.tsx (Accessible Form Field)</text>
+      <text x="14" y="40" class="comp-sub">Supports leftIcon, rightIcon, error text, and helper labels</text>
+      <text x="14" y="56" class="comp-sub">Tailwind border styling dynamically responding to focus &amp; error</text>
+      <text x="14" y="72" class="comp-sub">Standard forwardRef implementation for react-hook-form</text>
+      <text x="200" y="22" class="comp-tag">src/components/ui/Input.tsx</text>
+    </g>
+
+    <!-- Comp 4 -->
+    <g transform="translate(18, 345)">
+      <rect width="334" height="75" class="comp-node" />
+      <text x="14" y="22" class="comp-name">Badge.tsx (Status &amp; Attribute Tags)</text>
+      <text x="14" y="40" class="comp-sub">Variants: 'primary', 'success', 'warning', 'danger', 'info'</text>
+      <text x="14" y="56" class="comp-sub">Used for: Organic status, stock warnings, distance markers</text>
+      <text x="200" y="22" class="comp-tag">src/components/ui/Badge.tsx</text>
+    </g>
+
+    <!-- Comp 5 -->
+    <g transform="translate(18, 430)">
+      <rect width="334" height="95" class="comp-node" />
+      <text x="14" y="22" class="comp-name">CartDrawer / CartView (Cart UI)</text>
+      <text x="14" y="40" class="comp-sub">Displays active cart items grouped with quantity controls</text>
+      <text x="14" y="56" class="comp-sub">Real-time subtotal calculation from CartProvider</text>
+      <text x="14" y="72" class="comp-sub">Stock cap warnings prevent exceeding available units</text>
+      <text x="14" y="88" class="comp-sub">Direct link to /checkout with empty-cart detection</text>
+      <text x="200" y="22" class="comp-tag">src/app/cart/page.tsx</text>
+    </g>
+
+    <!-- Comp 6 -->
+    <g transform="translate(18, 535)">
+      <rect width="334" height="85" class="comp-node" />
+      <text x="14" y="22" class="comp-name">Farmer Inventory Table &amp; Modal</text>
+      <text x="14" y="40" class="comp-sub">Product listing table with active toggle &amp; stock inline edit</text>
+      <text x="14" y="56" class="comp-sub">Add Product modal with Cloudinary image file upload</text>
+      <text x="14" y="72" class="comp-sub">Incoming orders table with Accept / Deliver status buttons</text>
+      <text x="200" y="22" class="comp-tag">src/app/farmer/dashboard/</text>
+    </g>
+
+    <!-- Comp 7 -->
+    <g transform="translate(18, 630)">
+      <rect width="334" height="45" class="comp-node" />
+      <text x="14" y="22" class="comp-name">ThemeToggle.tsx</text>
+      <text x="14" y="36" class="comp-sub">Sun / Moon icon button triggering ThemeContext</text>
+      <text x="200" y="22" class="comp-tag">src/components/layout/</text>
+    </g>
+  </g>
+
+</svg>

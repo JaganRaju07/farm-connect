@@ -1,0 +1,268 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="100%" height="100%" style="background:#090d16;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+
+    <linearGradient id="entityGrad1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(16, 185, 129, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <linearGradient id="entityGrad2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(56, 189, 248, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <linearGradient id="entityGrad3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(245, 158, 11, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <linearGradient id="entityGrad4" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(168, 85, 247, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1600" height="1200" fill="url(#bgGrad)"/>
+  <rect width="1600" height="1200" fill="none" stroke="#1e293b" stroke-width="2"/>
+
+  <!-- Subtle Blueprint Grid -->
+  <g stroke="#1e293b" stroke-width="0.5" opacity="0.3">
+    <line x1="800" y1="0" x2="800" y2="1200"/>
+    <line x1="0" y1="620" x2="1600" y2="620"/>
+  </g>
+
+  <!-- Header Banner -->
+  <g transform="translate(60, 40)">
+    <rect x="0" y="0" width="1480" height="75" rx="12" fill="#0f172a" stroke="#334155" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <circle cx="45" cy="37" r="20" fill="#10b981" fill-opacity="0.2"/>
+    <text x="45" y="44" fill="#10b981" font-size="16" font-weight="700" text-anchor="middle">DB</text>
+    
+    <text x="80" y="34" fill="#f8fafc" font-size="22" font-weight="700">DATABASE ENTITY-TO-FEATURE MATRIX</text>
+    <text x="80" y="56" fill="#94a3b8" font-size="13">Bi-directional mapping between PostgreSQL relational tables and application read/write features, data guarantees, and indexes</text>
+
+    <rect x="1270" y="22" width="180" height="30" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+    <text x="1360" y="42" fill="#34d399" font-size="11" font-weight="600" text-anchor="middle">8 SCHEMAS MAPPED</text>
+  </g>
+
+  <!-- GRID LAYOUT OF 4 MAIN QUADRANTS -->
+
+  <!-- QUADRANT 1: PRODUCTS & FARMERS (TOP LEFT) -->
+  <g transform="translate(60, 140)">
+    <rect x="0" y="0" width="720" height="460" rx="12" fill="url(#entityGrad1)" stroke="#10b981" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="720" height="38" rx="12" fill="#10b981" fill-opacity="0.2"/>
+    <text x="20" y="25" fill="#34d399" font-size="14" font-weight="700">🌾 TABLE: products (Crop Inventory &amp; Pricing)</text>
+
+    <g transform="translate(20, 50)">
+      <!-- Schema Details -->
+      <rect x="0" y="0" width="680" height="120" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#34d399" font-size="11.5" font-weight="700">SCHEMA CONSTRAINTS &amp; INDEXES</text>
+      
+      <text x="15" y="42" fill="#94a3b8" font-size="11">COLUMNS: <tspan fill="#f8fafc">id (PK), farmer_id (FK → farmers.id), name, category, price, unit, stock_available, is_organic, image_url</tspan></text>
+      <text x="15" y="62" fill="#94a3b8" font-size="11">CONSTRAINTS: <tspan fill="#fbbf24">CHECK (price &gt;= 0), CHECK (stock_available &gt;= 0), is_active DEFAULT TRUE</tspan></text>
+      <text x="15" y="82" fill="#94a3b8" font-size="11">FOREIGN KEY: <tspan fill="#38bdf8">ON DELETE CASCADE ON UPDATE CASCADE → farmers(id)</tspan></text>
+      <text x="15" y="102" fill="#94a3b8" font-size="11">INDEXES: <tspan fill="#a78bfa">idx_products_farmer_id, idx_products_category, idx_products_active</tspan></text>
+
+      <!-- Read Operations -->
+      <rect x="0" y="130" width="680" height="125" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#38bdf8" font-size="11.5" font-weight="700">READ FEATURES &amp; QUERIES</text>
+      
+      <text x="15" y="45" fill="#e2e8f0" font-size="11" font-weight="600">• Hyperlocal Marketplace Search:</text>
+      <text x="200" y="45" fill="#94a3b8" font-size="10.5">Joined with farmers via calculate_distance_km()</text>
+
+      <text x="15" y="68" fill="#e2e8f0" font-size="11" font-weight="600">• Product Detail Page:</text>
+      <text x="200" y="68" fill="#94a3b8" font-size="10.5">Fetches single product + reviews + farmer contacts</text>
+
+      <text x="15" y="91" fill="#e2e8f0" font-size="11" font-weight="600">• Farmer Catalog Management:</text>
+      <text x="200" y="91" fill="#94a3b8" font-size="10.5">WHERE farmer_id = $1 (shows all active/inactive crops)</text>
+
+      <text x="15" y="114" fill="#e2e8f0" font-size="11" font-weight="600">• Cart Stock Validator:</text>
+      <text x="200" y="114" fill="#94a3b8" font-size="10.5">Pre-checkout stock balance verification</text>
+
+      <!-- Write Operations -->
+      <rect x="0" y="265" width="680" height="125" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#f59e0b" font-size="11.5" font-weight="700">WRITE &amp; MUTATION FEATURES</text>
+
+      <text x="15" y="45" fill="#e2e8f0" font-size="11" font-weight="600">• POST /api/v1/products/create:</text>
+      <text x="220" y="45" fill="#94a3b8" font-size="10.5">Inserts crop record with Cloudinary CDN HTTPS image</text>
+
+      <text x="15" y="68" fill="#e2e8f0" font-size="11" font-weight="600">• PUT /api/v1/products/:id:</text>
+      <text x="220" y="68" fill="#94a3b8" font-size="10.5">Updates stock, price, category, organic certification</text>
+
+      <text x="15" y="91" fill="#e2e8f0" font-size="11" font-weight="600">• Inventory Deduction:</text>
+      <text x="220" y="91" fill="#94a3b8" font-size="10.5">UPDATE stock_available = stock_available - $1 ON order</text>
+
+      <text x="15" y="114" fill="#e2e8f0" font-size="11" font-weight="600">• Soft / Hard Delete:</text>
+      <text x="220" y="114" fill="#94a3b8" font-size="10.5">Sets is_active = FALSE or purges row</text>
+    </g>
+  </g>
+
+  <!-- QUADRANT 2: ORDERS (TOP RIGHT) -->
+  <g transform="translate(820, 140)">
+    <rect x="0" y="0" width="720" height="460" rx="12" fill="url(#entityGrad2)" stroke="#38bdf8" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="720" height="38" rx="12" fill="#38bdf8" fill-opacity="0.2"/>
+    <text x="20" y="25" fill="#7dd3fc" font-size="14" font-weight="700">📦 TABLE: orders (Geotagged Transactions &amp; JSONB Line Items)</text>
+
+    <g transform="translate(20, 50)">
+      <!-- Schema Details -->
+      <rect x="0" y="0" width="680" height="120" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#38bdf8" font-size="11.5" font-weight="700">SCHEMA CONSTRAINTS &amp; JSONB ISOLATION</text>
+
+      <text x="15" y="42" fill="#94a3b8" font-size="11">COLUMNS: <tspan fill="#f8fafc">id (PK), order_number (UNIQUE), consumer_id (FK), farmer_id (FK), items (JSONB), total_amount</tspan></text>
+      <text x="15" y="62" fill="#94a3b8" font-size="11">JSONB CONTRACT: <tspan fill="#fbbf24">[ { productId, productName, quantity, priceAtPurchase, unit } ]</tspan></text>
+      <text x="15" y="82" fill="#94a3b8" font-size="11">SPATIAL ATTRIBUTES: <tspan fill="#34d399">delivery_lat, delivery_lng, delivery_distance_km, delivery_fee</tspan></text>
+      <text x="15" y="102" fill="#94a3b8" font-size="11">STATUS ENUM: <tspan fill="#a78bfa">'pending' → 'confirmed' → 'shipped' → 'delivered' → 'cancelled'</tspan></text>
+
+      <!-- Read Operations -->
+      <rect x="0" y="130" width="680" height="125" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#38bdf8" font-size="11.5" font-weight="700">READ FEATURES &amp; QUERIES</text>
+
+      <text x="15" y="45" fill="#e2e8f0" font-size="11" font-weight="600">• Consumer Order Tracking:</text>
+      <text x="200" y="45" fill="#94a3b8" font-size="10.5">GET /api/v1/consumers/orders (WHERE consumer_id = $1)</text>
+
+      <text x="15" y="68" fill="#e2e8f0" font-size="11" font-weight="600">• Farmer Order Fulfillment:</text>
+      <text x="200" y="68" fill="#94a3b8" font-size="10.5">GET /api/v1/farmers/orders (WHERE farmer_id = $1)</text>
+
+      <text x="15" y="91" fill="#e2e8f0" font-size="11" font-weight="600">• Farmer Dashboard KPI:</text>
+      <text x="200" y="91" fill="#94a3b8" font-size="10.5">SUM(total_amount), COUNT(id) WHERE order_status != 'cancelled'</text>
+
+      <text x="15" y="114" fill="#e2e8f0" font-size="11" font-weight="600">• Platform GMV Analytics:</text>
+      <text x="200" y="114" fill="#94a3b8" font-size="10.5">Admin dashboard total platform volume aggregation</text>
+
+      <!-- Write Operations -->
+      <rect x="0" y="265" width="680" height="125" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#f59e0b" font-size="11.5" font-weight="700">WRITE &amp; MUTATION FEATURES</text>
+
+      <text x="15" y="45" fill="#e2e8f0" font-size="11" font-weight="600">• Order Checkout Placement:</text>
+      <text x="220" y="45" fill="#94a3b8" font-size="10.5">INSERT INTO orders ... RETURNING id, order_number</text>
+
+      <text x="15" y="68" fill="#e2e8f0" font-size="11" font-weight="600">• Status Lifecycle Updates:</text>
+      <text x="220" y="68" fill="#94a3b8" font-size="10.5">UPDATE orders SET order_status = $1, updated_at = NOW()</text>
+
+      <text x="15" y="91" fill="#e2e8f0" font-size="11" font-weight="600">• Order Cancellation:</text>
+      <text x="220" y="91" fill="#94a3b8" font-size="10.5">Restores stock_available if cancelled before fulfillment</text>
+
+      <text x="15" y="114" fill="#e2e8f0" font-size="11" font-weight="600">• Push Notification Trigger:</text>
+      <text x="220" y="114" fill="#94a3b8" font-size="10.5">Creates notification event on status transition</text>
+    </g>
+  </g>
+
+  <!-- QUADRANT 3: USERS & OTP (BOTTOM LEFT) -->
+  <g transform="translate(60, 620)">
+    <rect x="0" y="0" width="720" height="490" rx="12" fill="url(#entityGrad3)" stroke="#f59e0b" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="720" height="38" rx="12" fill="#f59e0b" fill-opacity="0.2"/>
+    <text x="20" y="25" fill="#fbbf24" font-size="14" font-weight="700">👥 TABLES: farmers, consumers, otp_store (Identity &amp; Auth)</text>
+
+    <g transform="translate(20, 50)">
+      <!-- Schema Details -->
+      <rect x="0" y="0" width="680" height="130" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#fbbf24" font-size="11.5" font-weight="700">IDENTITY MODELS &amp; TEMPORAL TTL STORE</text>
+
+      <text x="15" y="42" fill="#94a3b8" font-size="11">farmers: <tspan fill="#f8fafc">id (PK), phone (UNIQUE), name, latitude, longitude, is_verified, rating, city</tspan></text>
+      <text x="15" y="62" fill="#94a3b8" font-size="11">consumers: <tspan fill="#f8fafc">id (PK), phone (UNIQUE), name, latitude, longitude, address, city, pincode</tspan></text>
+      <text x="15" y="82" fill="#94a3b8" font-size="11">otp_store: <tspan fill="#34d399">phone (PK/UNIQUE), otp_code (VARCHAR 6), expires_at (TIMESTAMP WITH TIME ZONE)</tspan></text>
+      <text x="15" y="102" fill="#94a3b8" font-size="11">SPATIAL INDEX: <tspan fill="#38bdf8">CREATE INDEX idx_farmers_lat_lon ON farmers(latitude, longitude)</tspan></text>
+      <text x="15" y="122" fill="#94a3b8" font-size="11">GEO INTEGRITY: <tspan fill="#a78bfa">calculate_distance_km() operates directly on farmers.(latitude, longitude)</tspan></text>
+
+      <!-- Read Operations -->
+      <rect x="0" y="140" width="680" height="135" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#38bdf8" font-size="11.5" font-weight="700">AUTHENTICATION &amp; LOCATION READS</text>
+
+      <text x="15" y="45" fill="#e2e8f0" font-size="11" font-weight="600">• OTP Deduplication Check:</text>
+      <text x="210" y="45" fill="#94a3b8" font-size="10.5">SELECT * FROM otp_store WHERE phone=$1 AND expires_at &gt; NOW()</text>
+
+      <text x="15" y="70" fill="#e2e8f0" font-size="11" font-weight="600">• OTP Validation on Login:</text>
+      <text x="210" y="70" fill="#94a3b8" font-size="10.5">Verifies matching code string &amp; unexpired TTL window</text>
+
+      <text x="15" y="95" fill="#e2e8f0" font-size="11" font-weight="600">• Nearby Farmers Directory:</text>
+      <text x="210" y="95" fill="#94a3b8" font-size="10.5">WHERE is_verified=TRUE AND calculate_distance_km(...) &lt;= radius</text>
+
+      <text x="15" y="120" fill="#e2e8f0" font-size="11" font-weight="600">• JWT Bearer Verification:</text>
+      <text x="210" y="120" fill="#94a3b8" font-size="10.5">SELECT id, phone, is_verified FROM farmers/consumers WHERE id = $1</text>
+
+      <!-- Write Operations -->
+      <rect x="0" y="285" width="680" height="145" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#f59e0b" font-size="11.5" font-weight="700">WRITE &amp; PROFILE MUTATIONS</text>
+
+      <text x="15" y="45" fill="#e2e8f0" font-size="11" font-weight="600">• OTP Generation Upsert:</text>
+      <text x="210" y="45" fill="#94a3b8" font-size="10.5">INSERT INTO otp_store ... ON CONFLICT (phone) DO UPDATE</text>
+
+      <text x="15" y="70" fill="#e2e8f0" font-size="11" font-weight="600">• Progressive User Seed:</text>
+      <text x="210" y="70" fill="#94a3b8" font-size="10.5">INSERT INTO farmers/consumers on initial OTP verification</text>
+
+      <text x="15" y="95" fill="#e2e8f0" font-size="11" font-weight="600">• Location &amp; Profile Sync:</text>
+      <text x="210" y="95" fill="#94a3b8" font-size="10.5">UPDATE farmers SET latitude=$1, longitude=$2, city=$3, address=$4</text>
+
+      <text x="15" y="120" fill="#e2e8f0" font-size="11" font-weight="600">• Admin Trust Verification:</text>
+      <text x="210" y="120" fill="#94a3b8" font-size="10.5">UPDATE farmers SET is_verified = TRUE WHERE id = $1</text>
+    </g>
+  </g>
+
+  <!-- QUADRANT 4: EXTENDED SUB-BACKEND TABLES (BOTTOM RIGHT) -->
+  <g transform="translate(820, 620)">
+    <rect x="0" y="0" width="720" height="490" rx="12" fill="url(#entityGrad4)" stroke="#a855f7" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="720" height="38" rx="12" fill="#a855f7" fill-opacity="0.2"/>
+    <text x="20" y="25" fill="#c084fc" font-size="14" font-weight="700">⭐ EXTENDED TABLES: product_reviews, consumer_wishlist, notifications</text>
+
+    <g transform="translate(20, 50)">
+      <!-- Schema Details -->
+      <rect x="0" y="0" width="680" height="130" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#c084fc" font-size="11.5" font-weight="700">EXTENDED MODULAR SCHEMAS (Port 4000 Sub-Backend)</text>
+
+      <text x="15" y="42" fill="#94a3b8" font-size="11">product_reviews: <tspan fill="#f8fafc">id (PK), consumer_id (FK), product_id (FK), rating (INT 1-5), comment, created_at</tspan></text>
+      <text x="15" y="62" fill="#94a3b8" font-size="11">consumer_wishlist: <tspan fill="#f8fafc">id (PK), consumer_id (FK), product_id (FK), created_at (UNIQUE pair constraint)</tspan></text>
+      <text x="15" y="82" fill="#94a3b8" font-size="11">notifications: <tspan fill="#f8fafc">id (PK), user_id, user_type, title, message, is_read, created_at</tspan></text>
+      <text x="15" y="102" fill="#94a3b8" font-size="11">RATING TRIGGER: <tspan fill="#34d399">Recalculates farmers.rating = AVG(product_reviews.rating) after review commit</tspan></text>
+      <text x="15" y="122" fill="#94a3b8" font-size="11">WISHLIST INTEGRITY: <tspan fill="#fbbf24">ON DELETE CASCADE when product is removed</tspan></text>
+
+      <!-- Read Operations -->
+      <rect x="0" y="140" width="680" height="135" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#38bdf8" font-size="11.5" font-weight="700">READ FEATURES &amp; QUERIES</text>
+
+      <text x="15" y="45" fill="#e2e8f0" font-size="11" font-weight="600">• Crop Reviews Feed:</text>
+      <text x="190" y="45" fill="#94a3b8" font-size="10.5">SELECT r.*, c.name FROM reviews r JOIN consumers c ...</text>
+
+      <text x="15" y="70" fill="#e2e8f0" font-size="11" font-weight="600">• Consumer Wishlist View:</text>
+      <text x="190" y="70" fill="#94a3b8" font-size="10.5">SELECT p.* FROM wishlists w JOIN products p ON w.product_id=p.id</text>
+
+      <text x="15" y="95" fill="#e2e8f0" font-size="11" font-weight="600">• In-App Notification Center:</text>
+      <text x="190" y="95" fill="#94a3b8" font-size="10.5">SELECT * FROM notifications WHERE user_id=$1 ORDER BY created_at DESC</text>
+
+      <text x="15" y="120" fill="#e2e8f0" font-size="11" font-weight="600">• Unread Count Badge:</text>
+      <text x="190" y="120" fill="#94a3b8" font-size="10.5">COUNT(*) WHERE user_id=$1 AND is_read=FALSE</text>
+
+      <!-- Write Operations -->
+      <rect x="0" y="285" width="680" height="145" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="15" y="22" fill="#f59e0b" font-size="11.5" font-weight="700">WRITE &amp; NOTIFICATION DISPATCHES</text>
+
+      <text x="15" y="45" fill="#e2e8f0" font-size="11" font-weight="600">• POST /api/v1/reviews:</text>
+      <text x="210" y="45" fill="#94a3b8" font-size="10.5">Inserts customer review &amp; triggers average rating recalc</text>
+
+      <text x="15" y="70" fill="#e2e8f0" font-size="11" font-weight="600">• Wishlist Bookmark Toggle:</text>
+      <text x="210" y="70" fill="#94a3b8" font-size="10.5">INSERT or DELETE ON CONFLICT toggle behavior</text>
+
+      <text x="15" y="95" fill="#e2e8f0" font-size="11" font-weight="600">• Notification Dispatch:</text>
+      <text x="210" y="95" fill="#94a3b8" font-size="10.5">INSERT INTO notifications (user_id, title, message)</text>
+
+      <text x="15" y="120" fill="#e2e8f0" font-size="11" font-weight="600">• Mark Notification Read:</text>
+      <text x="210" y="120" fill="#94a3b8" font-size="10.5">UPDATE notifications SET is_read=TRUE WHERE id=$1</text>
+    </g>
+  </g>
+
+  <!-- Footer -->
+  <g transform="translate(60, 1140)">
+    <rect x="0" y="0" width="1480" height="40" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <circle cx="20" cy="20" r="4" fill="#10b981"/>
+    <text x="35" y="24" fill="#94a3b8" font-size="11">Data consistency: All tables and relationships verified against Supabase production schema and controller/service query paths.</text>
+    <text x="1450" y="24" fill="#64748b" font-size="11" text-anchor="end">Farm Connect Visual Architecture Atlas • 06-code-tracing/database-entity-to-feature.svg</text>
+  </g>
+</svg>

@@ -1,0 +1,325 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" width="100%" height="100%" style="background:#090d16;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+
+    <linearGradient id="coreCardGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+
+    <linearGradient id="fast2smsGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(245, 158, 11, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <linearGradient id="cloudinaryGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(59, 130, 246, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <linearGradient id="supabaseGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(16, 185, 129, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <linearGradient id="osmGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(139, 92, 246, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="glowGreen" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="glowBlue" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrowAmber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+    <marker id="arrowEmerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#a855f7"/>
+    </marker>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1600" height="1100" fill="url(#bgGrad)"/>
+  <rect width="1600" height="1100" fill="none" stroke="#1e293b" stroke-width="2"/>
+
+  <!-- Subtle Blueprint Grid -->
+  <g stroke="#1e293b" stroke-width="0.5" opacity="0.3">
+    <line x1="100" y1="0" x2="100" y2="1100"/>
+    <line x1="300" y1="0" x2="300" y2="1100"/>
+    <line x1="500" y1="0" x2="500" y2="1100"/>
+    <line x1="800" y1="0" x2="800" y2="1100"/>
+    <line x1="1100" y1="0" x2="1100" y2="1100"/>
+    <line x1="1300" y1="0" x2="1300" y2="1100"/>
+    <line x1="1500" y1="0" x2="1500" y2="1100"/>
+    <line x1="0" y1="150" x2="1600" y2="150"/>
+    <line x1="0" y1="350" x2="1600" y2="350"/>
+    <line x1="0" y1="550" x2="1600" y2="550"/>
+    <line x1="0" y1="750" x2="1600" y2="750"/>
+    <line x1="0" y1="950" x2="1600" y2="950"/>
+  </g>
+
+  <!-- Header Banner -->
+  <g transform="translate(60, 45)">
+    <rect x="0" y="0" width="1480" height="80" rx="12" fill="#0f172a" stroke="#334155" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <circle cx="45" cy="40" r="22" fill="#10b981" fill-opacity="0.2"/>
+    <path d="M 37 40 L 43 46 L 53 34" fill="none" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <text x="80" y="36" fill="#f8fafc" font-size="22" font-weight="700" letter-spacing="0.5">EXTERNAL SERVICE INTEGRATION MATRIX</text>
+    <text x="80" y="58" fill="#94a3b8" font-size="13">Third-party service protocols, credential boundaries, fallback behaviors, and outbound telemetry in Farm Connect</text>
+
+    <!-- Header Stats / Tags -->
+    <rect x="1170" y="24" width="130" height="32" rx="6" fill="#1e293b" stroke="#475569" stroke-width="1"/>
+    <text x="1235" y="45" fill="#38bdf8" font-size="12" font-weight="600" text-anchor="middle">4 CORE INTEGRATIONS</text>
+
+    <rect x="1315" y="24" width="130" height="32" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+    <text x="1380" y="45" fill="#34d399" font-size="12" font-weight="600" text-anchor="middle">PROD AUDITED</text>
+  </g>
+
+  <!-- Central Hub: Farm Connect Application Cluster -->
+  <g transform="translate(630, 430)">
+    <!-- Glow ring -->
+    <circle cx="170" cy="150" r="160" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="6,6" opacity="0.3"/>
+    
+    <!-- Central Node Card -->
+    <rect x="0" y="0" width="340" height="300" rx="16" fill="url(#coreCardGrad)" stroke="#10b981" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="340" height="42" rx="16" fill="#10b981" fill-opacity="0.15"/>
+    
+    <text x="170" y="28" fill="#34d399" font-size="16" font-weight="700" text-anchor="middle">FARM CONNECT CORE</text>
+    <text x="170" y="58" fill="#e2e8f0" font-size="13" font-weight="600" text-anchor="middle">Express Application Runtime (Render)</text>
+    
+    <line x1="20" y1="72" x2="320" y2="72" stroke="#334155" stroke-width="1"/>
+
+    <!-- App Specifications -->
+    <g transform="translate(25, 90)">
+      <text x="0" y="15" fill="#94a3b8" font-size="11" font-weight="600">RUNTIME:</text>
+      <text x="80" y="15" fill="#f8fafc" font-size="11">Node.js 18+ LTS / Express 4.x</text>
+
+      <text x="0" y="40" fill="#94a3b8" font-size="11" font-weight="600">HOSTING:</text>
+      <text x="80" y="40" fill="#f8fafc" font-size="11">Render Web Service (Frankfurt/US)</text>
+
+      <text x="0" y="65" fill="#94a3b8" font-size="11" font-weight="600">PROXIES:</text>
+      <text x="80" y="65" fill="#f8fafc" font-size="11">app.set('trust proxy', 1)</text>
+
+      <text x="0" y="90" fill="#94a3b8" font-size="11" font-weight="600">CLIENT APP:</text>
+      <text x="80" y="90" fill="#f8fafc" font-size="11">Next.js 16 (Vercel Global CDN)</text>
+
+      <text x="0" y="115" fill="#94a3b8" font-size="11" font-weight="600">NETWORKING:</text>
+      <text x="80" y="115" fill="#38bdf8" font-size="11">Outbound HTTPS / TLS 1.3 Strict</text>
+
+      <text x="0" y="140" fill="#94a3b8" font-size="11" font-weight="600">SECRETS:</text>
+      <text x="80" y="140" fill="#f59e0b" font-size="11">Render Secure Environment Vault</text>
+
+      <rect x="0" y="160" width="290" height="30" rx="6" fill="#090d16" stroke="#1e293b" stroke-width="1"/>
+      <circle cx="15" cy="175" r="4" fill="#10b981"/>
+      <text x="30" y="179" fill="#94a3b8" font-size="10">Active Health Check: <tspan fill="#34d399">GET /api/v1/health (200 OK)</tspan></text>
+    </g>
+  </g>
+
+  <!-- ==========================================
+       EXTERNAL SERVICE 1: FAST2SMS (TOP LEFT)
+       ========================================== -->
+  <!-- Connection Curve -->
+  <path d="M 630 480 C 450 480, 420 340, 420 280" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowAmber)"/>
+  <rect x="440" y="360" width="140" height="24" rx="4" fill="#1e293b" stroke="#f59e0b" stroke-width="1"/>
+  <text x="510" y="376" fill="#f59e0b" font-size="10" font-weight="600" text-anchor="middle">HTTPS POST (JSON)</text>
+
+  <g transform="translate(60, 160)">
+    <rect x="0" y="0" width="420" height="270" rx="14" fill="url(#fast2smsGrad)" stroke="#f59e0b" stroke-width="1.8" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="420" height="38" rx="14" fill="#f59e0b" fill-opacity="0.2"/>
+
+    <!-- Icon -->
+    <circle cx="30" cy="19" r="10" fill="#f59e0b"/>
+    <text x="30" y="23" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">SMS</text>
+    <text x="50" y="24" fill="#fbbf24" font-size="15" font-weight="700">FAST2SMS BULK V2 SMS GATEWAY</text>
+
+    <!-- Details -->
+    <g transform="translate(20, 52)">
+      <!-- Endpoint -->
+      <text x="0" y="14" fill="#94a3b8" font-size="11" font-weight="600">ENDPOINT:</text>
+      <text x="80" y="14" fill="#e2e8f0" font-size="11" font-family="monospace">https://www.fast2sms.com/dev/bulkV2</text>
+
+      <!-- Auth Method -->
+      <text x="0" y="38" fill="#94a3b8" font-size="11" font-weight="600">AUTH HDR:</text>
+      <text x="80" y="38" fill="#fbbf24" font-size="11" font-family="monospace">authorization: process.env.FAST2SMS_API_KEY</text>
+
+      <!-- Payloads -->
+      <text x="0" y="62" fill="#94a3b8" font-size="11" font-weight="600">PAYLOAD:</text>
+      <text x="80" y="62" fill="#cbd5e1" font-size="11" font-family="monospace">{ route: "otp", variables_values: "123456", numbers }</text>
+
+      <!-- Module Call -->
+      <text x="0" y="86" fill="#94a3b8" font-size="11" font-weight="600">TRIGGER:</text>
+      <text x="80" y="86" fill="#38bdf8" font-size="11">POST /api/v1/auth/request-otp (Farmer/Consumer)</text>
+
+      <!-- Fallback / Sandbox Box -->
+      <rect x="0" y="105" width="380" height="85" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="12" y="125" fill="#f59e0b" font-size="11" font-weight="700">FALLBACK &amp; SANDBOX BEHAVIOR</text>
+      <text x="12" y="145" fill="#94a3b8" font-size="10.5">• If FAST2SMS_API_KEY is missing or invalid: logs warning</text>
+      <text x="12" y="162" fill="#94a3b8" font-size="10.5">• Development / Local Mode: Terminal logs 6-digit OTP code</text>
+      <text x="12" y="179" fill="#94a3b8" font-size="10.5">• TTL: Stored in otp_store table with 5-minute expiry timestamp</text>
+    </g>
+  </g>
+
+  <!-- ==========================================
+       EXTERNAL SERVICE 2: CLOUDINARY (TOP RIGHT)
+       ========================================== -->
+  <!-- Connection Curve -->
+  <path d="M 970 480 C 1140 480, 1160 340, 1160 280" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowBlue)"/>
+  <rect x="1010" y="360" width="145" height="24" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="1"/>
+  <text x="1082" y="376" fill="#38bdf8" font-size="10" font-weight="600" text-anchor="middle">HTTPS Stream (Buffer)</text>
+
+  <g transform="translate(1120, 160)">
+    <rect x="0" y="0" width="420" height="270" rx="14" fill="url(#cloudinaryGrad)" stroke="#38bdf8" stroke-width="1.8" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="420" height="38" rx="14" fill="#38bdf8" fill-opacity="0.2"/>
+
+    <!-- Icon -->
+    <circle cx="30" cy="19" r="10" fill="#38bdf8"/>
+    <text x="30" y="23" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">CDN</text>
+    <text x="50" y="24" fill="#7dd3fc" font-size="15" font-weight="700">CLOUDINARY MEDIA CLOUD</text>
+
+    <!-- Details -->
+    <g transform="translate(20, 52)">
+      <!-- Endpoint -->
+      <text x="0" y="14" fill="#94a3b8" font-size="11" font-weight="600">ENDPOINT:</text>
+      <text x="80" y="14" fill="#e2e8f0" font-size="11" font-family="monospace">api.cloudinary.com/v1_1/:cloud_name/upload</text>
+
+      <!-- Auth Method -->
+      <text x="0" y="38" fill="#94a3b8" font-size="11" font-weight="600">SECRETS:</text>
+      <text x="80" y="38" fill="#38bdf8" font-size="11" font-family="monospace">API_KEY, API_SECRET, CLOUD_NAME</text>
+
+      <!-- Ingestion Pipeline -->
+      <text x="0" y="62" fill="#94a3b8" font-size="11" font-weight="600">INGESTION:</text>
+      <text x="80" y="62" fill="#cbd5e1" font-size="11">Multer memoryStorage → upload_stream</text>
+
+      <!-- Stored Asset -->
+      <text x="0" y="86" fill="#94a3b8" font-size="11" font-weight="600">DESTINATION:</text>
+      <text x="80" y="86" fill="#a78bfa" font-size="11">folder: 'farm-connect/products'</text>
+
+      <!-- Asset Transformation Box -->
+      <rect x="0" y="105" width="380" height="85" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="12" y="125" fill="#38bdf8" font-size="11" font-weight="700">PIPELINE &amp; PERSISTENCE CONTRACT</text>
+      <text x="12" y="145" fill="#94a3b8" font-size="10.5">• Max file limit: 5MB (image/jpeg, png, webp)</text>
+      <text x="12" y="162" fill="#94a3b8" font-size="10.5">• Stream returns secure HTTPS asset URL (`res.secure_url`)</text>
+      <text x="12" y="179" fill="#94a3b8" font-size="10.5">• Database storage: Persisted to `products.image_url` column</text>
+    </g>
+  </g>
+
+  <!-- ==========================================
+       EXTERNAL SERVICE 3: SUPABASE POSTGRESQL (BOTTOM LEFT)
+       ========================================== -->
+  <!-- Connection Curve -->
+  <path d="M 630 680 C 450 680, 420 780, 420 840" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowEmerald)"/>
+  <rect x="440" y="740" width="145" height="24" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+  <text x="512" y="756" fill="#10b981" font-size="10" font-weight="600" text-anchor="middle">TLS 1.3 / Port 5432</text>
+
+  <g transform="translate(60, 720)">
+    <rect x="0" y="0" width="420" height="280" rx="14" fill="url(#supabaseGrad)" stroke="#10b981" stroke-width="1.8" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="420" height="38" rx="14" fill="#10b981" fill-opacity="0.2"/>
+
+    <!-- Icon -->
+    <circle cx="30" cy="19" r="10" fill="#10b981"/>
+    <text x="30" y="23" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">SQL</text>
+    <text x="50" y="24" fill="#34d399" font-size="15" font-weight="700">SUPABASE MANAGED POSTGRESQL</text>
+
+    <!-- Details -->
+    <g transform="translate(20, 52)">
+      <!-- URI -->
+      <text x="0" y="14" fill="#94a3b8" font-size="11" font-weight="600">CONNECTION:</text>
+      <text x="90" y="14" fill="#e2e8f0" font-size="11" font-family="monospace">db.&lt;ref&gt;.supabase.co:5432</text>
+
+      <!-- Pooling -->
+      <text x="0" y="38" fill="#94a3b8" font-size="11" font-weight="600">POOL DRIVER:</text>
+      <text x="90" y="38" fill="#34d399" font-size="11">pg.Pool (max: 10 prod, idle: 30000ms)</text>
+
+      <!-- SSL Spec -->
+      <text x="0" y="62" fill="#94a3b8" font-size="11" font-weight="600">ENCRYPTION:</text>
+      <text x="90" y="62" fill="#38bdf8" font-size="11">ssl: { rejectUnauthorized: false }</text>
+
+      <!-- Spatial Stored Proc -->
+      <text x="0" y="86" fill="#94a3b8" font-size="11" font-weight="600">FUNCTIONS:</text>
+      <text x="90" y="86" fill="#fbbf24" font-size="11">calculate_distance_km() (Haversine)</text>
+
+      <!-- DB Guarantees Box -->
+      <rect x="0" y="105" width="380" height="95" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="12" y="125" fill="#34d399" font-size="11" font-weight="700">RESILIENCY &amp; DATA CONTRACT</text>
+      <text x="12" y="145" fill="#94a3b8" font-size="10.5">• Managed High-Availability cluster on AWS infra</text>
+      <text x="12" y="162" fill="#94a3b8" font-size="10.5">• Transaction control: Orders wrap inventory updates in BEGIN/COMMIT</text>
+      <text x="12" y="179" fill="#94a3b8" font-size="10.5">• Pool error listener: pool.on('error') logs unexpected idle drops</text>
+      <text x="12" y="196" fill="#94a3b8" font-size="10.5">• Historical isolation: Order line items stored in JSONB frozen snapshot</text>
+    </g>
+  </g>
+
+  <!-- ==========================================
+       EXTERNAL SERVICE 4: OPENSTREETMAP & LEAFLET (BOTTOM RIGHT)
+       ========================================== -->
+  <!-- Connection Curve -->
+  <path d="M 970 680 C 1140 680, 1160 780, 1160 840" fill="none" stroke="#a855f7" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowPurple)"/>
+  <rect x="1010" y="740" width="155" height="24" rx="4" fill="#1e293b" stroke="#a855f7" stroke-width="1"/>
+  <text x="1087" y="756" fill="#a855f7" font-size="10" font-weight="600" text-anchor="middle">HTTPS / Browser Direct</text>
+
+  <g transform="translate(1120, 720)">
+    <rect x="0" y="0" width="420" height="280" rx="14" fill="url(#osmGrad)" stroke="#a855f7" stroke-width="1.8" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="420" height="38" rx="14" fill="#a855f7" fill-opacity="0.2"/>
+
+    <!-- Icon -->
+    <circle cx="30" cy="19" r="10" fill="#a855f7"/>
+    <text x="30" y="23" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">MAP</text>
+    <text x="50" y="24" fill="#c084fc" font-size="15" font-weight="700">OPENSTREETMAP &amp; NOMINATIM</text>
+
+    <!-- Details -->
+    <g transform="translate(20, 52)">
+      <!-- Tiles Server -->
+      <text x="0" y="14" fill="#94a3b8" font-size="11" font-weight="600">TILE SERVER:</text>
+      <text x="90" y="14" fill="#e2e8f0" font-size="11" font-family="monospace">tile.openstreetmap.org/{z}/{x}/{y}.png</text>
+
+      <!-- Geocoding -->
+      <text x="0" y="38" fill="#94a3b8" font-size="11" font-weight="600">GEOCODING:</text>
+      <text x="90" y="38" fill="#c084fc" font-size="11" font-family="monospace">nominatim.openstreetmap.org/reverse</text>
+
+      <!-- Client Engine -->
+      <text x="0" y="62" fill="#94a3b8" font-size="11" font-weight="600">ENGINE:</text>
+      <text x="90" y="62" fill="#38bdf8" font-size="11">react-leaflet v5 / Leaflet 1.9.4</text>
+
+      <!-- Location API -->
+      <text x="0" y="86" fill="#94a3b8" font-size="11" font-weight="600">DEVICE GPS:</text>
+      <text x="90" y="86" fill="#34d399" font-size="11">navigator.geolocation.getCurrentPosition</text>
+
+      <!-- Map Features Box -->
+      <rect x="0" y="105" width="380" height="95" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+      <text x="12" y="125" fill="#c084fc" font-size="11" font-weight="700">INTEGRATION CONSTRAINTS &amp; USAGE</text>
+      <text x="12" y="145" fill="#94a3b8" font-size="10.5">• Zero API key requirement (Open Source Community Tiles)</text>
+      <text x="12" y="162" fill="#94a3b8" font-size="10.5">• SSR Bypass: Dynamic import `ssr: false` in Next.js App Router</text>
+      <text x="12" y="179" fill="#94a3b8" font-size="10.5">• Custom Markers: Leaflet L.divIcon() for custom SVG farm pins</text>
+      <text x="12" y="196" fill="#94a3b8" font-size="10.5">• Coordinate sync: Feeds `location_lat` &amp; `location_lng` to DB</text>
+    </g>
+  </g>
+
+  <!-- Bottom Architecture Audit Footer -->
+  <g transform="translate(60, 1030)">
+    <rect x="0" y="0" width="1480" height="45" rx="8" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <circle cx="25" cy="22" r="5" fill="#10b981"/>
+    <text x="40" y="27" fill="#94a3b8" font-size="11">SECURITY BOUNDARY AUDIT: All production API keys and database credentials reside strictly within environment variables. No client-side exposure.</text>
+    <text x="1450" y="27" fill="#64748b" font-size="11" text-anchor="end">Farm Connect Visual Architecture Atlas • 05-deployment/external-service-integrations.svg</text>
+  </g>
+</svg>

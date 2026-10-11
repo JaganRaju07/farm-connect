@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .cascade-card { fill: #131c2e; stroke: #0284c7; stroke-width: 1.5; rx: 12px; }
+      .cascade-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 15px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .layer-card { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .layer-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f1f5f9; }
+      .layer-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .layer-file { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #10b981; }
+      .layer-arrow { stroke: #0284c7; stroke-width: 2; fill: none; marker-end: url(#arrow-cyan); }
+      .page-card { fill: #1e293b; stroke: #10b981; stroke-width: 1.2; rx: 8px; }
+    </style>
+    <marker id="arrow-cyan" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0284c7" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="800" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Frontend Architecture &amp; Provider Cascade</text>
+  <text x="45" y="68" class="subtitle">Next.js 16 App Router hierarchy showing the exact Provider wrapping order in src/app/layout.tsx</text>
+
+  <!-- Cascade Container -->
+  <g transform="translate(45, 95)">
+    <rect width="600" height="660" class="cascade-card" />
+    <text x="25" y="32" class="cascade-title">PROVIDER WRAPPER CASCADE (src/app/layout.tsx)</text>
+
+    <!-- Layer 0: Root Layout -->
+    <g transform="translate(25, 45)">
+      <rect width="550" height="65" class="layer-card" />
+      <text x="16" y="24" class="layer-title">0. RootLayout (HTML &amp; Head Theme Script)</text>
+      <text x="16" y="42" class="layer-desc">Embeds inline JS script preventing flash of wrong theme (localStorage: farmconnect-theme)</text>
+      <text x="410" y="24" class="layer-file">src/app/layout.tsx</text>
+    </g>
+    <path d="M 300, 110 L 300, 125" class="layer-arrow" />
+
+    <!-- Layer 1: ThemeProvider -->
+    <g transform="translate(25, 125)">
+      <rect width="550" height="65" class="layer-card" />
+      <text x="16" y="24" class="layer-title">1. ThemeProvider</text>
+      <text x="16" y="42" class="layer-desc">Provides light / dark / system mode toggling; updates document.documentElement.classList</text>
+      <text x="390" y="24" class="layer-file">src/context/ThemeContext.tsx</text>
+    </g>
+    <path d="M 300, 190 L 300, 205" class="layer-arrow" />
+
+    <!-- Layer 2: AuthProvider -->
+    <g transform="translate(25, 205)">
+      <rect width="550" height="70" class="layer-card" />
+      <text x="16" y="24" class="layer-title">2. AuthProvider</text>
+      <text x="16" y="42" class="layer-desc">Loads token &amp; user from localStorage; tracks role: 'farmer' | 'consumer' | 'admin'</text>
+      <text x="16" y="58" class="layer-desc">Exposes: { user, token, role, isAuthenticated, login, logout, updateUser }</text>
+      <text x="395" y="24" class="layer-file">src/context/AuthContext.tsx</text>
+    </g>
+    <path d="M 300, 275 L 300, 290" class="layer-arrow" />
+
+    <!-- Layer 3: LocationProvider -->
+    <g transform="translate(25, 290)">
+      <rect width="550" height="70" class="layer-card" />
+      <text x="16" y="24" class="layer-title">3. LocationProvider (GPS Integration)</text>
+      <text x="16" y="42" class="layer-desc">Invokes useGeolocation() hook; caches latitude/longitude across sessions</text>
+      <text x="16" y="58" class="layer-desc">Config: enableHighAccuracy: true, timeout: 10000ms, maxAge: 300000ms (5 mins)</text>
+      <text x="375" y="24" class="layer-file">src/context/LocationContext.tsx</text>
+    </g>
+    <path d="M 300, 360 L 300, 375" class="layer-arrow" />
+
+    <!-- Layer 4: ToastProvider -->
+    <g transform="translate(25, 375)">
+      <rect width="550" height="65" class="layer-card" />
+      <text x="16" y="24" class="layer-title">4. ToastProvider</text>
+      <text x="16" y="42" class="layer-desc">Global notification dispatch queue (success, error, warning, info alerts)</text>
+      <text x="390" y="24" class="layer-file">src/context/ToastContext.tsx</text>
+    </g>
+    <path d="M 300, 440 L 300, 455" class="layer-arrow" />
+
+    <!-- Layer 5: CartProvider -->
+    <g transform="translate(25, 455)">
+      <rect width="550" height="70" class="layer-card" />
+      <text x="16" y="24" class="layer-title">5. CartProvider</text>
+      <text x="16" y="42" class="layer-desc">Persistent shopping cart; auto-syncs with localStorage: farmconnect_cart</text>
+      <text x="16" y="58" class="layer-desc">Enforces stock ceiling: Math.min(newQ, product.stockAvailable); calculates subtotal</text>
+      <text x="395" y="24" class="layer-file">src/context/cartcontext.tsx</text>
+    </g>
+    <path d="M 300, 525 L 300, 540" class="layer-arrow" />
+
+    <!-- Layer 6: AxiosInterceptorWrapper -->
+    <g transform="translate(25, 540)">
+      <rect width="550" height="70" class="layer-card" />
+      <text x="16" y="24" class="layer-title">6. AxiosInterceptorWrapper &amp; Header</text>
+      <text x="16" y="42" class="layer-desc">Intercepts all outbound Axios calls, injecting Authorization: Bearer &lt;token&gt;</text>
+      <text x="16" y="58" class="layer-desc">Mounts sticky navigation header with cart badge, taluk locator, and theme toggle</text>
+      <text x="340" y="24" class="layer-file">src/components/layout/AxiosInterceptorWrapper.tsx</text>
+    </g>
+  </g>
+
+  <!-- Page Route Targets (Right Panel) -->
+  <g transform="translate(680, 95)">
+    <rect width="475" height="660" class="cascade-card" />
+    <text x="25" y="32" class="cascade-title">CHILD CONSUMERS ({children})</text>
+
+    <!-- Page 1 -->
+    <g transform="translate(25, 50)">
+      <rect width="425" height="85" class="page-card" />
+      <text x="16" y="24" class="layer-title">/ (HomePage: src/app/page.tsx)</text>
+      <text x="16" y="44" class="layer-desc">Consumes: useLocation(), useAuth()</text>
+      <text x="16" y="62" class="layer-desc">Fetches: GET /farmers/nearby?latitude=...&amp;longitude=...</text>
+      <text x="16" y="78" class="layer-desc">Components: HeroNarrative, FarmJourneyTimeline, LocalFarmNetwork</text>
+    </g>
+
+    <!-- Page 2 -->
+    <g transform="translate(25, 150)">
+      <rect width="425" height="95" class="page-card" />
+      <text x="16" y="24" class="layer-title">/marketplace (src/app/marketplace/page.tsx)</text>
+      <text x="16" y="44" class="layer-desc">Consumes: useLocation(), useCart(), useToast()</text>
+      <text x="16" y="62" class="layer-desc">Fetches: GET /products?lat=...&amp;lon=...&amp;radius=25</text>
+      <text x="16" y="80" class="layer-desc">Components: MapExplorer (Leaflet), ProductCard, ProductFilter</text>
+    </g>
+
+    <!-- Page 3 -->
+    <g transform="translate(25, 260)">
+      <rect width="425" height="85" class="page-card" />
+      <text x="16" y="24" class="layer-title">/cart &amp; /checkout (src/app/checkout/page.tsx)</text>
+      <text x="16" y="44" class="layer-desc">Consumes: useCart(), useLocation(), useAuth()</text>
+      <text x="16" y="62" class="layer-desc">Fires: POST /api/v1/consumers/orders with GPS location snapshot</text>
+      <text x="16" y="78" class="layer-desc">Clears cart in CartProvider upon successful order creation</text>
+    </g>
+
+    <!-- Page 4 -->
+    <g transform="translate(25, 360)">
+      <rect width="425" height="85" class="page-card" />
+      <text x="16" y="24" class="layer-title">/farmer/dashboard (src/app/farmer/dashboard/)</text>
+      <text x="16" y="44" class="layer-desc">Consumes: useAuth() with ProtectedRoute(role="farmer")</text>
+      <text x="16" y="62" class="layer-desc">Endpoints: GET /api/v1/farmers/dashboard, GET /farmers/orders</text>
+      <text x="16" y="78" class="layer-desc">Crop inventory CRUD, harvest date scheduling, order acceptance</text>
+    </g>
+
+    <!-- Page 5 -->
+    <g transform="translate(25, 460)">
+      <rect width="425" height="85" class="page-card" />
+      <text x="16" y="24" class="layer-title">/login &amp; /register (src/app/login/)</text>
+      <text x="16" y="44" class="layer-desc">Consumes: useAuth(), useToast()</text>
+      <text x="16" y="62" class="layer-desc">Fires: POST /auth/send-otp, POST /auth/verify-otp</text>
+      <text x="16" y="78" class="layer-desc">Calls AuthContext.login(token, user, role) on verification</text>
+    </g>
+
+    <!-- Page 6 -->
+    <g transform="translate(25, 560)">
+      <rect width="425" height="75" class="page-card" />
+      <text x="16" y="24" class="layer-title">/admin/dashboard (src/app/admin/dashboard/)</text>
+      <text x="16" y="44" class="layer-desc">Consumes: useAuth() with ProtectedRoute(role="admin")</text>
+      <text x="16" y="62" class="layer-desc">Platform telemetry: Active farmers, transaction volume, verification</text>
+    </g>
+  </g>
+
+</svg>

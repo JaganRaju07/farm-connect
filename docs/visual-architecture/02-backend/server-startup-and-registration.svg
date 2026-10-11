@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1150 820" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .step-box { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 8px; }
+      .step-box-active { fill: #1e293b; stroke: #10b981; stroke-width: 2; rx: 8px; }
+      .step-num { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 800; fill: #10b981; }
+      .step-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .step-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .step-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #38bdf8; }
+      .seq-arrow { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <rect width="1150" height="820" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Backend Server Startup &amp; Route Registration Sequence</text>
+  <text x="45" y="68" class="subtitle">Chronological execution steps from node process invocation to listening on the network port</text>
+
+  <!-- Flow Steps -->
+  <!-- Step 1 -->
+  <g transform="translate(60, 105)">
+    <rect width="1030" height="65" class="step-box-active" />
+    <circle cx="35" cy="32" r="18" fill="#064e3b" />
+    <text x="30" y="37" class="step-num">1</text>
+    <text x="70" y="26" class="step-title">Load Environment Variables</text>
+    <text x="70" y="46" class="step-desc">require('dotenv').config() executes at the top of server.js / app.js, populating process.env from .env file.</text>
+    <text x="820" y="36" class="step-code">server.js #L1</text>
+  </g>
+  <path d="M 575, 170 L 575, 190" class="seq-arrow" />
+
+  <!-- Step 2 -->
+  <g transform="translate(60, 190)">
+    <rect width="1030" height="65" class="step-box" />
+    <circle cx="35" cy="32" r="18" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="30" y="37" class="step-num" fill="#38bdf8">2</text>
+    <text x="70" y="26" class="step-title">Instantiate PostgreSQL Connection Pool</text>
+    <text x="70" y="46" class="step-desc">new Pool({ connectionString: DATABASE_URL, ssl: { rejectUnauthorized: false } }). Establishes connection parameters.</text>
+    <text x="800" y="36" class="step-code">src/config/db.js #L5</text>
+  </g>
+  <path d="M 575, 255 L 575, 275" class="seq-arrow" />
+
+  <!-- Step 3 -->
+  <g transform="translate(60, 275)">
+    <rect width="1030" height="65" class="step-box" />
+    <circle cx="35" cy="32" r="18" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="30" y="37" class="step-num" fill="#38bdf8">3</text>
+    <text x="70" y="26" class="step-title">Database Pre-Flight Diagnostic Check</text>
+    <text x="70" y="46" class="step-desc">Executes pool.query('SELECT NOW()') or testConnection(). Confirms credentials; fails loudly and halts if unreachable.</text>
+    <text x="795" y="36" class="step-code">src/config/db.js #L11</text>
+  </g>
+  <path d="M 575, 340 L 575, 360" class="seq-arrow" />
+
+  <!-- Step 4 -->
+  <g transform="translate(60, 360)">
+    <rect width="1030" height="75" class="step-box" />
+    <circle cx="35" cy="37" r="18" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="30" y="42" class="step-num" fill="#38bdf8">4</text>
+    <text x="70" y="26" class="step-title">Configure Global Middleware Stack</text>
+    <text x="70" y="44" class="step-desc">• Root (src/app.js): app.use(helmet()), cors(), express.json()</text>
+    <text x="70" y="62" class="step-desc">• Modular (backend/src/app.js): adds trust proxy, rateLimit (300 req/15m), sanitizeInputs</text>
+    <text x="805" y="42" class="step-code">src/app.js &amp; backend/app.js</text>
+  </g>
+  <path d="M 575, 435 L 575, 455" class="seq-arrow" />
+
+  <!-- Step 5 -->
+  <g transform="translate(60, 455)">
+    <rect width="1030" height="75" class="step-box" />
+    <circle cx="35" cy="37" r="18" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="30" y="42" class="step-num" fill="#38bdf8">5</text>
+    <text x="70" y="26" class="step-title">Mount REST Endpoints &amp; Sub-Routers</text>
+    <text x="70" y="44" class="step-desc">• GET /health | • /api/v1/auth (authroutes.js) | • /api/v1/products (productroutes.js)</text>
+    <text x="70" y="62" class="step-desc">• /api/v1/farmers (farmerroutes.js) | • /api/v1/consumers (consumerroutes.js)</text>
+    <text x="805" y="42" class="step-code">src/app.js #L20-28</text>
+  </g>
+  <path d="M 575, 530 L 575, 550" class="seq-arrow" />
+
+  <!-- Step 6 -->
+  <g transform="translate(60, 550)">
+    <rect width="1030" height="65" class="step-box" />
+    <circle cx="35" cy="32" r="18" fill="#1e293b" stroke="#334155" stroke-width="1.5" />
+    <text x="30" y="37" class="step-num" fill="#38bdf8">6</text>
+    <text x="70" y="26" class="step-title">Register 404 Catch-All &amp; Global Error Handler</text>
+    <text x="70" y="46" class="step-desc">app.use((req, res)) returns ROUTE_NOT_FOUND; app.use((err, req, res, next)) returns sanitized 500 error payload.</text>
+    <text x="780" y="36" class="step-code">backend/src/app.js #L100</text>
+  </g>
+  <path d="M 575, 615 L 575, 635" class="seq-arrow" />
+
+  <!-- Step 7 -->
+  <g transform="translate(60, 635)">
+    <rect width="1030" height="65" class="step-box-active" />
+    <circle cx="35" cy="32" r="18" fill="#064e3b" />
+    <text x="30" y="37" class="step-num">7</text>
+    <text x="70" y="26" class="step-title">Bind Network Port &amp; Begin Listening</text>
+    <text x="70" y="46" class="step-desc">app.listen(PORT, '0.0.0.0', callback). Prints: "🚀 Farm Connect API running on port 5000" to terminal logs.</text>
+    <text x="825" y="36" class="step-code">server.js #L8</text>
+  </g>
+
+</svg>

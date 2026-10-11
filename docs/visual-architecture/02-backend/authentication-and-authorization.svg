@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 850" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .lane { fill: #131c2e; stroke: #1e293b; stroke-width: 1.5; rx: 12px; }
+      .lane-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #38bdf8; letter-spacing: 0.05em; }
+      .node { fill: #1e293b; stroke: #334155; stroke-width: 1.2; rx: 8px; }
+      .node-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; fill: #f8fafc; }
+      .node-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 11px; fill: #94a3b8; }
+      .node-code { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 600; fill: #10b981; }
+      .arrow { stroke: #10b981; stroke-width: 2; fill: none; marker-end: url(#arrow-green); }
+      .branch-arrow { stroke: #f59e0b; stroke-width: 2; fill: none; marker-end: url(#arrow-amber); }
+    </style>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrow-amber" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="850" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Passwordless Authentication &amp; RBAC Engine</text>
+  <text x="45" y="68" class="subtitle">Complete implementation flow of Fast2SMS dispatch, otp_store table state, JWT token issuance, and role access control</text>
+
+  <!-- ================= PHASE 1: DISPATCH ================= -->
+  <g transform="translate(45, 95)">
+    <rect width="530" height="710" class="lane" />
+    <text x="25" y="32" class="lane-title">PHASE 1: OTP DISPATCH (POST /api/v1/auth/send-otp)</text>
+
+    <!-- Node 1: Request Validation -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="95" class="node" />
+      <text x="16" y="24" class="node-title">1. Phone &amp; Role Pre-Validation</text>
+      <text x="16" y="44" class="node-desc">• Checks body: { phone, userType ('farmer' | 'consumer'), action }</text>
+      <text x="16" y="62" class="node-desc">• Queries target table: SELECT id FROM farmers / consumers WHERE phone=$1</text>
+      <text x="16" y="80" class="node-desc">• Rejects with 400 if registering existing phone OR logging in new phone</text>
+      <text x="360" y="24" class="node-code">authController.js #L11</text>
+    </g>
+    <path d="M 265, 145 L 265, 175" class="arrow" />
+
+    <!-- Node 2: Rate Lockout & Reuse Check -->
+    <g transform="translate(25, 175)">
+      <rect width="480" height="110" class="node" />
+      <text x="16" y="24" class="node-title">2. Double-Click Protection &amp; Token Reuse</text>
+      <text x="16" y="44" class="node-desc">• Queries active OTP: SELECT otp_code, expires_at FROM otp_store ...</text>
+      <text x="16" y="62" class="node-desc">• If existing OTP was generated &lt; 60 seconds ago (TTL &gt; 4 mins remaining):</text>
+      <text x="26" y="80" font-family="monospace" font-size="10" fill="#38bdf8">Reuses existing OTP to avoid overwriting during rapid clicks</text>
+      <text x="16" y="98" class="node-desc">• Else: Generates new 6-digit random numeric code with 5-minute expiry</text>
+      <text x="360" y="24" class="node-code">authController.js #L40</text>
+    </g>
+    <path d="M 265, 285 L 265, 315" class="arrow" />
+
+    <!-- Node 3: Database Upsert -->
+    <g transform="translate(25, 315)">
+      <rect width="480" height="110" class="node" />
+      <text x="16" y="24" class="node-title">3. Atomic Upsert into otp_store</text>
+      <text x="16" y="44" class="node-desc">• INSERT INTO otp_store (phone, otp_code, expires_at, user_type, action)</text>
+      <text x="16" y="62" class="node-desc">• ON CONFLICT (phone) DO UPDATE SET otp_code=$2, expires_at=$3 ...</text>
+      <text x="16" y="80" class="node-desc">• Guarantees exactly one active token per phone number at any moment</text>
+      <text x="16" y="98" class="node-desc">• Database constraints ensure transactional consistency</text>
+      <text x="360" y="24" class="node-code">authController.js #L52</text>
+    </g>
+    <path d="M 265, 425 L 265, 455" class="arrow" />
+
+    <!-- Node 4: SMS Transmission -->
+    <g transform="translate(25, 455)">
+      <rect width="480" height="120" class="node" />
+      <text x="16" y="24" class="node-title">4. SMS Gateway Dispatch (smsservice.js)</text>
+      <text x="16" y="44" class="node-desc">• Check: If OTP_DEMO_MODE === 'true': logs code to terminal and returns true</text>
+      <text x="16" y="62" class="node-desc">• Production: Calls Fast2SMS Bulk V2 REST Gateway via Axios:</text>
+      <text x="26" y="80" font-family="monospace" font-size="10" fill="#34d399">GET https://www.fast2sms.com/dev/bulkV2?authorization=KEY&amp;route=otp&amp;...</text>
+      <text x="16" y="98" class="node-desc">• Verifies response.data.return === true; throws error on API failure</text>
+      <text x="360" y="24" class="node-code">smsservice.js #L7</text>
+    </g>
+    <path d="M 265, 575 L 265, 605" class="arrow" />
+
+    <!-- Node 5: Success Response -->
+    <g transform="translate(25, 605)">
+      <rect width="480" height="75" class="node" />
+      <text x="16" y="24" class="node-title">5. Client Response</text>
+      <text x="16" y="44" class="node-desc">• Returns HTTP 200: { success: true, message: "OTP sent successfully" }</text>
+      <text x="16" y="60" class="node-desc">• Client transitions to 6-digit input view with 60-second countdown timer</text>
+    </g>
+  </g>
+
+  <!-- ================= PHASE 2: VERIFICATION & JWT ================= -->
+  <g transform="translate(625, 95)">
+    <rect width="530" height="710" class="lane" />
+    <text x="25" y="32" class="lane-title">PHASE 2: VERIFICATION &amp; SESSION (POST /verify-otp)</text>
+
+    <!-- Node 1: Code Matching -->
+    <g transform="translate(25, 50)">
+      <rect width="480" height="110" class="node" />
+      <text x="16" y="24" class="node-title">1. Database Lookup &amp; Safe String Matching</text>
+      <text x="16" y="44" class="node-desc">• SELECT * FROM otp_store WHERE phone=$1 AND user_type=$2</text>
+      <text x="16" y="62" class="node-desc">• If not found: Returns 400 "No OTP found"</text>
+      <text x="16" y="80" class="node-desc">• Compares trimmed string: storedOTP.otp_code.trim() === String(otp).trim()</text>
+      <text x="16" y="98" class="node-desc">• Checks expiry timestamp: new Date() &gt; new Date(storedOTP.expires_at)</text>
+      <text x="360" y="24" class="node-code">authController.js #L100</text>
+    </g>
+    <path d="M 265, 160 L 265, 190" class="arrow" />
+
+    <!-- Node 2: User Creation / Retrieval -->
+    <g transform="translate(25, 190)">
+      <rect width="480" height="135" class="node" />
+      <text x="16" y="24" class="node-title">2. Progressive Onboarding &amp; Profile Insertion</text>
+      <text x="16" y="44" class="node-desc">• If action === 'register':</text>
+      <text x="26" y="62" class="node-desc">Inserts user into farmers / consumers with default coordinates</text>
+      <text x="26" y="78" font-family="monospace" font-size="10" fill="#38bdf8">lat: 0, lon: 0, address: 'Pending Profile Completion', phone_verified: true</text>
+      <text x="26" y="96" class="node-desc">Allows consumer / farmer to complete detailed address later</text>
+      <text x="16" y="114" class="node-desc">• If action === 'login': SELECT id, phone, name FROM target table</text>
+      <text x="360" y="24" class="node-code">authController.js #L112</text>
+    </g>
+    <path d="M 265, 325 L 265, 355" class="arrow" />
+
+    <!-- Node 3: OTP Teardown -->
+    <g transform="translate(25, 355)">
+      <rect width="480" height="75" class="node" />
+      <text x="16" y="24" class="node-title">3. Ephemeral Token Cleanup</text>
+      <text x="16" y="44" class="node-desc">• DELETE FROM otp_store WHERE phone=$1</text>
+      <text x="16" y="62" class="node-desc">• Guarantees single-use OTP cannot be replayed or intercepted</text>
+      <text x="360" y="24" class="node-code">authController.js #L143</text>
+    </g>
+    <path d="M 265, 430 L 265, 460" class="arrow" />
+
+    <!-- Node 4: JWT Token Signing -->
+    <g transform="translate(25, 460)">
+      <rect width="480" height="110" class="node" />
+      <text x="16" y="24" class="node-title">4. HMAC-SHA256 JWT Token Signing</text>
+      <text x="16" y="44" class="node-desc">• Signs session token using process.env.JWT_SECRET:</text>
+      <text x="26" y="64" font-family="monospace" font-size="10.5" fill="#10b981">jwt.sign({ userId: user.id, phone: user.phone, role: userType })</text>
+      <text x="16" y="84" class="node-desc">• Sets validity: process.env.JWT_EXPIRES_IN || '30d'</text>
+      <text x="16" y="100" class="node-desc">• Compact signature safely stored in frontend localStorage</text>
+      <text x="360" y="24" class="node-code">authController.js #L146</text>
+    </g>
+    <path d="M 265, 570 L 265, 600" class="arrow" />
+
+    <!-- Node 5: Session Handshake -->
+    <g transform="translate(25, 600)">
+      <rect width="480" height="85" class="node" />
+      <text x="16" y="24" class="node-title">5. Client Session Handshake</text>
+      <text x="16" y="44" class="node-desc">• Returns payload: { success: true, data: { token, user, requiresProfileCompletion } }</text>
+      <text x="16" y="62" class="node-desc">• AuthContext sets role &amp; updates axios.defaults.headers.common</text>
+      <text x="16" y="78" class="node-desc">• User redirected to /marketplace or /farmer/dashboard</text>
+    </g>
+  </g>
+
+</svg>

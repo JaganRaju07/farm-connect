@@ -1,0 +1,254 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="100%" height="100%" style="background:#090d16;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+
+    <linearGradient id="authCard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(245, 158, 11, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <linearGradient id="productCard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(16, 185, 129, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <linearGradient id="orderCard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(56, 189, 248, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <linearGradient id="farmerCard" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(168, 85, 247, 0.15)"/>
+      <stop offset="100%" stop-color="rgba(15, 23, 42, 0.95)"/>
+    </linearGradient>
+
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="1600" height="1200" fill="url(#bgGrad)"/>
+  <rect width="1600" height="1200" fill="none" stroke="#1e293b" stroke-width="2"/>
+
+  <!-- Subtle Blueprint Grid -->
+  <g stroke="#1e293b" stroke-width="0.5" opacity="0.3">
+    <line x1="800" y1="0" x2="800" y2="1200"/>
+    <line x1="0" y1="620" x2="1600" y2="620"/>
+  </g>
+
+  <!-- Header Banner -->
+  <g transform="translate(60, 40)">
+    <rect x="0" y="0" width="1480" height="75" rx="12" fill="#0f172a" stroke="#334155" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <circle cx="45" cy="37" r="20" fill="#38bdf8" fill-opacity="0.2"/>
+    <text x="45" y="44" fill="#38bdf8" font-size="16" font-weight="700" text-anchor="middle">API</text>
+    
+    <text x="80" y="34" fill="#f8fafc" font-size="22" font-weight="700">ENDPOINT-TO-IMPLEMENTATION CATALOG</text>
+    <text x="80" y="56" fill="#94a3b8" font-size="13">Exhaustive REST API registry: HTTP verbs, router files, middleware pipelines, controller handlers, and SQL operations</text>
+
+    <rect x="1270" y="22" width="180" height="30" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1"/>
+    <text x="1360" y="42" fill="#38bdf8" font-size="11" font-weight="600" text-anchor="middle">VERIFIED HANDLERS</text>
+  </g>
+
+  <!-- SECTION 1: AUTHENTICATION API (TOP LEFT) -->
+  <g transform="translate(60, 140)">
+    <rect x="0" y="0" width="720" height="460" rx="12" fill="url(#authCard)" stroke="#f59e0b" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="720" height="38" rx="12" fill="#f59e0b" fill-opacity="0.2"/>
+    <text x="20" y="25" fill="#fbbf24" font-size="14" font-weight="700">🔐 AUTHENTICATION ENDPOINTS (/api/v1/auth) — src/routes/authroutes.js</text>
+
+    <g transform="translate(18, 50)">
+      <!-- Item 1: POST /send-otp -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="684" height="115" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#f59e0b"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">POST</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/auth/send-otp</text>
+        
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">authController.sendOTP</tspan> in <tspan fill="#38bdf8">src/controllers/authController.js#L5-76</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">MIDDLEWARE: <tspan fill="#cbd5e1">express.json(), rateLimit(300 req/15min)</tspan></text>
+        <text x="12" y="88" fill="#94a3b8" font-size="11">DATA / SERVICE: <tspan fill="#34d399">otp_store (UPSERT)</tspan> • <tspan fill="#fbbf24">smsservice.js (Fast2SMS Bulk V2 REST)</tspan></text>
+        <text x="12" y="104" fill="#94a3b8" font-size="10.5">RESPONSE: <tspan fill="#a78bfa">{ success: true, message: "OTP sent successfully" } (200 OK)</tspan></text>
+      </g>
+
+      <!-- Item 2: POST /verify-otp -->
+      <g transform="translate(0, 125)">
+        <rect x="0" y="0" width="684" height="125" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#f59e0b"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">POST</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/auth/verify-otp</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">authController.verifyOTP</tspan> in <tspan fill="#38bdf8">src/controllers/authController.js#L78-170</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">MIDDLEWARE: <tspan fill="#cbd5e1">express.json()</tspan></text>
+        <text x="12" y="88" fill="#94a3b8" font-size="11">DATA / SERVICE: <tspan fill="#34d399">otp_store (DELETE)</tspan> • <tspan fill="#34d399">farmers/consumers (INSERT ON CONFLICT)</tspan> • <tspan fill="#fbbf24">jwt.sign()</tspan></text>
+        <text x="12" y="104" fill="#94a3b8" font-size="10.5">PAYLOAD: <tspan fill="#cbd5e1">{ phone, otp, userType, name, city, latitude, longitude }</tspan></text>
+        <text x="12" y="118" fill="#94a3b8" font-size="10.5">RESPONSE: <tspan fill="#a78bfa">{ success: true, data: { token, user, requiresProfileCompletion } } (200 OK)</tspan></text>
+      </g>
+
+      <!-- Item 3: POST /refresh-token -->
+      <g transform="translate(0, 260)">
+        <rect x="0" y="0" width="684" height="100" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#f59e0b"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">POST</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/auth/refresh-token</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">authController.refreshToken</tspan> in <tspan fill="#38bdf8">src/controllers/authController.js</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">MIDDLEWARE: <tspan fill="#cbd5e1">authMiddleware.verifyToken</tspan></text>
+        <text x="12" y="88" fill="#94a3b8" font-size="10.5">RESPONSE: <tspan fill="#a78bfa">{ success: true, token: "&lt;new_jwt&gt;" } (200 OK)</tspan></text>
+      </g>
+    </g>
+  </g>
+
+  <!-- SECTION 2: PRODUCTS API (TOP RIGHT) -->
+  <g transform="translate(820, 140)">
+    <rect x="0" y="0" width="720" height="460" rx="12" fill="url(#productCard)" stroke="#10b981" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="720" height="38" rx="12" fill="#10b981" fill-opacity="0.2"/>
+    <text x="20" y="25" fill="#34d399" font-size="14" font-weight="700">🌱 PRODUCT &amp; DISCOVERY ENDPOINTS (/api/v1/products) — src/routes/productroutes.js</text>
+
+    <g transform="translate(18, 50)">
+      <!-- Item 1: GET / (Search Nearby) -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="684" height="115" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#10b981"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">GET</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/products</text>
+        <text x="240" y="28" fill="#94a3b8" font-size="11">(Hyperlocal Proximity Search)</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">productController.searchNearbyProducts</tspan> in <tspan fill="#38bdf8">src/controllers/productController.js#L4-39</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">PARAMS: <tspan fill="#cbd5e1">?lat=12.97&amp;lon=77.59&amp;radius=30&amp;category=Vegetables&amp;search=tomato</tspan></text>
+        <text x="12" y="88" fill="#94a3b8" font-size="11">SQL: <tspan fill="#fbbf24">calculate_distance_km($1,$2, f.latitude, f.longitude) &lt;= $3 ORDER BY dist ASC</tspan></text>
+        <text x="12" y="104" fill="#94a3b8" font-size="10.5">RESPONSE: <tspan fill="#a78bfa">{ success: true, count: N, data: [ { id, name, price, distance_km, ... } ] } (200 OK)</tspan></text>
+      </g>
+
+      <!-- Item 2: POST /create -->
+      <g transform="translate(0, 125)">
+        <rect x="0" y="0" width="684" height="115" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#f59e0b"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">POST</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/products/create</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">productController.createProduct</tspan> in <tspan fill="#38bdf8">src/controllers/productController.js</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">MIDDLEWARE: <tspan fill="#fbbf24">authMiddleware.verifyToken</tspan>, <tspan fill="#fbbf24">authMiddleware.requireRole('farmer')</tspan></text>
+        <text x="12" y="88" fill="#94a3b8" font-size="11">SQL: <tspan fill="#34d399">INSERT INTO products (farmer_id, name, category, price, stock_available, image_url, ...)</tspan></text>
+        <text x="12" y="104" fill="#94a3b8" font-size="10.5">RESPONSE: <tspan fill="#a78bfa">{ success: true, data: { id, name, ... } } (201 Created)</tspan></text>
+      </g>
+
+      <!-- Item 3: PUT /:id & DELETE /:id -->
+      <g transform="translate(0, 250)">
+        <rect x="0" y="0" width="684" height="110" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#38bdf8"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">PUT</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/products/:id</text>
+        <text x="265" y="28" fill="#94a3b8" font-size="11">• Also handles DELETE /:id (Soft or Hard Delete)</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">productController.updateProduct</tspan> / <tspan fill="#e2e8f0" font-weight="600">deleteProduct</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">MIDDLEWARE: <tspan fill="#fbbf24">authMiddleware.requireRole('farmer')</tspan> (Enforces farmer_id = req.user.id)</text>
+        <text x="12" y="88" fill="#94a3b8" font-size="11">SQL: <tspan fill="#34d399">UPDATE products SET stock_available=$1, price=$2 WHERE id=$3 AND farmer_id=$4</tspan></text>
+      </g>
+    </g>
+  </g>
+
+  <!-- SECTION 3: CONSUMER & ORDERS API (BOTTOM LEFT) -->
+  <g transform="translate(60, 620)">
+    <rect x="0" y="0" width="720" height="490" rx="12" fill="url(#orderCard)" stroke="#38bdf8" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="720" height="38" rx="12" fill="#38bdf8" fill-opacity="0.2"/>
+    <text x="20" y="25" fill="#7dd3fc" font-size="14" font-weight="700">🛒 CONSUMER &amp; ORDER ENDPOINTS (/api/v1/consumers) — src/routes/consumerroutes.js</text>
+
+    <g transform="translate(18, 50)">
+      <!-- Item 1: POST /orders -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="684" height="120" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#f59e0b"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">POST</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/consumers/orders</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">consumerController.createOrder</tspan> in <tspan fill="#38bdf8">src/controllers/consumerController.js#L22-65</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">MIDDLEWARE: <tspan fill="#fbbf24">authMiddleware.verifyToken</tspan>, <tspan fill="#fbbf24">authMiddleware.requireRole('consumer')</tspan></text>
+        <text x="12" y="88" fill="#94a3b8" font-size="11">SQL: <tspan fill="#34d399">INSERT INTO orders (items JSONB, delivery_distance_km, total_amount, ...)</tspan></text>
+        <text x="12" y="104" fill="#94a3b8" font-size="10.5">RESPONSE: <tspan fill="#a78bfa">{ success: true, data: { order_number, order_status: "pending" } } (201 Created)</tspan></text>
+      </g>
+
+      <!-- Item 2: GET /orders -->
+      <g transform="translate(0, 130)">
+        <rect x="0" y="0" width="684" height="100" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#10b981"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">GET</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/consumers/orders</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">consumerController.getConsumerOrders</tspan> in <tspan fill="#38bdf8">consumerController.js</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">MIDDLEWARE: <tspan fill="#fbbf24">authMiddleware.requireRole('consumer')</tspan></text>
+        <text x="12" y="88" fill="#94a3b8" font-size="11">SQL: <tspan fill="#34d399">SELECT o.*, f.name AS farmer_name FROM orders o JOIN farmers f ...</tspan></text>
+      </g>
+
+      <!-- Item 3: GET /nearby-farmers -->
+      <g transform="translate(0, 240)">
+        <rect x="0" y="0" width="684" height="100" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#10b981"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">GET</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/consumers/nearby-farmers</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">consumerController.getNearbyFarmers</tspan> in <tspan fill="#38bdf8">consumerController.js</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">SQL: <tspan fill="#fbbf24">calculate_distance_km()</tspan> filtering verified farmers (<tspan fill="#34d399">is_verified = TRUE</tspan>)</text>
+        <text x="12" y="88" fill="#94a3b8" font-size="10.5">RESPONSE: <tspan fill="#a78bfa">{ success: true, count: N, data: [ { id, name, distance_km, rating } ] }</tspan></text>
+      </g>
+    </g>
+  </g>
+
+  <!-- SECTION 4: FARMER PORTAL & EXTENDED SUB-BACKEND API (BOTTOM RIGHT) -->
+  <g transform="translate(820, 620)">
+    <rect x="0" y="0" width="720" height="490" rx="12" fill="url(#farmerCard)" stroke="#a855f7" stroke-width="1.5" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="720" height="38" rx="12" fill="#a855f7" fill-opacity="0.2"/>
+    <text x="20" y="25" fill="#c084fc" font-size="14" font-weight="700">🚜 FARMER OPERATIONS &amp; EXTENDED SERVICES (Port 5000 &amp; 4000)</text>
+
+    <g transform="translate(18, 50)">
+      <!-- Item 1: PUT /orders/:id/status -->
+      <g transform="translate(0, 0)">
+        <rect x="0" y="0" width="684" height="110" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#38bdf8"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">PUT</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/farmers/orders/:id/status</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">farmerController.updateOrderStatus</tspan> in <tspan fill="#38bdf8">src/controllers/farmerController.js</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">MIDDLEWARE: <tspan fill="#fbbf24">authMiddleware.requireRole('farmer')</tspan></text>
+        <text x="12" y="88" fill="#94a3b8" font-size="11">SQL: <tspan fill="#34d399">UPDATE orders SET order_status=$1 WHERE id=$2 AND farmer_id=$3</tspan></text>
+      </g>
+
+      <!-- Item 2: POST /upload/image (Modular Backend Port 4000) -->
+      <g transform="translate(0, 120)">
+        <rect x="0" y="0" width="684" height="110" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#f59e0b"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">POST</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/upload/image</text>
+        <text x="260" y="28" fill="#38bdf8" font-size="11">(backend/src/routes/upload.routes.js)</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">upload.controller.uploadImage</tspan> via <tspan fill="#38bdf8">upload.middleware.js</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">INGESTION: <tspan fill="#cbd5e1">Multer memoryStorage() → Cloudinary uploader upload_stream()</tspan></text>
+        <text x="12" y="88" fill="#94a3b8" font-size="10.5">RESPONSE: <tspan fill="#a78bfa">{ success: true, url: "https://res.cloudinary.com/..." } (200 OK)</tspan></text>
+      </g>
+
+      <!-- Item 3: GET /admin/metrics -->
+      <g transform="translate(0, 240)">
+        <rect x="0" y="0" width="684" height="100" rx="8" fill="#090d16" stroke="#334155" stroke-width="1"/>
+        <rect x="12" y="12" width="60" height="22" rx="4" fill="#10b981"/>
+        <text x="42" y="27" fill="#090d16" font-size="11" font-weight="800" text-anchor="middle">GET</text>
+        <text x="82" y="28" fill="#f8fafc" font-size="13" font-weight="700" font-family="monospace">/api/v1/admin/metrics</text>
+        <text x="260" y="28" fill="#fbbf24" font-size="11">(backend/src/routes/admin.routes.js)</text>
+
+        <text x="12" y="52" fill="#94a3b8" font-size="11">HANDLER: <tspan fill="#e2e8f0" font-weight="600">admin.controller.getPlatformMetrics</tspan></text>
+        <text x="12" y="70" fill="#94a3b8" font-size="11">MIDDLEWARE: <tspan fill="#fbbf24">authMiddleware.requireRole('admin')</tspan></text>
+        <text x="12" y="88" fill="#94a3b8" font-size="11">SQL: <tspan fill="#34d399">Aggregated COUNT(farmers), COUNT(orders), SUM(total_amount)</tspan></text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Footer -->
+  <g transform="translate(60, 1140)">
+    <rect x="0" y="0" width="1480" height="40" rx="6" fill="#0f172a" stroke="#1e293b" stroke-width="1"/>
+    <circle cx="20" cy="20" r="4" fill="#38bdf8"/>
+    <text x="35" y="24" fill="#94a3b8" font-size="11">Audit complete: All routes match live implementation files in D:\farm-connect repository.</text>
+    <text x="1450" y="24" fill="#64748b" font-size="11" text-anchor="end">Farm Connect Visual Architecture Atlas • 06-code-tracing/endpoint-to-implementation.svg</text>
+  </g>
+</svg>

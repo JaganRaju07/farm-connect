@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1250 820" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .entity-box { fill: #1e293b; stroke: #3b82f6; stroke-width: 1.5; rx: 8px; }
+      .entity-header { fill: #1e3a8a; rx: 8px; }
+      .entity-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 800; fill: #ffffff; letter-spacing: 0.05em; }
+      .col-pk { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 700; fill: #f59e0b; }
+      .col-fk { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 700; fill: #38bdf8; }
+      .col-name { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; fill: #f1f5f9; }
+      .col-type { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 9.5px; fill: #94a3b8; }
+      .rel-line { stroke: #64748b; stroke-width: 2; fill: none; }
+      .rel-label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10px; fill: #cbd5e1; font-weight: 600; }
+    </style>
+  </defs>
+
+  <rect width="1250" height="820" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Database Entity-Relationship Diagram (ERD)</text>
+  <text x="45" y="68" class="subtitle">Complete relational schema in PostgreSQL (Supabase) with primary keys, foreign key constraints, and JSONB snapshots</text>
+
+  <!-- FARMERS -->
+  <g transform="translate(60, 110)">
+    <rect width="280" height="310" class="entity-box" />
+    <path d="M 0,0 L 280,0 L 280,32 L 0,32 Z" class="entity-header" />
+    <text x="14" y="22" class="entity-title">farmers</text>
+
+    <text x="14" y="55" class="col-pk">PK</text><text x="45" y="55" class="col-name">id</text><text x="190" y="55" class="col-type">SERIAL</text>
+    <text x="45" y="75" class="col-name">name</text><text x="190" y="75" class="col-type">VARCHAR(255)</text>
+    <text x="14" y="95" class="col-pk">UK</text><text x="45" y="95" class="col-name">phone</text><text x="190" y="95" class="col-type">VARCHAR(15)</text>
+    <text x="45" y="115" class="col-name">latitude</text><text x="190" y="115" class="col-type">DOUBLE PREC.</text>
+    <text x="45" y="135" class="col-name">longitude</text><text x="190" y="135" class="col-type">DOUBLE PREC.</text>
+    <text x="45" y="155" class="col-name">address</text><text x="190" y="155" class="col-type">TEXT</text>
+    <text x="45" y="175" class="col-name">city</text><text x="190" y="175" class="col-type">VARCHAR(100)</text>
+    <text x="45" y="195" class="col-name">is_verified</text><text x="190" y="195" class="col-type">BOOLEAN (DEF)</text>
+    <text x="45" y="215" class="col-name">phone_verified</text><text x="190" y="215" class="col-type">BOOLEAN</text>
+    <text x="45" y="235" class="col-name">rating</text><text x="190" y="235" class="col-type">NUMERIC(3,2)</text>
+    <text x="45" y="255" class="col-name">reviews_count</text><text x="190" y="255" class="col-type">INT DEFAULT 0</text>
+    <text x="45" y="275" class="col-name">created_at</text><text x="190" y="275" class="col-type">TIMESTAMP</text>
+    <text x="45" y="295" class="col-name">updated_at</text><text x="190" y="295" class="col-type">TIMESTAMP</text>
+  </g>
+
+  <!-- PRODUCTS -->
+  <g transform="translate(480, 110)">
+    <rect width="280" height="310" class="entity-box" />
+    <path d="M 0,0 L 280,0 L 280,32 L 0,32 Z" class="entity-header" />
+    <text x="14" y="22" class="entity-title">products</text>
+
+    <text x="14" y="55" class="col-pk">PK</text><text x="45" y="55" class="col-name">id</text><text x="190" y="55" class="col-type">SERIAL</text>
+    <text x="14" y="75" class="col-fk">FK</text><text x="45" y="75" class="col-name">farmer_id</text><text x="190" y="75" class="col-type">INT -> farmers</text>
+    <text x="45" y="95" class="col-name">name</text><text x="190" y="95" class="col-type">VARCHAR(255)</text>
+    <text x="45" y="115" class="col-name">category</text><text x="190" y="115" class="col-type">VARCHAR(50)</text>
+    <text x="45" y="135" class="col-name">description</text><text x="190" y="135" class="col-type">TEXT</text>
+    <text x="45" y="155" class="col-name">price</text><text x="190" y="155" class="col-type">NUMERIC(10,2)</text>
+    <text x="45" y="175" class="col-name">unit</text><text x="190" y="175" class="col-type">VARCHAR(20)</text>
+    <text x="45" y="195" class="col-name">stock_available</text><text x="190" y="195" class="col-type">NUMERIC(10,2)</text>
+    <text x="45" y="215" class="col-name">min_order_qty</text><text x="190" y="215" class="col-type">NUMERIC(10,2)</text>
+    <text x="45" y="235" class="col-name">image_url</text><text x="190" y="235" class="col-type">VARCHAR(500)</text>
+    <text x="45" y="255" class="col-name">is_organic</text><text x="190" y="255" class="col-type">BOOLEAN</text>
+    <text x="45" y="275" class="col-name">is_active</text><text x="190" y="275" class="col-type">BOOLEAN (TRUE)</text>
+    <text x="45" y="295" class="col-name">harvest_date</text><text x="190" y="295" class="col-type">DATE</text>
+  </g>
+
+  <!-- CONSUMERS -->
+  <g transform="translate(900, 110)">
+    <rect width="280" height="310" class="entity-box" />
+    <path d="M 0,0 L 280,0 L 280,32 L 0,32 Z" class="entity-header" />
+    <text x="14" y="22" class="entity-title">consumers</text>
+
+    <text x="14" y="55" class="col-pk">PK</text><text x="45" y="55" class="col-name">id</text><text x="190" y="55" class="col-type">SERIAL</text>
+    <text x="45" y="75" class="col-name">name</text><text x="190" y="75" class="col-type">VARCHAR(255)</text>
+    <text x="14" y="95" class="col-pk">UK</text><text x="45" y="95" class="col-name">phone</text><text x="190" y="95" class="col-type">VARCHAR(15)</text>
+    <text x="45" y="115" class="col-name">email</text><text x="190" y="115" class="col-type">VARCHAR(255)</text>
+    <text x="45" y="135" class="col-name">latitude</text><text x="190" y="135" class="col-type">DOUBLE PREC.</text>
+    <text x="45" y="155" class="col-name">longitude</text><text x="190" y="155" class="col-type">DOUBLE PREC.</text>
+    <text x="45" y="175" class="col-name">delivery_address</text><text x="190" y="175" class="col-type">TEXT</text>
+    <text x="45" y="195" class="col-name">city</text><text x="190" y="195" class="col-type">VARCHAR(100)</text>
+    <text x="45" y="215" class="col-name">pincode</text><text x="190" y="215" class="col-type">VARCHAR(10)</text>
+    <text x="45" y="235" class="col-name">phone_verified</text><text x="190" y="235" class="col-type">BOOLEAN</text>
+    <text x="45" y="255" class="col-name">created_at</text><text x="190" y="255" class="col-type">TIMESTAMP</text>
+  </g>
+
+  <!-- ORDERS -->
+  <g transform="translate(480, 470)">
+    <rect width="280" height="310" class="entity-box" />
+    <path d="M 0,0 L 280,0 L 280,32 L 0,32 Z" class="entity-header" />
+    <text x="14" y="22" class="entity-title">orders</text>
+
+    <text x="14" y="55" class="col-pk">PK</text><text x="45" y="55" class="col-name">id</text><text x="190" y="55" class="col-type">SERIAL</text>
+    <text x="14" y="75" class="col-pk">UK</text><text x="45" y="75" class="col-name">order_number</text><text x="190" y="75" class="col-type">VARCHAR(50)</text>
+    <text x="14" y="95" class="col-fk">FK</text><text x="45" y="95" class="col-name">consumer_id</text><text x="190" y="95" class="col-type">INT -> consumers</text>
+    <text x="14" y="115" class="col-fk">FK</text><text x="45" y="115" class="col-name">farmer_id</text><text x="190" y="115" class="col-type">INT -> farmers</text>
+    <text x="45" y="135" class="col-name">items</text><text x="190" y="135" class="col-type">JSONB (lines)</text>
+    <text x="45" y="155" class="col-name">subtotal</text><text x="190" y="155" class="col-type">NUMERIC(10,2)</text>
+    <text x="45" y="175" class="col-name">delivery_fee</text><text x="190" y="175" class="col-type">NUMERIC(10,2)</text>
+    <text x="45" y="195" class="col-name">total_amount</text><text x="190" y="195" class="col-type">NUMERIC(10,2)</text>
+    <text x="45" y="215" class="col-name">order_status</text><text x="190" y="215" class="col-type">VARCHAR(30)</text>
+    <text x="45" y="235" class="col-name">delivery_lat/lon</text><text x="190" y="235" class="col-type">DOUBLE PREC.</text>
+    <text x="45" y="255" class="col-name">delivery_dist_km</text><text x="190" y="255" class="col-type">NUMERIC(6,2)</text>
+    <text x="45" y="275" class="col-name">consumer_notes</text><text x="190" y="275" class="col-type">TEXT</text>
+    <text x="45" y="295" class="col-name">created_at</text><text x="190" y="295" class="col-type">TIMESTAMP</text>
+  </g>
+
+  <!-- OTP_STORE -->
+  <g transform="translate(60, 470)">
+    <rect width="280" height="200" class="entity-box" style="stroke: #10b981;" />
+    <path d="M 0,0 L 280,0 L 280,32 L 0,32 Z" style="fill: #064e3b; rx: 8px;" />
+    <text x="14" y="22" class="entity-title">otp_store</text>
+
+    <text x="14" y="55" class="col-pk">PK</text><text x="45" y="55" class="col-name">phone</text><text x="190" y="55" class="col-type">VARCHAR(15)</text>
+    <text x="45" y="75" class="col-name">otp_code</text><text x="190" y="75" class="col-type">VARCHAR(6)</text>
+    <text x="45" y="95" class="col-name">expires_at</text><text x="190" y="95" class="col-type">TIMESTAMP (5m)</text>
+    <text x="45" y="115" class="col-name">user_type</text><text x="190" y="115" class="col-type">VARCHAR(20)</text>
+    <text x="45" y="135" class="col-name">action</text><text x="190" y="135" class="col-type">VARCHAR(20)</text>
+    <text x="45" y="155" class="col-name">updated_at</text><text x="190" y="155" class="col-type">TIMESTAMP</text>
+    <text x="14" y="180" class="col-type" style="fill: #34d399;">ON CONFLICT (phone) DO UPDATE</text>
+  </g>
+
+  <!-- Connectors -->
+  <path d="M 340, 200 L 480, 200" class="rel-line" />
+  <text x="360" y="190" class="rel-label">1 : N (farmer_id)</text>
+
+  <path d="M 200, 420 L 200, 520 L 480, 520" class="rel-line" />
+  <text x="210" y="510" class="rel-label">1 : N (farmer_id)</text>
+
+  <path d="M 1040, 420 L 1040, 520 L 760, 520" class="rel-line" />
+  <text x="910" y="510" class="rel-label">1 : N (consumer_id)</text>
+
+  <path d="M 620, 420 L 620, 470" class="rel-line" stroke-dasharray="4,4" />
+  <text x="630" y="450" class="rel-label">JSONB Item Snapshot</text>
+
+</svg>

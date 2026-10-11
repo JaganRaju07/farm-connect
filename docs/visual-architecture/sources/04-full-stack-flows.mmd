@@ -1,0 +1,105 @@
+%% ========================================================
+%% FARM CONNECT — FULL-STACK WORKFLOW SOURCES (MERMAID)
+%% ========================================================
+
+%% --------------------------------------------------------
+%% 1. PASSWORDLESS SMS OTP AUTHENTICATION & ONBOARDING
+%% --------------------------------------------------------
+sequenceDiagram
+    autonumber
+    actor User as User (Farmer / Consumer)
+    participant Front as Frontend (login/page.tsx)
+    participant AuthMid as Express Router & RateLimiter
+    participant Ctrl as authController.js
+    participant DB as Supabase PostgreSQL
+    participant SMS as Fast2SMS Gateway Bulk V2
+
+    User->>Front: Enters 10-digit mobile & role
+    Front->>AuthMid: POST /api/v1/auth/send-otp { phone, userType, action }
+    AuthMid->>Ctrl: Dispatch to sendOTP()
+    Ctrl->>DB: Query otp_store for active OTP (>4 min remaining)
+    alt Unexpired OTP exists
+        DB-->>Ctrl: Return existing OTP (spam prevention)
+    else Expired or First Attempt
+        Ctrl->>Ctrl: otpservice.generateOTP() (6-digit crypto)
+        Ctrl->>DB: UPSERT INTO otp_store (phone, otp_code, expires_at)
+    end
+    Ctrl->>SMS: POST https://www.fast2sms.com/dev/bulkV2
+    SMS-->>User: Delivers 6-digit SMS text message
+    Ctrl-->>Front: HTTP 200 { success: true, message: "OTP sent" }
+
+    User->>Front: Enters 6-digit OTP from SMS
+    Front->>AuthMid: POST /api/v1/auth/verify-otp { phone, otp, userType, ... }
+    AuthMid->>Ctrl: Dispatch to verifyOTP()
+    Ctrl->>DB: SELECT * FROM otp_store WHERE phone=$1
+    Ctrl->>Ctrl: Verify string equality & check expires_at > NOW()
+    Ctrl->>DB: DELETE FROM otp_store WHERE phone=$1
+    Ctrl->>DB: INSERT/SELECT farmers OR consumers
+    Ctrl->>Ctrl: jwt.sign({ userId, phone, role }, JWT_SECRET, { expiresIn: '30d' })
+    Ctrl-->>Front: HTTP 200 { success: true, token, user }
+    Front->>Front: AuthContext: store token in localStorage, set isAuthenticated
+
+%% --------------------------------------------------------
+%% 2. MARKETPLACE & NEARBY PRODUCT DISCOVERY
+%% --------------------------------------------------------
+sequenceDiagram
+    autonumber
+    actor Consumer as Consumer Browser
+    participant Hook as useGeolocation.ts
+    participant Page as marketplace/page.tsx
+    participant Ctrl as productController.js
+    participant DB as PostgreSQL (calculate_distance_km)
+
+    Consumer->>Hook: navigator.geolocation.getCurrentPosition()
+    Hook-->>Page: Coordinates: { latitude: 12.9716, longitude: 77.5946 }
+    Page->>Ctrl: GET /api/v1/products?lat=12.97&lon=77.59&radius=30
+    Ctrl->>DB: SELECT p.*, f.name, calculate_distance_km(...) AS distance_km<br/>FROM products p JOIN farmers f ON p.farmer_id=f.id<br/>WHERE p.is_active=TRUE AND f.is_verified=TRUE AND dist <= 30<br/>ORDER BY distance_km ASC
+    DB-->>Ctrl: Returns sorted rows
+    Ctrl-->>Page: HTTP 200 { success: true, count: N, data: rows }
+    Page-->>Consumer: Render ProductCard grid + Leaflet MapExplorer markers
+
+%% --------------------------------------------------------
+%% 3. PRODUCT IMAGE UPLOAD PIPELINE
+%% --------------------------------------------------------
+sequenceDiagram
+    autonumber
+    actor Farmer as Farmer Browser
+    participant Form as ProductForm.tsx
+    participant Multer as upload.middleware.js (Multer)
+    participant Ctrl as upload.controller.js
+    participant Cloud as Cloudinary Media API
+    participant DB as PostgreSQL (products table)
+
+    Farmer->>Form: Selects crop image file (JPEG/PNG <= 5MB)
+    Form->>Multer: POST /api/v1/upload/image (multipart/form-data)
+    Multer->>Multer: Ingest buffer into memoryStorage() (no disk write)
+    Multer->>Ctrl: Passes req.file.buffer
+    Ctrl->>Cloud: cloudinary.uploader.upload_stream({ folder: 'farm-connect/products' })
+    Cloud-->>Ctrl: Returns { secure_url: "https://res.cloudinary.com/..." }
+    Ctrl-->>Form: HTTP 200 { success: true, url }
+    Form->>Farmer: Displays image preview in form
+
+    Farmer->>Form: Submits crop price, stock & details
+    Form->>Ctrl: POST /api/v1/products/create { name, price, stock, image_url: url }
+    Ctrl->>DB: INSERT INTO products (farmer_id, name, price, stock, image_url)
+    DB-->>Ctrl: Product record created
+    Ctrl-->>Form: HTTP 201 Created { success: true, product }
+
+%% --------------------------------------------------------
+%% 4. GEOTAGGED CHECKOUT & ORDER LIFECYCLE
+%% --------------------------------------------------------
+stateDiagram-v2
+    [*] --> ShoppingCart: Consumer adds items to cart
+    ShoppingCart --> CheckoutPage: Review line items & enter address
+    CheckoutPage --> OrderPlaced: POST /api/v1/consumers/orders<br/>(Freeze JSONB snapshot, calculate distance)
+
+    state OrderLifecycle {
+        OrderPlaced --> Pending: order_status = 'pending'
+        Pending --> Confirmed: Farmer accepts order
+        Confirmed --> Shipped: Farmer dispatches delivery
+        Shipped --> Delivered: Consumer receives goods
+        Pending --> Cancelled: Farmer/Consumer cancels
+    }
+
+    Delivered --> ReviewSubmitted: Consumer rates crop (1-5 stars)
+    ReviewSubmitted --> [*]

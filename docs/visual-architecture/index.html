@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farm Connect — Visual Architecture Atlas & Developer Learning System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-surface: #111827;
+      --bg-card: #1e293b;
+      --border-color: #1f2937;
+      --border-focus: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --brand-emerald: #10b981;
+      --brand-emerald-dark: #064e3b;
+      --brand-cyan: #38bdf8;
+      --brand-amber: #f59e0b;
+      --brand-purple: #a855f7;
+      --sidebar-width: 340px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    aside {
+      width: var(--sidebar-width);
+      background-color: var(--bg-surface);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      height: 100%;
+    }
+
+    .brand-header {
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--brand-emerald-dark);
+      border: 1px solid var(--brand-emerald);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+    .brand-tag {
+      font-size: 10.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--brand-emerald);
+      font-weight: 600;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .search-box {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .search-input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--border-focus); }
+
+    .nav-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 12px;
+    }
+    .nav-category {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--brand-cyan);
+      padding: 14px 10px 6px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-category:first-child { padding-top: 4px; }
+    .nav-count {
+      background: #1f2937;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 9.5px;
+      color: #94a3b8;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 12.5px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      cursor: pointer;
+      margin-bottom: 2px;
+      border: 1px solid transparent;
+    }
+    .nav-item:hover {
+      background: var(--bg-card);
+      color: var(--text-main);
+    }
+    .nav-item.active {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: var(--brand-emerald);
+      font-weight: 600;
+    }
+    .nav-item span.icon {
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    /* Main Content Area */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: var(--bg-dark);
+      overflow: hidden;
+    }
+
+    .topbar {
+      padding: 16px 28px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .topbar-info h1 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .topbar-info p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      border-color: var(--brand-emerald);
+      color: var(--brand-emerald);
+    }
+    .btn-primary {
+      background: var(--brand-emerald);
+      border-color: var(--brand-emerald);
+      color: #042f2e;
+    }
+    .btn-primary:hover {
+      background: #34d399;
+      color: #042f2e;
+    }
+
+    /* Diagram Viewer Frame */
+    .viewer-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 24px;
+      overflow: hidden;
+    }
+    .diagram-frame {
+      flex: 1;
+      background: #000000;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .diagram-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .meta-bar {
+      margin-top: 14px;
+      padding: 10px 18px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .meta-file {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--brand-emerald);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Sidebar -->
+  <aside>
+    <div class="brand-header">
+      <div class="brand-icon">🌾</div>
+      <div>
+        <div class="brand-title">Farm Connect</div>
+        <span class="brand-tag">Visual Architecture Atlas</span>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="filterInput" class="search-input" placeholder="Search 36 diagrams, flows, schemas...">
+    </div>
+
+    <nav class="nav-list" id="navList">
+      <!-- Category 00 -->
+      <div class="nav-category">
+        <span>00 — System Overview</span>
+        <span class="nav-count">3</span>
+      </div>
+      <a class="nav-item active" data-src="00-system-overview/system-context.svg" data-title="System Context Boundary Diagram" data-desc="User roles, device tiers, and integrated cloud service providers">
+        <span class="icon">🌐</span> System Context
+      </a>
+      <a class="nav-item" data-src="00-system-overview/complete-architecture.svg" data-title="Complete Architecture Topology Map" data-desc="Full-stack component interactions across Next.js, Express, and PostgreSQL">
+        <span class="icon">🏗️</span> Complete Architecture
+      </a>
+      <a class="nav-item" data-src="00-system-overview/technology-and-service-map.svg" data-title="Technology Stack & Service Map" data-desc="Runtime package versions, network protocols, and environment contracts">
+        <span class="icon">📦</span> Tech Stack & Services
+      </a>
+
+      <!-- Category 01 -->
+      <div class="nav-category">
+        <span>01 — Frontend Architecture</span>
+        <span class="nav-count">5</span>
+      </div>
+      <a class="nav-item" data-src="01-frontend/frontend-architecture.svg" data-title="Frontend Architecture & Provider Cascade" data-desc="Next.js 16 App Router wrapping order and 5-tier layout hierarchy">
+        <span class="icon">⚛️</span> Provider Cascade
+      </a>
+      <a class="nav-item" data-src="01-frontend/pages-and-components.svg" data-title="Pages & Component Taxonomy" data-desc="Complete taxonomy of page routes, GIS explorers, and atomic UI blocks">
+        <span class="icon">🧩</span> Pages & Components
+      </a>
+      <a class="nav-item" data-src="01-frontend/routing-and-navigation.svg" data-title="Routing & Navigation Architecture" data-desc="App Router transition maps, route guards, and role-driven user paths">
+        <span class="icon">🧭</span> Routing & Navigation
+      </a>
+      <a class="nav-item" data-src="01-frontend/authentication-and-state.svg" data-title="Authentication & State Architecture" data-desc="AuthContext, CartContext, LocationContext, and ThemeContext synchronization">
+        <span class="icon">🔐</span> Auth & Global State
+      </a>
+      <a class="nav-item" data-src="01-frontend/api-integration.svg" data-title="API Integration & Interceptor Pipeline" data-desc="Axios client configuration, Bearer token injection, and error boundaries">
+        <span class="icon">⚡</span> API Interceptors
+      </a>
+
+      <!-- Category 02 -->
+      <div class="nav-category">
+        <span>02 — Backend Architecture</span>
+        <span class="nav-count">6</span>
+      </div>
+      <a class="nav-item" data-src="02-backend/backend-architecture.svg" data-title="Express API Backend Architecture" data-desc="Layered decomposition of server startup, REST dispatch, and database pool">
+        <span class="icon">⚙️</span> Backend Architecture
+      </a>
+      <a class="nav-item" data-src="02-backend/server-startup-and-registration.svg" data-title="Server Startup & Route Registration" data-desc="Step-by-step startup sequence from Node process invocation to port listening">
+        <span class="icon">🚀</span> Startup Sequence
+      </a>
+      <a class="nav-item" data-src="02-backend/routes-and-request-handlers.svg" data-title="Routes & Request Handlers Matrix" data-desc="REST API endpoint catalog, HTTP methods, controllers, and DB queries">
+        <span class="icon">📋</span> Routes & Handlers
+      </a>
+      <a class="nav-item" data-src="02-backend/authentication-and-authorization.svg" data-title="Passwordless Auth & RBAC Engine" data-desc="Fast2SMS integration, otp_store table state, and JWT issuance">
+        <span class="icon">📱</span> Passwordless SMS Auth
+      </a>
+      <a class="nav-item" data-src="02-backend/api-request-lifecycle.svg" data-title="API Request Lifecycle Pipeline" data-desc="Trace of an HTTP request traversing Express middleware and DB queries">
+        <span class="icon">🔄</span> Request Lifecycle
+      </a>
+      <a class="nav-item" data-src="02-backend/error-handling.svg" data-title="Backend Error Handling & Fault Resilience" data-desc="Exception boundaries, 404 catch-alls, DB crash safety, and sanitization">
+        <span class="icon">🛡️</span> Error Resilience
+      </a>
+
+      <!-- Category 03 -->
+      <div class="nav-category">
+        <span>03 — Database Architecture</span>
+        <span class="nav-count">5</span>
+      </div>
+      <a class="nav-item" data-src="03-database/database-erd.svg" data-title="Database Entity-Relationship (ER) Schema" data-desc="8 PostgreSQL tables, PKs, foreign key constraints, and JSONB line items">
+        <span class="icon">🗄️</span> Database ERD
+      </a>
+      <a class="nav-item" data-src="03-database/tables-and-relationships.svg" data-title="Tables & Foreign Key Cardinality" data-desc="Explicit relational associations, cascading behavior, and cardinality">
+        <span class="icon">🔗</span> Tables & Foreign Keys
+      </a>
+      <a class="nav-item" data-src="03-database/database-query-lifecycle.svg" data-title="Database Query Lifecycle & Pool Management" data-desc="pg.Pool connection acquisition, TLS 1.3 execution, and idle release">
+        <span class="icon">🏊</span> Query & Pool Lifecycle
+      </a>
+      <a class="nav-item" data-src="03-database/data-integrity.svg" data-title="Data Integrity Guarantees & Transactions" data-desc="ACID transactions, atomic stock decrement, and JSONB price freezing">
+        <span class="icon">🔒</span> Data Integrity & ACID
+      </a>
+      <a class="nav-item" data-src="03-database/geospatial-proximity-engine.svg" data-title="Geospatial Proximity Engine (Haversine)" data-desc="calculate_distance_km formula, radius expansion, and Leaflet integration">
+        <span class="icon">📍</span> Spatial Proximity Engine
+      </a>
+
+      <!-- Category 04 -->
+      <div class="nav-category">
+        <span>04 — Full-Stack Feature Flows</span>
+        <span class="nav-count">9</span>
+      </div>
+      <a class="nav-item" data-src="04-full-stack-flows/authentication-and-otp.svg" data-title="Auth & OTP Onboarding Sequence" data-desc="Step-by-step trace from phone input to Fast2SMS, otp_store, and JWT creation">
+        <span class="icon">🔑</span> SMS Auth & OTP
+      </a>
+      <a class="nav-item" data-src="04-full-stack-flows/marketplace-and-product-discovery.svg" data-title="Marketplace & Product Discovery Flow" data-desc="GPS coordinate resolution, Haversine spatial filtering, and grid/map view rendering">
+        <span class="icon">🔍</span> Marketplace Discovery
+      </a>
+      <a class="nav-item" data-src="04-full-stack-flows/product-management.svg" data-title="Farmer Crop Management & Inventory Flow" data-desc="Crop creation, price/unit specification, active toggle, and stock tracking">
+        <span class="icon">🌾</span> Crop Management
+      </a>
+      <a class="nav-item" data-src="04-full-stack-flows/cart-and-checkout.svg" data-title="Shopping Cart & Stock Clamping Flow" data-desc="Client-side cart mutations, localStorage sync, and stock ceiling enforcement">
+        <span class="icon">🛒</span> Cart & Clamping
+      </a>
+      <a class="nav-item" data-src="04-full-stack-flows/order-lifecycle.svg" data-title="Order State Machine Lifecycle" data-desc="State transitions: pending → confirmed → shipped → delivered">
+        <span class="icon">📦</span> Order Lifecycle
+      </a>
+      <a class="nav-item" data-src="04-full-stack-flows/product-image-upload.svg" data-title="Product Image Upload & Cloudinary Pipeline" data-desc="Multer memory buffer stream, Cloudinary ingestion, and CDN URL persistence">
+        <span class="icon">📸</span> Image Upload Pipeline
+      </a>
+      <a class="nav-item" data-src="04-full-stack-flows/nearby-farmer-discovery.svg" data-title="Nearby Farmer Discovery & Profiles Flow" data-desc="Radius expansion queries, verified farmer badge filters, and contact cards">
+        <span class="icon">👨‍🌾</span> Nearby Farmers
+      </a>
+      <a class="nav-item" data-src="04-full-stack-flows/notifications.svg" data-title="In-App Notifications Flow" data-desc="Order state change alerts, delivery reminders, and unread badge counters">
+        <span class="icon">🔔</span> Notification Events
+      </a>
+      <a class="nav-item" data-src="04-full-stack-flows/administrative-analytics.svg" data-title="Administrative Telemetry & Farmer Verification" data-desc="Platform GMV aggregations, user metrics, and farmer credential verification">
+        <span class="icon">📊</span> Admin Analytics
+      </a>
+
+      <!-- Category 05 -->
+      <div class="nav-category">
+        <span>05 — Deployment & Cloud Architecture</span>
+        <span class="nav-count">3</span>
+      </div>
+      <a class="nav-item" data-src="05-deployment/deployment-architecture.svg" data-title="Production Deployment Architecture" data-desc="Vercel Edge, Render Node web service container, and Supabase AWS Postgres">
+        <span class="icon">☁️</span> Deployment Topology
+      </a>
+      <a class="nav-item" data-src="05-deployment/production-request-flow.svg" data-title="Production Ingress & Request Flow" data-desc="Browser HTTPS request traversal through Edge CDN, reverse proxy, and DB pool">
+        <span class="icon">🌐</span> Production Request Flow
+      </a>
+      <a class="nav-item" data-src="05-deployment/external-service-integrations.svg" data-title="External Service Integrations Matrix" data-desc="Fast2SMS, Cloudinary Media Cloud, Supabase DB, and OpenStreetMap Leaflet">
+        <span class="icon">🔌</span> External Integrations
+      </a>
+
+      <!-- Category 06 -->
+      <div class="nav-category">
+        <span>06 — Code Tracing & Source Maps</span>
+        <span class="nav-count">5</span>
+      </div>
+      <a class="nav-item" data-src="06-code-tracing/frontend-source-map.svg" data-title="Frontend Source Code Repository Map" data-desc="Visual tree of Next.js App Router pages, components, contexts, and custom hooks">
+        <span class="icon">🗂️</span> Frontend Source Map
+      </a>
+      <a class="nav-item" data-src="06-code-tracing/backend-source-map.svg" data-title="Backend Source Code Repository Map" data-desc="Dual backend architecture (Root Port 5000 vs Modular Subfolder Port 4000)">
+        <span class="icon">🗂️</span> Backend Source Map
+      </a>
+      <a class="nav-item" data-src="06-code-tracing/feature-to-code-index.svg" data-title="Feature-to-Code Traceability Index" data-desc="Cross-stack index linking 8 features to pages, routes, controllers, and SQL">
+        <span class="icon">🎯</span> Feature-to-Code Index
+      </a>
+      <a class="nav-item" data-src="06-code-tracing/endpoint-to-implementation.svg" data-title="Endpoint-to-Implementation Catalog" data-desc="Complete REST API directory with HTTP verbs, middleware, and query handlers">
+        <span class="icon">📡</span> Endpoint Catalog
+      </a>
+      <a class="nav-item" data-src="06-code-tracing/database-entity-to-feature.svg" data-title="Database Entity-to-Feature Matrix" data-desc="Bi-directional table mapping to read/write queries, constraints, and indexes">
+        <span class="icon">💾</span> Entity-to-Feature Map
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main View Area -->
+  <main>
+    <div class="topbar">
+      <div class="topbar-info">
+        <h1 id="diagramTitle">System Context Boundary Diagram</h1>
+        <p id="diagramDesc">User roles, device tiers, and integrated cloud service providers</p>
+      </div>
+      <div class="topbar-actions">
+        <a id="openTabBtn" class="btn" target="_blank" href="00-system-overview/system-context.svg">Open Standalone SVG ↗</a>
+        <a class="btn" href="verification-report.md" target="_blank">Audit Report 🛡️</a>
+        <a class="btn" href="06-code-tracing/feature-code-paths.md" target="_blank">Feature Code Traces 🔍</a>
+        <a class="btn btn-primary" href="architecture-inventory.md" target="_blank">Technical Inventory 📄</a>
+      </div>
+    </div>
+
+    <div class="viewer-container">
+      <div class="diagram-frame">
+        <iframe id="diagramFrame" src="00-system-overview/system-context.svg"></iframe>
+      </div>
+      <div class="meta-bar">
+        <div>Asset Path: <span id="diagramPath" class="meta-file">docs/visual-architecture/00-system-overview/system-context.svg</span></div>
+        <div style="color: var(--text-muted);">Verified against live D:\farm-connect repository codebase</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const navItems = document.querySelectorAll('.nav-item');
+    const diagramFrame = document.getElementById('diagramFrame');
+    const diagramTitle = document.getElementById('diagramTitle');
+    const diagramDesc = document.getElementById('diagramDesc');
+    const diagramPath = document.getElementById('diagramPath');
+    const openTabBtn = document.getElementById('openTabBtn');
+    const filterInput = document.getElementById('filterInput');
+
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        navItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        const src = item.getAttribute('data-src');
+        const title = item.getAttribute('data-title');
+        const desc = item.getAttribute('data-desc');
+
+        diagramFrame.src = src;
+        diagramTitle.textContent = title;
+        diagramDesc.textContent = desc;
+        diagramPath.textContent = 'docs/visual-architecture/' + src;
+        openTabBtn.href = src;
+      });
+    });
+
+    filterInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      navItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        const desc = (item.getAttribute('data-desc') || '').toLowerCase();
+        if (text.includes(term) || desc.includes(term)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

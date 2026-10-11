@@ -1,0 +1,114 @@
+%% ========================================================
+%% FARM CONNECT — CODE TRACING SOURCES (MERMAID)
+%% ========================================================
+
+%% --------------------------------------------------------
+%% 1. FRONTEND SOURCE REPOSITORY MAP
+%% --------------------------------------------------------
+mindmap
+  root((frontend/src/))
+    app/
+      layout.tsx (Root Provider Cascade)
+      page.tsx (Landing Hero)
+      login/page.tsx (SMS OTP Auth)
+      register/page.tsx (Progressive Onboarding)
+      marketplace/page.tsx (Nearby Search & Leaflet)
+      product/[id]/page.tsx (Crop Detail & Farmer Card)
+      cart/page.tsx (Local Cart State)
+      checkout/page.tsx (GPS Tagged Orders)
+      orders/page.tsx (Tracking & Status)
+      farmer/
+        dashboard/page.tsx (Sales KPI & Feed)
+        products/page.tsx (Catalog & Active Toggle)
+        orders/page.tsx (Order Fulfillment)
+      admin/page.tsx (Platform Metrics)
+    components/
+      common/
+        Navbar.tsx
+        Footer.tsx
+        MapExplorer.tsx (SSR Bypass Leaflet)
+        Toast.tsx
+      product/
+        ProductCard.tsx
+        ProductFilter.tsx
+        ProductModal.tsx
+      farmer/
+        ProductForm.tsx
+        OrderStatusDropdown.tsx
+        StatCard.tsx
+      cart/
+        CartItem.tsx
+        OrderSummary.tsx
+    context/
+      AuthContext.tsx
+      cartcontext.tsx
+      LocationContext.tsx
+      ToastContext.tsx
+      ThemeContext.tsx
+    hooks/
+      useGeolocation.ts
+      useDebounce.ts
+      useOrders.ts
+
+%% --------------------------------------------------------
+%% 2. BACKEND SOURCE REPOSITORY MAP
+%% --------------------------------------------------------
+mindmap
+  root((Backend Architecture))
+    Root Backend (server.js & src/ - Port 5000)
+      server.js (HTTP Listener)
+      src/app.js (Express & Middleware)
+      src/config/db.js (pg.Pool Connection)
+      src/routes/
+        authroutes.js (/api/v1/auth)
+        farmerroutes.js (/api/v1/farmers)
+        productroutes.js (/api/v1/products)
+        consumerroutes.js (/api/v1/consumers)
+      src/controllers/
+        authController.js
+        farmerController.js
+        productController.js
+        consumerController.js
+      src/services/
+        smsservice.js (Fast2SMS REST)
+        otpservice.js (6-digit crypto)
+        geoservice.js (Spherical Math)
+      src/middleware/
+        authMiddleware.js
+        errorHandler.js
+    Modular Backend (backend/src/ - Port 4000)
+      backend/src/app.js
+      backend/src/routes/
+        review.routes.js
+        wishlist.routes.js
+        notification.routes.js
+        upload.routes.js
+        admin.routes.js
+      backend/src/controllers/
+        review.controller.js
+        upload.controller.js
+        admin.controller.js
+      backend/src/middleware/
+        upload.middleware.js (Multer Buffer)
+    Shared Database Tier
+      Supabase Remote DDL (8 Core Relational Tables)
+      calculate_distance_km() (Haversine Function)
+
+%% --------------------------------------------------------
+%% 3. ENDPOINT TO IMPLEMENTATION MATRIX
+%% --------------------------------------------------------
+flowchart LR
+    subgraph AuthEndpoints ["/api/v1/auth"]
+        A1["POST /send-otp"] --> AC1["authController.sendOTP()"] --> DB_OTP["otp_store + Fast2SMS"]
+        A2["POST /verify-otp"] --> AC2["authController.verifyOTP()"] --> DB_USR["farmers/consumers + JWT"]
+    end
+
+    subgraph ProductEndpoints ["/api/v1/products"]
+        P1["GET / (Search)"] --> PC1["productController.searchNearbyProducts()"] --> DB_SPATIAL["calculate_distance_km()"]
+        P2["POST /create"] --> PC2["productController.createProduct()"] --> DB_PROD["products (INSERT)"]
+    end
+
+    subgraph OrderEndpoints ["/api/v1/consumers"]
+        O1["POST /orders"] --> OC1["consumerController.createOrder()"] --> DB_ORD["orders (JSONB line items)"]
+        O2["GET /orders"] --> OC2["consumerController.getConsumerOrders()"] --> DB_FETCH["orders JOIN farmers"]
+    end

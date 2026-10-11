@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" width="100%" height="100%">
+  <defs>
+    <style>
+      .bg { fill: #0b1120; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 24px; font-weight: 800; fill: #f8fafc; }
+      .subtitle { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 13px; fill: #94a3b8; }
+      .route-card { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 10px; }
+      .route-card-guard { fill: #1e293b; stroke: #f59e0b; stroke-width: 1.8; rx: 10px; }
+      .route-card-hub { fill: #1e293b; stroke: #10b981; stroke-width: 2; rx: 10px; }
+      .route-title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 14px; font-weight: 700; fill: #f8fafc; }
+      .route-path { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 11px; font-weight: 600; fill: #38bdf8; }
+      .route-desc { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 10.5px; fill: #94a3b8; }
+      .guard-tag { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; font-size: 10px; font-weight: 700; fill: #fbbf24; }
+      .flow-arrow { stroke: #64748b; stroke-width: 2; fill: none; marker-end: url(#arrow-gray); }
+      .flow-arrow-green { stroke: #10b981; stroke-width: 2.2; fill: none; marker-end: url(#arrow-green); }
+      .flow-arrow-amber { stroke: #f59e0b; stroke-width: 2.2; fill: none; marker-end: url(#arrow-amber); }
+      .step-badge { fill: #064e3b; rx: 12px; }
+      .step-num { font-family: -apple-system, sans-serif; font-size: 11px; font-weight: 800; fill: #34d399; }
+    </style>
+    <marker id="arrow-gray" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#64748b" />
+    </marker>
+    <marker id="arrow-green" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+    </marker>
+    <marker id="arrow-amber" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#f59e0b" />
+    </marker>
+  </defs>
+
+  <rect width="1200" height="780" class="bg" />
+
+  <!-- Header -->
+  <text x="45" y="45" class="title">Farm Connect — Routing &amp; Navigation Architecture</text>
+  <text x="45" y="68" class="subtitle">Next.js App Router transition maps, protected route guards, and role-driven user paths</text>
+
+  <!-- ================= CENTRAL HUB: LANDING PAGE ================= -->
+  <g transform="translate(430, 110)">
+    <rect width="340" height="110" class="route-card-hub" />
+    <text x="16" y="28" class="route-title">Landing &amp; Taluk Discovery Hub</text>
+    <text x="16" y="48" class="route-path">GET / (src/app/page.tsx)</text>
+    <text x="16" y="68" class="route-desc">• Captures browser GPS coords via useLocation()</text>
+    <text x="16" y="84" class="route-desc">• Calls /farmers/nearby to resolve user taluk</text>
+    <text x="16" y="100" class="route-desc">• Dynamic Nav: shows role dashboard if authenticated</text>
+  </g>
+
+  <!-- ================= CONSUMER PATHWAY (LEFT) ================= -->
+  <!-- 1. Marketplace -->
+  <g transform="translate(60, 270)">
+    <rect width="320" height="110" class="route-card" />
+    <text x="16" y="28" class="route-title">Fresh Produce Marketplace</text>
+    <text x="16" y="48" class="route-path">GET /marketplace</text>
+    <text x="16" y="68" class="route-desc">• Dual Mode: Grid View vs MapExplorer (Leaflet)</text>
+    <text x="16" y="84" class="route-desc">• Query params: ?search=&amp;category=&amp;radius=25</text>
+    <text x="16" y="100" class="route-desc">• Optimistic Add-to-Cart with stock limits</text>
+  </g>
+
+  <!-- 2. Cart -->
+  <g transform="translate(60, 430)">
+    <rect width="320" height="100" class="route-card" />
+    <text x="16" y="28" class="route-title">Shopping Cart Review</text>
+    <text x="16" y="48" class="route-path">GET /cart</text>
+    <text x="16" y="68" class="route-desc">• Syncs with localStorage: farmconnect_cart</text>
+    <text x="16" y="84" class="route-desc">• Subtotal, quantity steppers, item removal</text>
+  </g>
+
+  <!-- 3. Checkout (Guarded) -->
+  <g transform="translate(60, 580)">
+    <rect width="320" height="130" class="route-card-guard" />
+    <text x="16" y="28" class="route-title">Order Checkout</text>
+    <text x="210" y="28" class="guard-tag">GUARD: AUTH</text>
+    <text x="16" y="48" class="route-path">GET /checkout</text>
+    <text x="16" y="68" class="route-desc">• ProtectedRoute wrapper requires active session</text>
+    <text x="16" y="84" class="route-desc">• Captures destination lat/lon coordinates</text>
+    <text x="16" y="100" class="route-desc">• Posts order to /api/v1/consumers/orders</text>
+    <text x="16" y="116" class="route-desc">• Clears cart &amp; redirects to /orders</text>
+  </g>
+
+  <!-- ================= AUTHENTICATION PATHWAY (CENTER) ================= -->
+  <!-- Login / Register -->
+  <g transform="translate(450, 310)">
+    <rect width="300" height="120" class="route-card" />
+    <text x="16" y="28" class="route-title">Authentication Portal</text>
+    <text x="16" y="48" class="route-path">GET /login &amp; GET /register</text>
+    <text x="16" y="68" class="route-desc">• Step 1: Input mobile &amp; select userType</text>
+    <text x="16" y="84" class="route-desc">• Step 2: Receive 6-digit OTP via Fast2SMS</text>
+    <text x="16" y="100" class="route-desc">• Step 3: Verify OTP &amp; store JWT token</text>
+    <text x="16" y="114" class="route-desc">• Redirects to role-specific destination</text>
+  </g>
+
+  <!-- ================= FARMER & ADMIN PATHWAY (RIGHT) ================= -->
+  <!-- Farmer Register -->
+  <g transform="translate(820, 270)">
+    <rect width="320" height="95" class="route-card" />
+    <text x="16" y="28" class="route-title">Cultivator Onboarding</text>
+    <text x="16" y="48" class="route-path">GET /farmer/register</text>
+    <text x="16" y="68" class="route-desc">• Farm name, GPS location, taluk, crop types</text>
+    <text x="16" y="84" class="route-desc">• Direct enrollment into verified farmer pool</text>
+  </g>
+
+  <!-- Farmer Dashboard (Guarded) -->
+  <g transform="translate(820, 410)">
+    <rect width="320" height="135" class="route-card-guard" />
+    <text x="16" y="28" class="route-title">Cultivator Dashboard</text>
+    <text x="195" y="28" class="guard-tag">GUARD: FARMER</text>
+    <text x="16" y="48" class="route-path">GET /farmer/dashboard</text>
+    <text x="16" y="68" class="route-desc">• ProtectedRoute(requiredRole="farmer")</text>
+    <text x="16" y="84" class="route-desc">• Crop inventory CRUD (add, update, delete)</text>
+    <text x="16" y="100" class="route-desc">• Cloudinary image upload integration</text>
+    <text x="16" y="116" class="route-desc">• Incoming orders queue: Accept / Deliver</text>
+  </g>
+
+  <!-- Admin Dashboard (Guarded) -->
+  <g transform="translate(820, 580)">
+    <rect width="320" height="110" class="route-card-guard" />
+    <text x="16" y="28" class="route-title">Admin Analytics Portal</text>
+    <text x="205" y="28" class="guard-tag">GUARD: ADMIN</text>
+    <text x="16" y="48" class="route-path">GET /admin/dashboard</text>
+    <text x="16" y="68" class="route-desc">• ProtectedRoute(requiredRole="admin")</text>
+    <text x="16" y="84" class="route-desc">• Platform telemetry, cultivator verification</text>
+    <text x="16" y="100" class="route-desc">• Aggregated transaction metrics</text>
+  </g>
+
+  <!-- ================= ARROWS & TRANSITIONS ================= -->
+  <!-- Hub to Marketplace -->
+  <path d="M 430, 165 C 220, 165 220, 240 220, 270" class="flow-arrow-green" />
+  <!-- Marketplace to Cart -->
+  <path d="M 220, 380 L 220, 430" class="flow-arrow-green" />
+  <!-- Cart to Checkout -->
+  <path d="M 220, 530 L 220, 580" class="flow-arrow-green" />
+
+  <!-- Hub to Login -->
+  <path d="M 600, 220 L 600, 310" class="flow-arrow" />
+  <!-- Login to Checkout (if returning consumer) -->
+  <path d="M 450, 370 C 380, 370 380, 600 380, 600" class="flow-arrow-amber" />
+  <!-- Login to Farmer Dashboard -->
+  <path d="M 750, 370 C 820, 370 820, 430 820, 430" class="flow-arrow-amber" />
+
+  <!-- Hub to Farmer Register -->
+  <path d="M 770, 165 C 980, 165 980, 240 980, 270" class="flow-arrow" />
+  <!-- Farmer Register to Dashboard -->
+  <path d="M 980, 365 L 980, 410" class="flow-arrow" />
+
+</svg>
