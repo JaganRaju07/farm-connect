@@ -17,15 +17,15 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary: 
-    'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
+    'bg-primary-600 text-white hover:bg-primary-700 shadow-sm hover:shadow focus:ring-primary-500/50',
   secondary: 
-    'bg-secondary-500 text-white hover:bg-secondary-600 focus:ring-secondary-500',
+    'bg-secondary-500 text-white hover:bg-secondary-600 shadow-sm hover:shadow focus:ring-secondary-500/50',
   outline: 
-    'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500',
+    'border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500/50',
   ghost: 
-    'text-earth-600 hover:bg-earth-100 hover:text-earth-900 focus:ring-earth-500',
+    'text-earth-600 hover:bg-earth-100 hover:text-earth-900 focus:ring-earth-500/50',
   danger: 
-    'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
+    'bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow focus:ring-red-500/50',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -52,9 +52,10 @@ export default function Button({
       className={cn(
         // Base styles
         'inline-flex items-center justify-center font-medium rounded-lg',
-        'transition-colors duration-200',
-        'focus:outline-none focus:ring-2 focus:ring-offset-2',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
+        'transition-all duration-300 ease-out',
+        'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white',
+        'active:scale-[0.98]',
+        'disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100',
         // Variant styles
         variantStyles[variant],
         // Size styles
