@@ -232,11 +232,134 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      outline: none;
     }
-    .diagram-frame iframe {
+    .diagram-frame:focus-visible {
+      border-color: var(--border-focus);
+    }
+    .diagram-frame.is-panning {
+      cursor: grabbing;
+    }
+    .diagram-viewport {
       width: 100%;
       height: 100%;
-      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .diagram-viewport svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: auto;
+    }
+
+    /* Floating Zoom Controls */
+    .zoom-controls {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(17, 24, 39, 0.88);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--border-color);
+      padding: 4px;
+      border-radius: 8px;
+      z-index: 10;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+    .zoom-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 6px;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .zoom-btn:hover {
+      background: #334155;
+      border-color: var(--brand-emerald);
+      color: var(--brand-emerald);
+    }
+    .zoom-btn:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 1px;
+    }
+    .zoom-level-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--brand-emerald);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      width: auto;
+      min-width: 50px;
+      padding: 0 8px;
+      height: 30px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .zoom-level-btn:hover {
+      background: rgba(16, 185, 129, 0.2);
+    }
+    .zoom-level-btn:focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 1px;
+    }
+    .zoom-hint {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-family: 'JetBrains Mono', monospace;
+      pointer-events: none;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+        height: auto;
+        overflow-y: auto;
+      }
+      aside {
+        width: 100%;
+        height: 300px;
+        flex-shrink: 0;
+      }
+      main {
+        height: 100vh;
+      }
+      .zoom-hint {
+        display: none;
+      }
     }
 
     .meta-bar {
@@ -443,8 +566,25 @@
     </div>
 
     <div class="viewer-container">
-      <div class="diagram-frame">
-        <iframe id="diagramFrame" src="00-system-overview/system-context.svg"></iframe>
+      <div class="diagram-frame" id="diagramFrame" tabindex="0" role="region" aria-label="Interactive Architecture Diagram Viewer">
+        <div class="zoom-controls" role="toolbar" aria-label="Diagram Zoom & Pan Controls">
+          <button type="button" class="zoom-btn" id="zoomInBtn" aria-label="Zoom in" title="Zoom In (+)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+          <button type="button" class="zoom-level-btn" id="zoomResetBtn" aria-label="Reset zoom to 100%" title="Reset to 100% (0)">
+            <span id="zoomLevel">100%</span>
+          </button>
+          <button type="button" class="zoom-btn" id="zoomOutBtn" aria-label="Zoom out" title="Zoom Out (-)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          </button>
+          <button type="button" class="zoom-btn" id="zoomFitBtn" aria-label="Fit diagram" title="Fit to Screen (F)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+          </button>
+        </div>
+        <div class="zoom-hint">
+          <span>Scroll to Zoom</span> • <span>Drag to Pan</span>
+        </div>
+        <div class="diagram-viewport" id="diagramViewport"></div>
       </div>
       <div class="meta-bar">
         <div>Asset Path: <span id="diagramPath" class="meta-file">docs/visual-architecture/00-system-overview/system-context.svg</span></div>
@@ -456,12 +596,198 @@
   <script>
     const navItems = document.querySelectorAll('.nav-item');
     const diagramFrame = document.getElementById('diagramFrame');
+    const diagramViewport = document.getElementById('diagramViewport');
     const diagramTitle = document.getElementById('diagramTitle');
     const diagramDesc = document.getElementById('diagramDesc');
     const diagramPath = document.getElementById('diagramPath');
     const openTabBtn = document.getElementById('openTabBtn');
     const filterInput = document.getElementById('filterInput');
 
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const zoomResetBtn = document.getElementById('zoomResetBtn');
+    const zoomFitBtn = document.getElementById('zoomFitBtn');
+    const zoomLevel = document.getElementById('zoomLevel');
+
+    let currentSvg = null;
+    let origVb = { x: 0, y: 0, w: 1200, h: 700 };
+    let currentVb = { x: 0, y: 0, w: 1200, h: 700 };
+    let isPanning = false;
+    let panStartX = 0;
+    let panStartY = 0;
+    let vbStartX = 0;
+    let vbStartY = 0;
+    let loadSeq = 0;
+
+    const MIN_ZOOM = 0.5;   // 50%
+    const MAX_ZOOM = 5.0;   // 500%
+    const ZOOM_STEP = 1.25; // 25% step
+
+    function updateViewBox(x, y, w, h) {
+      if (!currentSvg) return;
+      // Clamping: ensure at least 25% of diagram overlaps with viewport
+      const minOverlapW = Math.min(origVb.w, w) * 0.25;
+      const minOverlapH = Math.min(origVb.h, h) * 0.25;
+      const clampedX = Math.max(origVb.x - w + minOverlapW, Math.min(origVb.x + origVb.w - minOverlapW, x));
+      const clampedY = Math.max(origVb.y - h + minOverlapH, Math.min(origVb.y + origVb.h - minOverlapH, y));
+
+      currentVb = { x: clampedX, y: clampedY, w, h };
+      currentSvg.setAttribute('viewBox', `${clampedX} ${clampedY} ${w} ${h}`);
+      const scale = origVb.w / w;
+      zoomLevel.textContent = Math.round(scale * 100) + '%';
+    }
+
+    function resetZoom() {
+      if (!currentSvg) return;
+      updateViewBox(origVb.x, origVb.y, origVb.w, origVb.h);
+    }
+
+    function zoomAtPoint(clientX, clientY, factor) {
+      if (!currentSvg) return;
+      const currentZoom = origVb.w / currentVb.w;
+      let targetZoom = currentZoom * factor;
+      targetZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, targetZoom));
+      const actualFactor = targetZoom / currentZoom;
+      if (Math.abs(actualFactor - 1) < 0.001) return;
+
+      let svgPt;
+      const ctm = currentSvg.getScreenCTM();
+      if (ctm) {
+        const pt = currentSvg.createSVGPoint();
+        pt.x = clientX;
+        pt.y = clientY;
+        svgPt = pt.matrixTransform(ctm.inverse());
+      } else {
+        svgPt = { x: currentVb.x + currentVb.w / 2, y: currentVb.y + currentVb.h / 2 };
+      }
+
+      const newW = currentVb.w / actualFactor;
+      const newH = currentVb.h / actualFactor;
+      const newX = svgPt.x - (svgPt.x - currentVb.x) / actualFactor;
+      const newY = svgPt.y - (svgPt.y - currentVb.y) / actualFactor;
+
+      updateViewBox(newX, newY, newW, newH);
+    }
+
+    function zoomCenter(factor) {
+      if (!currentSvg) return;
+      const rect = diagramFrame.getBoundingClientRect();
+      zoomAtPoint(rect.left + rect.width / 2, rect.top + rect.height / 2, factor);
+    }
+
+    async function loadDiagram(src) {
+      const thisSeq = ++loadSeq;
+      try {
+        const res = await fetch(src);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const svgText = await res.text();
+        if (thisSeq !== loadSeq) return;
+
+        diagramViewport.innerHTML = svgText;
+        const svg = diagramViewport.querySelector('svg');
+        if (!svg) throw new Error('No SVG found');
+
+        const vbAttr = svg.getAttribute('viewBox');
+        if (vbAttr) {
+          const parts = vbAttr.trim().split(/[\s,]+/).map(Number);
+          if (parts.length === 4 && !parts.some(isNaN)) {
+            origVb = { x: parts[0], y: parts[1], w: parts[2], h: parts[3] };
+          }
+        } else {
+          const w = parseFloat(svg.getAttribute('width')) || 1200;
+          const h = parseFloat(svg.getAttribute('height')) || 800;
+          origVb = { x: 0, y: 0, w, h };
+          svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+        }
+
+        svg.setAttribute('width', '100%');
+        svg.setAttribute('height', '100%');
+        svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+        currentSvg = svg;
+
+        resetZoom();
+      } catch (err) {
+        if (thisSeq !== loadSeq) return;
+        console.warn('Inline SVG load failed, falling back to iframe:', err);
+        diagramViewport.innerHTML = `<iframe src="${src}" style="width:100%;height:100%;border:none;"></iframe>`;
+        currentSvg = null;
+        zoomLevel.textContent = '100%';
+      }
+    }
+
+    // Pointer event dragging (mouse & touch)
+    diagramFrame.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.zoom-controls')) return;
+      if (e.button !== 0) return;
+      if (!currentSvg) return;
+
+      isPanning = true;
+      panStartX = e.clientX;
+      panStartY = e.clientY;
+      vbStartX = currentVb.x;
+      vbStartY = currentVb.y;
+      diagramFrame.classList.add('is-panning');
+      try {
+        diagramFrame.setPointerCapture(e.pointerId);
+      } catch (err) {}
+    });
+
+    diagramFrame.addEventListener('pointermove', (e) => {
+      if (!isPanning || !currentSvg) return;
+      const deltaX = e.clientX - panStartX;
+      const deltaY = e.clientY - panStartY;
+
+      const ctm = currentSvg.getScreenCTM();
+      if (!ctm) return;
+      const svgDeltaX = deltaX / ctm.a;
+      const svgDeltaY = deltaY / ctm.d;
+
+      updateViewBox(vbStartX - svgDeltaX, vbStartY - svgDeltaY, currentVb.w, currentVb.h);
+    });
+
+    function endPan(e) {
+      if (!isPanning) return;
+      isPanning = false;
+      diagramFrame.classList.remove('is-panning');
+      try {
+        diagramFrame.releasePointerCapture(e.pointerId);
+      } catch (err) {}
+    }
+
+    diagramFrame.addEventListener('pointerup', endPan);
+    diagramFrame.addEventListener('pointercancel', endPan);
+
+    // Mouse-wheel zoom
+    diagramFrame.addEventListener('wheel', (e) => {
+      if (!currentSvg) return;
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.15 : (1 / 1.15);
+      zoomAtPoint(e.clientX, e.clientY, factor);
+    }, { passive: false });
+
+    // Keyboard accessibility on diagramFrame
+    diagramFrame.addEventListener('keydown', (e) => {
+      if (!currentSvg) return;
+      if (e.key === '+' || e.key === '=') {
+        e.preventDefault();
+        zoomCenter(ZOOM_STEP);
+      } else if (e.key === '-' || e.key === '_') {
+        e.preventDefault();
+        zoomCenter(1 / ZOOM_STEP);
+      } else if (e.key === '0' || e.key === 'r' || e.key === 'R' || e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        resetZoom();
+      }
+    });
+
+    // Zoom control buttons
+    zoomInBtn.addEventListener('click', () => zoomCenter(ZOOM_STEP));
+    zoomOutBtn.addEventListener('click', () => zoomCenter(1 / ZOOM_STEP));
+    zoomResetBtn.addEventListener('click', resetZoom);
+    zoomFitBtn.addEventListener('click', resetZoom);
+
+    // Diagram selection
     navItems.forEach(item => {
       item.addEventListener('click', (e) => {
         e.preventDefault();
@@ -472,14 +798,16 @@
         const title = item.getAttribute('data-title');
         const desc = item.getAttribute('data-desc');
 
-        diagramFrame.src = src;
         diagramTitle.textContent = title;
         diagramDesc.textContent = desc;
         diagramPath.textContent = 'docs/visual-architecture/' + src;
         openTabBtn.href = src;
+
+        loadDiagram(src);
       });
     });
 
+    // Search filter
     filterInput.addEventListener('input', (e) => {
       const term = e.target.value.toLowerCase();
       navItems.forEach(item => {
@@ -492,6 +820,14 @@
         }
       });
     });
+
+    // Initial load
+    const initialItem = document.querySelector('.nav-item.active');
+    if (initialItem) {
+      loadDiagram(initialItem.getAttribute('data-src'));
+    } else {
+      loadDiagram('00-system-overview/system-context.svg');
+    }
   </script>
 </body>
 </html>
