@@ -1,13 +1,17 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
+const auth = require("../middleware/auth");
+const roleAuth = require("../middleware/roleAuth");
 
-// Authentication
+// Authentication (Public)
 router.post("/login", adminController.adminLogin);
 
-// Management Tasks
-router.get("/farmers", adminController.listFarmers); // To see all farmers
-router.patch("/farmers/:id/verify", adminController.verifyFarmer); // To approve a farmer
-router.get("/stats", adminController.getStats); // To see platform growth
+// Management Tasks (Protected: Requires Admin Role)
+router.use(auth, roleAuth(["admin", "super_admin", "moderator"]));
+
+router.get("/farmers", adminController.listFarmers);
+router.patch("/farmers/:id/verify", adminController.verifyFarmer);
+router.get("/stats", adminController.getStats);
 
 module.exports = router;

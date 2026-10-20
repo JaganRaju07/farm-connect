@@ -77,6 +77,7 @@ Traditional agricultural supply chains introduce intermediary costs and delays:
 - ✅ **Admin Dashboard** — Platform analytics and management console
 - ✅ **Farmer Verification** — Review and approve/reject farmer applications
 - ✅ **Platform Analytics** — Monitor user growth, transactions, and metrics
+- ✅ **Admin Authentication** — Password verification via bcrypt and role-based JWT issuance
 - ⚠️ **User Moderation** — Administrative controls (partial implementation)
 
 ---
@@ -227,10 +228,16 @@ farm-connect/
    - Token expires according to `JWT_EXPIRES_IN` environment variable
    - Expired/invalid tokens trigger automatic logout
 
-3. **Admin Authentication**
-   - Email + password login (bcrypt password hashing)
-   - Separate JWT issuance for admin sessions
-   - [Status: TO BE CONFIRMED in active code]
+3. **Admin Authentication & Provisioning**
+   - Email + password login (verified via bcrypt against PostgreSQL `admins` table)
+   - Issues signed JWT token with admin role
+   - Protected server-side management routes enforced via `authenticateToken` and `roleAuth`
+   - **Provisioning Note:** The database seed (`database/seed.sql`) creates an initial admin record (`admin@farmconnect.in`) with a placeholder hash (`$2b$10$placeholder_bcrypt_hash_replace_with_real_hash`). Before initial admin login or deployment, securely generate a bcrypt hash and update the database:
+     ```bash
+     node -e "require('bcrypt').hash('YourSecurePassword', 10).then(console.log)"
+     # Update database:
+     # UPDATE admins SET password_hash = '<generated_hash>' WHERE email = 'admin@farmconnect.in';
+     ```
 
 ### RBAC (Role-Based Access Control)
 
@@ -264,8 +271,10 @@ Valid roles:
 ### Known Security Considerations
 
 - **JWT in localStorage:** Vulnerable to XSS. Production deployments should migrate to HTTP-only secure cookies.
+- **In-Memory OTP Attempt Tracking:** Failed OTP attempts and 15-minute lockouts are tracked using a process-local in-memory `Map()`. While effective for single-instance setups, multi-instance or auto-scaled environments require an external persistent store (e.g., Redis or a dedicated PostgreSQL table) to synchronize lockout state across instances.
+- **Admin Password Provisioning:** `database/seed.sql` contains a placeholder hash. A real bcrypt hash must be generated and inserted into the `admins` table before administrative access is functional.
 - **Demo OTP Routes:** Development-only OTP retrieval endpoints should not exist in production.
-- **Schema Merge Markers:** The `database/schema.sql` file contains unresolved Git merge markers and must be resolved before deployment.
+- **Schema Cleanliness:** Git merge conflict markers in `database/schema.sql` and `database/seed.sql` have been audited and resolved.
 
 ---
 
@@ -411,8 +420,6 @@ NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
    psql farm_connect < database/seed.sql
    ```
 
-> **Note:** `database/schema.sql` contains unresolved Git merge markers. Resolve these before running in production.
-
 ### Start Backend
 
 ```bash
@@ -493,6 +500,7 @@ The current main branch includes end-to-end functionality across the full user j
 | Farmer Dashboard | ✅ Verified |
 | Order Management | ✅ Verified |
 | Admin Dashboard Shell | ✅ Verified |
+| Admin Authentication (Bcrypt + JWT) | ✅ Verified |
 | Farmer Verification Workflow | ✅ Verified |
 | Platform Analytics | ✅ Verified |
 | Reviews & Ratings | ✅ Verified |
@@ -507,8 +515,9 @@ The current main branch includes end-to-end functionality across the full user j
 
 - **Payment:** Only Cash-on-Delivery (COD) is implemented. Digital payment gateways (Stripe, Razorpay, UPI) are not yet integrated.
 - **Distance Calculation:** Haversine computes straight-line distance, not road-based routing. Future enhancements may include actual navigation distance and ETA prediction.
-- **Notifications:** HTTP polling every 30 seconds. WebSocket or Server-Sent Events (SSE) not implemented.
-- **Admin Authentication:** Email/password login flow is [TO BE CONFIRMED] in active backend code.
+- **Notifications:** HTTP polling every 10 seconds (`useNotifications.ts`). WebSocket or Server-Sent Events (SSE) not implemented.
+- **OTP Rate Limiting:** Enforced via process-local in-memory Map; requires Redis or database backing for multi-replica deployments.
+- **Admin Credentials:** Admin authentication (bcrypt + JWT) is implemented in the backend; production use requires provisioning an admin row with a secure bcrypt hash in the PostgreSQL `admins` table.
 - **Accessibility:** Partial accessibility implementation. aria-live regions and keyboard navigation need enhancement.
 - **Mobile:** Responsive design present, but no native mobile app (React Native).
 

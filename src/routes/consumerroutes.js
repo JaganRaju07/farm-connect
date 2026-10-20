@@ -1,11 +1,15 @@
 const express = require('express');
 const router = express.Router();
-
-// 1. THIS IS THE CRITICAL LINE THAT FIXES THE ERROR:
 const consumerController = require('../controllers/consumerController');
+const auth = require('../middleware/auth');
+const roleAuth = require('../middleware/roleAuth');
 
-// 2. Your routes:
+// --- Consumer Registration (Public) ---
 router.post('/register', consumerController.registerConsumer);
+
+// --- Protected Consumer Orders ---
+router.use(auth, roleAuth(['consumer', 'admin', 'super_admin', 'moderator']));
+
 router.post('/orders', consumerController.placeOrder);
 router.get('/orders', consumerController.getOrderHistory);
 

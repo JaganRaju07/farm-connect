@@ -1,6 +1,6 @@
 /**
-* Role Authorization Middleware
-*/
+ * Role Authorization Middleware
+ */
 const roleAuth = (allowedRoles) => (req, res, next) => {
   if (!req.user || !req.user.role) {
     return res.status(401).json({
@@ -9,7 +9,13 @@ const roleAuth = (allowedRoles) => (req, res, next) => {
     });
   }
 
-  if (!allowedRoles.includes(req.user.role)) {
+  const userRoles = [req.user.role];
+  if (req.user.adminRole) {
+    userRoles.push(req.user.adminRole);
+  }
+
+  const hasRole = allowedRoles.some((role) => userRoles.includes(role));
+  if (!hasRole) {
     return res.status(403).json({
       success: false,
       error: {

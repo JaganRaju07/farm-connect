@@ -1,10 +1,45 @@
 const pool = require("../config/db");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const { sendOTP, generateOTP } = require("../services/smsservice");
+
+// In-memory per-phone attempt limiter
+// NOTE: otpAttempts uses a Node.js process-local Map. This provides reliable enforcement
+// in single-instance deployments. For multi-instance, clustered, or autoscaled environments,
+// this state must be backed by an external shared store (such as Redis or a PostgreSQL table)
+// so that failed-attempt counting and lockouts are synchronized across all application workers.
+const MAX_OTP_ATTEMPTS = 5;
+const LOCKOUT_PERIOD_MS = 15 * 60 * 1000; // 15 minutes
+const otpAttempts = new Map(); // phone -> { attempts: number, lockoutUntil: number | null }
+
+// Periodic cleanup of stale attempt records every 30 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [phone, record] of otpAttempts.entries()) {
+    if (record.lockoutUntil && record.lockoutUntil < now) {
+      otpAttempts.delete(phone);
+    }
+  }
+}, 30 * 60 * 1000).unref();
 
 exports.sendOTP = async (req, res, next) => {
   try {
     const { phone, userType, action } = req.body;
+
+    // Check if phone is currently locked out due to excessive failed attempts
+    const attemptRecord = otpAttempts.get(phone);
+    if (attemptRecord) {
+      if (attemptRecord.lockoutUntil && attemptRecord.lockoutUntil > Date.now()) {
+        const remainingMinutes = Math.ceil((attemptRecord.lockoutUntil - Date.now()) / 60000);
+        return res.status(429).json({
+          success: false,
+          message: `Too many failed attempts. Please wait ${remainingMinutes} minute(s) before requesting another OTP.`
+        });
+      } else if (attemptRecord.lockoutUntil && attemptRecord.lockoutUntil <= Date.now()) {
+        // Active lockout has elapsed, reset attempt record
+        otpAttempts.delete(phone);
+      }
+    }
 
     const table = userType === "farmer" ? "farmers" : "consumers";
 
@@ -45,6 +80,8 @@ exports.sendOTP = async (req, res, next) => {
       // Generate a new one
       otp = generateOTP();
       expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+      // NOTE: Failed attempts persist across re-issuances. We deliberately do NOT
+      // delete otpAttempts here, preventing an attacker from resetting attempt limits.
     }
 
     // Upsert the OTP
@@ -77,8 +114,22 @@ exports.sendOTP = async (req, res, next) => {
 
 exports.verifyOTP = async (req, res, next) => {
   try {
-    // Note: Added profile fields for the registration flow
     const { phone, otp, userType, name, latitude, longitude, address, city } = req.body;
+
+    // Check per-phone lockout
+    const attemptRecord = otpAttempts.get(phone);
+    if (attemptRecord) {
+      if (attemptRecord.lockoutUntil && attemptRecord.lockoutUntil > Date.now()) {
+        const remainingMinutes = Math.ceil((attemptRecord.lockoutUntil - Date.now()) / 60000);
+        return res.status(429).json({
+          success: false,
+          message: `Too many failed attempts. Account temporarily locked for ${remainingMinutes} minute(s).`
+        });
+      } else if (attemptRecord.lockoutUntil && attemptRecord.lockoutUntil <= Date.now()) {
+        // Lockout period has elapsed, clear lockout
+        otpAttempts.delete(phone);
+      }
+    }
 
     const result = await pool.query(
       `SELECT * FROM otp_store WHERE phone=$1 AND user_type=$2`,
@@ -91,28 +142,53 @@ exports.verifyOTP = async (req, res, next) => {
 
     const storedOTP = result.rows[0];
 
-    console.log("=== OTP VERIFICATION DEBUG ===");
-    console.log("Provided OTP:", otp, typeof otp);
-    console.log("Stored OTP:", storedOTP.otp_code, typeof storedOTP.otp_code);
-    console.log("Match:", storedOTP.otp_code === String(otp));
-    console.log("Trim Match:", storedOTP.otp_code.trim() === String(otp).trim());
-
-    if (storedOTP.otp_code.trim() !== String(otp).trim()) { // Added trim to be safe
-      return res.status(400).json({ success: false, message: "Invalid OTP" });
-    }
-
+    // Expiry check must happen BEFORE comparing codes
     if (new Date() > new Date(storedOTP.expires_at)) {
-      return res.status(400).json({ success: false, message: "OTP expired" });
+      await pool.query(`DELETE FROM otp_store WHERE phone=$1`, [phone]);
+      // NOTE: Do not clear otpAttempts here, so expired attempts still count against quota
+      return res.status(400).json({ success: false, message: "OTP expired. Please request a new OTP." });
     }
+
+    // Constant-time comparison to prevent timing attacks
+    const storedBuf = Buffer.from(storedOTP.otp_code.trim());
+    const providedBuf = Buffer.from(String(otp || '').trim());
+    const isMatch = storedBuf.length === providedBuf.length && crypto.timingSafeEqual(storedBuf, providedBuf);
+
+    if (!isMatch) {
+      const priorAttempts = otpAttempts.get(phone)?.attempts || 0;
+      const currentAttempts = priorAttempts + 1;
+
+      if (currentAttempts >= MAX_OTP_ATTEMPTS) {
+        otpAttempts.set(phone, {
+          attempts: currentAttempts,
+          lockoutUntil: Date.now() + LOCKOUT_PERIOD_MS
+        });
+        // Invalidate OTP immediately upon exceeding max attempts
+        await pool.query(`DELETE FROM otp_store WHERE phone=$1`, [phone]);
+        return res.status(429).json({
+          success: false,
+          message: "Too many failed attempts. OTP has been invalidated. Please try again after 15 minutes."
+        });
+      } else {
+        otpAttempts.set(phone, {
+          attempts: currentAttempts,
+          lockoutUntil: null
+        });
+        const remaining = MAX_OTP_ATTEMPTS - currentAttempts;
+        return res.status(400).json({
+          success: false,
+          message: `Invalid OTP. ${remaining} attempt(s) remaining.`
+        });
+      }
+    }
+
+    // OTP verified successfully - clear attempt counter
+    otpAttempts.delete(phone);
 
     const table = userType === "farmer" ? "farmers" : "consumers";
     let user;
 
-    // --- CRITICAL FIX HERE ---
     if (storedOTP.action === "register") {
-      // For progressive onboarding, we don't require latitude, longitude, address, city upfront.
-      // The frontend will send them later via /complete-registration.
-      // However, the database schema has NOT NULL constraints, so we insert temporary defaults.
       const insertLat = latitude || 0;
       const insertLon = longitude || 0;
       const insertAddr = address || 'Pending Profile Completion';
@@ -123,7 +199,6 @@ exports.verifyOTP = async (req, res, next) => {
         query = `INSERT INTO farmers (name, phone, latitude, longitude, address, city, phone_verified) 
                  VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING id, phone, name`;
       } else {
-        // Note: Consumers table uses 'delivery_address' instead of 'address'
         query = `INSERT INTO consumers (name, phone, latitude, longitude, delivery_address, city, phone_verified) 
                  VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING id, phone, name`;
       }
@@ -141,6 +216,11 @@ exports.verifyOTP = async (req, res, next) => {
 
     // Clean up OTP after successful use
     await pool.query(`DELETE FROM otp_store WHERE phone=$1`, [phone]);
+
+    // Ensure JWT secret is configured
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET environment variable is not configured");
+    }
 
     // Generate JWT
     const token = jwt.sign(
@@ -201,3 +281,8 @@ exports.getDemoOTP = async (req, res, next) => {
     next(error);
   }
 };
+
+// Exported for testing and audit inspection
+exports._otpAttempts = otpAttempts;
+exports._MAX_OTP_ATTEMPTS = MAX_OTP_ATTEMPTS;
+exports._LOCKOUT_PERIOD_MS = LOCKOUT_PERIOD_MS;

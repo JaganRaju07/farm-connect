@@ -48,24 +48,41 @@ export default function AdminFarmerVerificationPage() {
 
   const handleVerify = async (farmerId: number, decision: 'approved' | 'rejected') => {
     const note = rejectionNotes[farmerId] || '';
-    if (decision === 'rejected' && !note.trim()) {
-      alert('Please specify a rejection reason.');
-      return;
+    if (decision === 'rejected') {
+      if (!note.trim()) {
+        alert('Please specify a rejection reason.');
+        return;
+      }
+      if (note.trim().length < 10) {
+        alert('Rejection reason must be at least 10 characters.');
+        return;
+      }
     }
 
     setActionLoadingId(farmerId);
     try {
       const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
-      await axios.patch(`${API}/admin/farmers/${farmerId}/verify`, 
-        { decision, adminNote: note || null },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const endpoint = decision === 'approved'
+        ? `${API}/admin/verifications/${farmerId}/approve`
+        : `${API}/admin/verifications/${farmerId}/reject`;
+      const payload = decision === 'approved'
+        ? { notes: note.trim() || null }
+        : { reason: note.trim() };
+
+      await axios.post(endpoint, payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
       
       // Remove from list
       setFarmers(prev => prev.filter(f => f.id !== farmerId));
       setActiveRejectionId(null);
+      setRejectionNotes(prev => {
+        const nextNotes = { ...prev };
+        delete nextNotes[farmerId];
+        return nextNotes;
+      });
     } catch (err: any) {
-      alert(err.response?.data?.error?.message || 'Verification process failed.');
+      alert(err.response?.data?.error?.message || err.response?.data?.message || 'Verification process failed.');
     } finally {
       setActionLoadingId(null);
     }

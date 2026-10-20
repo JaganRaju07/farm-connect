@@ -103,7 +103,7 @@ export default function CompleteProfilePage() {
       const endpoint = '/auth/complete-registration';
 
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'}${endpoint}`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1'}${endpoint}`,
         payload,
         {
           headers: {

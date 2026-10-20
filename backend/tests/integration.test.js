@@ -1,4 +1,4 @@
-// backend/tests/integration.test.js — CREATE this file
+// backend/tests/integration.test.js
 
 /**
 * Farm Connect Integration Test Script
@@ -15,6 +15,7 @@
 */
 
 const path = require('path');
+const assert = require('assert');
 require('dotenv').config({ path: path.join(__dirname, '../.env') });
 const db = require('../src/config/database');
 const { placeOrder, updateOrderStatus, cancelOrder } = require('../src/services/order.service');
@@ -35,9 +36,9 @@ async function runTests() {
     const products = await searchProducts({
       lat: 12.9716, lon: 77.5946, radius: 50 // Wide radius to ensure seed data appears
     });
-    console.assert(Array.isArray(products), 'Search should return array');
-    console.assert(products.length > 0, 'Search should return at least one product');
-    console.assert('distance_km' in products[0], 'Each product should have distance_km');
+    assert.ok(Array.isArray(products), 'Search should return array');
+    assert.ok(products.length > 0, 'Search should return at least one product');
+    assert.ok('distance_km' in products[0], 'Each product should have distance_km');
     console.log('✅ Test 1 PASS — GPS product search returns distance-sorted results');
     testsPassed++;
   } catch (e) {
@@ -87,7 +88,9 @@ async function runTests() {
     );
     const newStock = parseInt(newStockResult.rows[0].stock_available);
 
-    console.assert(newStock === initialStock - orderQty,
+    assert.strictEqual(
+      newStock,
+      initialStock - orderQty,
       `Stock should reduce by ${orderQty}: expected ${initialStock - orderQty}, got ${newStock}`
     );
     console.log(`✅ Test 3 PASS — Order placed (ID: ${createdOrderId}), stock reduced ${initialStock} -> ${newStock}`);
@@ -111,9 +114,9 @@ async function runTests() {
       );
       const row = orderCheck.rows[0];
 
-      console.assert(row.order_status === 'delivered', 'Status should be delivered');
-      console.assert(row.confirmed_at !== null, 'confirmed_at timestamp must be set');
-      console.assert(row.delivered_at !== null, 'delivered_at timestamp must be set');
+      assert.strictEqual(row.order_status, 'delivered', 'Status should be delivered');
+      assert.ok(row.confirmed_at !== null, 'confirmed_at timestamp must be set');
+      assert.ok(row.delivered_at !== null, 'delivered_at timestamp must be set');
       console.log('✅ Test 4 PASS — Order lifecycle complete, all timestamps recorded');
       testsPassed++;
     } catch (e) {
@@ -143,7 +146,9 @@ async function runTests() {
       [PRODUCT_ID])).rows[0].stock_available
     );
 
-    console.assert(stockAfterCancel === stockBeforeCancel + 1,
+    assert.strictEqual(
+      stockAfterCancel,
+      stockBeforeCancel + 1,
       `Stock should restore by 1: expected ${stockBeforeCancel + 1}, got ${stockAfterCancel}`
     );
     console.log(`✅ Test 5 PASS — Order cancellation restores stock: ${stockBeforeCancel} -> ${stockAfterCancel}`);
@@ -156,9 +161,9 @@ async function runTests() {
   // ── Test 6: Farmer dashboard stats reflect correctly ─────────────────────────
   try {
     const dashboard = await getFarmerDashboardData(FARMER_ID);
-    console.assert(dashboard.overview, 'Dashboard should have overview section');
-    console.assert(dashboard.recentOrders, 'Dashboard should have recent orders');
-    console.assert(Array.isArray(dashboard.monthlyTrend), 'Monthly trend should be array');
+    assert.ok(dashboard.overview, 'Dashboard should have overview section');
+    assert.ok(dashboard.recentOrders, 'Dashboard should have recent orders');
+    assert.ok(Array.isArray(dashboard.monthlyTrend), 'Monthly trend should be array');
     console.log(`✅ Test 6 PASS — Farmer dashboard data: ${dashboard.overview.total_orders} total orders, ₹${dashboard.overview.total_earnings} earned`);
     testsPassed++;
   } catch (e) {
@@ -170,8 +175,8 @@ async function runTests() {
   try {
     const { createReview } = require('../src/services/review.service');
 
-    // Try review on non-delivered order — should fail
-    let caught = false;
+    // Try review on non-delivered order — should fail specifically with REVIEW_NOT_ELIGIBLE
+    let validationFailedAsExpected = false;
     try {
       await createReview(CONSUMER_ID, {
         productId: PRODUCT_ID,
@@ -180,13 +185,18 @@ async function runTests() {
         reviewText: 'Test'
       });
     } catch (e) {
-      caught = true;
+      if (e.code === 'REVIEW_NOT_ELIGIBLE' && e.statusCode === 403) {
+        validationFailedAsExpected = true;
+      } else {
+        // Re-throw database, connection, or unexpected errors so test fails legitimately
+        throw e;
+      }
     }
-    console.assert(caught, 'Review on fake order should be rejected');
+    assert.ok(validationFailedAsExpected, 'Review on fake order should be rejected with REVIEW_NOT_ELIGIBLE (403)');
     console.log('✅ Test 7 PASS — Review gating works correctly');
     testsPassed++;
   } catch (e) {
-    console.error('❌ Test 7 FAIL:', e.message);
+    console.error('❌ Test 7 FAIL — Review gating:', e.message);
     testsFailed++;
   }
 
@@ -196,11 +206,11 @@ async function runTests() {
 
     await toggleWishlist(CONSUMER_ID, PRODUCT_ID); // save
     const afterSave = await getWishlist(CONSUMER_ID);
-    console.assert(afterSave.length > 0, 'Wishlist should have item after save');
+    assert.ok(afterSave.length > 0, 'Wishlist should have item after save');
 
     await toggleWishlist(CONSUMER_ID, PRODUCT_ID); // unsave
     const afterRemove = await getWishlist(CONSUMER_ID);
-    console.assert(afterRemove.length === 0, 'Wishlist should be empty after unsave');
+    assert.strictEqual(afterRemove.length, 0, 'Wishlist should be empty after unsave');
 
     console.log('✅ Test 8 PASS — Wishlist toggle works correctly');
     testsPassed++;
@@ -220,16 +230,20 @@ async function runTests() {
     console.log('❌ Fix failing tests before proceeding to deployment.');
   }
 
-  if (db.pool && db.pool.end) {
+  try {
+    if (db.pool && db.pool.end) {
       await db.pool.end();
-  } else if (db.end) {
-      await db.end(); // If db is directly exported client
-  } else {
-      process.exit(0); // fallback
+    } else if (db.end) {
+      await db.end();
+    }
+  } catch (err) {
+    console.error('Error closing database pool:', err.message);
   }
+
+  process.exit(testsFailed === 0 ? 0 : 1);
 }
 
 runTests().catch(err => {
-    console.error(err);
-    process.exit(1);
+  console.error('Top-level test error:', err);
+  process.exit(1);
 });

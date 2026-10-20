@@ -22,7 +22,7 @@ const roleAuth = require('../middleware/roleAuth');
 router.post('/login', adminLogin);
 
 // All below require admin JWT
-router.use(authenticateToken, roleAuth(['admin']));
+router.use(authenticateToken, roleAuth(['admin', 'super_admin', 'moderator']));
 
 // Analytics
 router.get('/analytics', getAnalytics);

@@ -1,7 +1,8 @@
 const axios = require("axios");
+const crypto = require("crypto");
 
 const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 1000000).toString();
 };
 
 const sendOTP = async (phone, otp) => {
@@ -44,4 +45,4 @@ const sendOTP = async (phone, otp) => {
   }
 };
 
-module.exports = { generateOTP, sendOTP };
+module.exports = { generateOTP, sendOTP };
