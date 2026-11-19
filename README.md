@@ -546,7 +546,7 @@ The current main branch includes end-to-end functionality across the full user j
 | **Deekshitha P** | Backend Developer | API routes, controllers, integrations |
 | **Ishani Srinivas** | Frontend Developer | UI/UX, Next.js pages, components, state management |
 
-**Mentor:** Dr. Narender M.
+**Mentor:** Manas Ajaykumar Choksi.
 
 **Acknowledgements:** IEEE Computer Society Bangalore Chapter, IAMPro Internship 2026, Team P116
 
